@@ -1,35 +1,29 @@
-# How to contribute to a Stellar project
+# Como contribuir para um projeto Stellar
 
-Your contributions to the [Stellar network](https://www.stellar.org/) will help improve the world’s financial
-infrastructure, faster.
+Suas contribuições à [rede Stellar](https://www.stellar.org/) vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
 
-We want to make it as easy as possible to contribute changes that
-help the Stellar network grow and thrive. There are a few guidelines that we
-ask contributors to follow so that we can merge your changes quickly.
+Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente.
 
-## Getting Started
+## Para Começar
 
-* Make sure you have a [GitHub account](https://github.com/signup/free).
-* Create a GitHub issue for your contribution, assuming one does not already exist.
-  * Clearly describe the issue including steps to reproduce if it is a bug.
-* Fork the repository on GitHub.
+* Certifique-se de que você tem uma [conta no GitHub](https://github.com/signup/free).
+* Crie uma issue no GitHub para sua contribuição, se já não houver.
+  * Descreva claramente o problema, incluindo passos para reproduzí-lo casjo seja um bug.
+* Faça um fork do repisitório no GitHub.
 
-### Minor Changes
+### Pequenas Mudanças
 
-#### Documentation
+#### Documentação
 
-For small changes to comments and documentation, it is not
-always necessary to create a new GitHub issue. In this case, it is
-appropriate to start the first line of a commit with 'doc' instead of
-an issue number.
+Para pequenas alterações nos comentários e na documentação, nem sempre é preciso criar uma nova issue no GitHub. Nesse caso, é adequado começar a primeira linha de um commit com 'doc' em vez do número de uma issue.
 
-## Finding things to work on
+## Encontrar coisas para trabalhar
 
-The first place to start is always looking over the current GitHub issues for the project you are interested in contributing to. Issues marked with [help wanted](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Astellar+label%3A%22help+wanted%22) are usually pretty self-contained and a good place to get started.
+O melhor lugar para começar é sempre dando uma olhada nas issues atuais no GitHub referentes ao projeto em que você tem interesse em contribuir. Issues marcadas com [help wanted](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Astellar+label%3A%22help+wanted%22) costumam não ser muito abrangentes e são um bom lugar para começar.
 
-Stellar.org also uses these same GitHub issues to keep track of what we are working on. If you see any issues that are assigned to a particular person or have the `in progress` label, that means someone is currently working on that issue. The `orbit` label means we will likely be working on this issue in the next week or two. The `ready` label means that the issue is one we have prioritized and will be working on in our next orbit (the Stellar term for a sprint) or two.
+O Stellar.org também usa essas mesmas issues do GitHub para acompanhar aquilo em que estamos trabalhando. Caso veja alguma issue atribuída a uma pessoa específica ou que tenha um rótulo `in progress`, significa que alguém está trabalhando nessa issue. O rótulo `orbit` quer dizer que provavelmente vamos trabalhar nessa issue nas próximas semanas. O rótulo `ready` significa que é uma issue prioritária e que trabalharemos nela na nossa próxima "orbit" (o termo que usamos no lugar de um sprint) ou na seguinte.
 
-Of course, feel free to create a new issue if you think something needs to be added or fixed.
+ E, é claro, sinta-se livre para criar uma nova issue se achar que algo precisa ser adicionado ou consertado.
 
 ## Making Changes
 
