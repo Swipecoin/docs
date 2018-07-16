@@ -1,11 +1,11 @@
-Stellar Docs
+Documentação Stellar
 ============
 
-This repository is home to the Stellar documentation. These docs feed into the [Stellar developers site builder](https://github.com/stellar/developers) and are on display at [stellar.org/developers](https://www.stellar.org/developers/).
+Neste repositório se encontra a documentação Stellar. Estes documentos alimentam o [builder do site Stellar para desenvolvedores](https://github.com/stellar/developers) e estão expostos em [stellar.org/developers](https://www.stellar.org/developers/).
 
-## How to write docs
+## Como escrever documentos
 
-There are a few conventions when writing docs that go into the Stellar Developers site. Most of the docs are written in Markdown format. For an introduction to Markdown, take a look at [Github's Mastering Markdown Guide](https://guides.github.com/features/mastering-markdown/).
+Há algumas convenções ao escrever documentos que vão para o site de Stellar para Desenvolvedores. A maioria dos documentos são escritos em formato Markdown. Para uma introdução ao Markdown, dê uma olhada no [Guia do Github "Mastering Markdown"](https://guides.github.com/features/mastering-markdown/).
 
 ### Headers
 
