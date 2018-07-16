@@ -92,4 +92,4 @@ Veja um exemplo na [pasta software do stellar-core](https://github.com/stellar/s
 
 Suas contribuições à rede Stellar vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
 
-Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente. Por favor leia nosso [Guia de Contribuições](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) e assine nosso [Acordo de Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).
+Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente. Por favor leia nosso [Guia de Contribuições](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) e assine nosso [Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).
