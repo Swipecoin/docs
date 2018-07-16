@@ -25,34 +25,33 @@ O Stellar.org também usa essas mesmas issues do GitHub para acompanhar aquilo e
 
  E, é claro, sinta-se livre para criar uma nova issue se achar que algo precisa ser adicionado ou consertado.
 
-## Making Changes
+## Fazer Alterações
 
-* Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
-  * Please avoid working directly on the `master` branch.
-* Make sure you have added the necessary tests for your changes and make sure all tests pass.
+* Crie um topic branch a partir do branch no qual você quer basear seu trabalho.
+  * Normalmente seria criado a partir do branch `master`.
+  * Por favor evite trabalhar diretamente no branch `master`.
+* Certifique-se de que tenha adicionado os testes necessários para suas alterações e que todos os testes tenham passado.
 
-## Submitting Changes
+## Submeter Alterações
 
-* [Sign the Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form).
-* All content, comments, and pull requests must follow the [Stellar Community Guidelines](https://www.stellar.org/community-guidelines/).
-* Push your changes to a topic branch in your fork of the repository.
-* Submit a pull request to the [docs repository](https://github.com/stellar/docs) in the Stellar organization.
- * Include a descriptive [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages).
- * Changes contributed via pull request should focus on a single issue at a time.
- * Rebase your local changes against the master branch. Resolve any conflicts that arise.
+* [Assine o Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form).
+* Todo o conteúdo, comentários e pull requests devem seguir as [Orientações da Comunidade Stellar](https://www.stellar.org/community-guidelines/).
+* Dê push em suas alterações para um topic branch no seu fork do repositório.
+* Submeta uma pull request para o [repositório docs](https://github.com/stellar/docs) na organização Stellar.
+ * Inclua uma [mensagem de commit](https://github.com/erlang/otp/wiki/Writing-good-commit-messages) descritiva.
+ * Mudanças contribuídas por meio de pull requests devem se focar em uma issue por vez.
+ * Dê rebase em suas mudanças locais em relação ao branch `master`. Resolva todos os conflitos que surgirem.
 
-At this point you're waiting on us. We like to at least comment on pull requests within three
-business days (typically, one business day). We may suggest some changes, improvements or alternatives.
+Nesse momento, a bola fica com a gente. Gostamos de pelo menos comentar as pull requests dentro de três dias úteis (tipicamente um dia útil). Podemos sugerir algumas mudanças, melhorias ou alternativas.
 
-# Additional Resources
+# Recursos Adicionais
 
-* [Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form)
-* [Explore the API](https://www.stellar.org/developers/reference/)
-* #dev channel on [Slack](http://slack.stellar.org)
-* #stellar-dev IRC channel on freenode.org
+* [Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form)
+* [Explore a API](https://www.stellar.org/developers/reference/)
+* canal #dev no [Slack](http://slack.stellar.org)
+* canal IRC #stellar-dev no freenode.org
 
-This document is inspired by:
+Esse documento tem como inspiração:
 
 * https://github.com/puppetlabs/puppet/blob/master/CONTRIBUTING.md
 * https://github.com/thoughtbot/factory_girl_rails/blob/master/CONTRIBUTING.md
