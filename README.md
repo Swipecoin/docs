@@ -9,7 +9,7 @@ Há algumas convenções ao escrever documentos que vão para o site de Stellar 
 
 ### Headers
 
-Lines that start with a hash symbol (`#`) are considered headers. Below is an example of a few and the name of the header:
+Linhas que começam com um símbolo hash (`#`) são consideradas como headers. Veja abaixo um exemplo de alguns e do nome do header:
 
 ```
 # h1
@@ -18,62 +18,62 @@ Lines that start with a hash symbol (`#`) are considered headers. Below is an ex
 #### h4
 ```
 
-- DO NOT use h1 since that is reserved for the page title generated from front matter.
-- DO NOT skip a header size (don't go from h2 to h4).
-- DO use smaller headers (more hash symbols) to represent that a section is nested under a parent one with a larger header.
-- DO add a space after the hash symbols. Some Markdown parsers will not render the text as a header without the space.
+- NÃO usar h1, pois é reservado para o título da página gerado a partir da front matter.
+- NÃO pular tamanhos de headers (não vá de h2 para h4).
+- NÃO usar headers menores (mais símbolos hash) para representar que uma seção está inserida dentro de uma seção pai com um header maior.
+- Adicionar SIM um espaço após os símbolos hash. Alguns parsers de Markdown não irão renderizar o texto como header se não houver o espaço.
 
 ### Front matter
 
-At the top of most documents is something called "front matter". This is metadata for the file written in [YAML format](https://en.wikipedia.org/wiki/YAML).
+No topo da maioria dos documentos há algo chamado de "front matter" (conteúdo antes do texto). Trata-se de metadados para o arquivo escrito em [formato YAML](https://en.wikipedia.org/wiki/YAML).
 
-Here is an example of front matter in action:
+Aqui está um exemplo da front matter em ação:
 ```
 ---
-title: Horizon Reference
+title: Referência de Horizon
 ---
 ```
 
-The currently used keys in the front matter are:
+As chaves sendo usadas na front matter são:
 - title
 
-### Document title
+### Título do documento
 
-Do not start a page with a Markdown header (`# Title`). Instead, leave it in the front matter. The developers site will take the title from the front matter.
+Não comece uma página com um header em Markdown (`# Title`). Em vez disso, deixe-o na front matter. O site para desenvolvedores irá pegar o título a partir da front matter.
 
 ### Links
 
-Use inline links and not reference links.
+Use links em linha e não referencie links.
 
-There are three different kinds of links, and each different kind of link has a significant meaning. Some of these links are transformed in the generation of the developers site.
+Há três tipos diferentes de links, e cada tipo de link tem seu próprio significado. Alguns desses links são transformados durante a geração do site para desenvolvedores.
 
 <table>
   <tbody>
     <tr>
-      <th>link type</th>
-      <th>where to use</th>
-      <th>markdown link example</th>
-      <th>resulting link (after dev portal processing)</th>
+      <th>tipo de link</th>
+      <th>onde usar</th>
+      <th>exemplo de link em markdown</th>
+      <th>link resultante (após processamento pelo portal)</th>
     </tr>
     <tr>
     <tr>
-      <td>Relative</td>
-      <td><ul><li>links within same repository</li></ul></td>
+      <td>Relativo</td>
+      <td><ul><li>links dentro do mesmo repositório</li></ul></td>
       <td>../reference/accounts-all.md</td>
       <td>../reference/accounts-all.html</td>
     </tr>
     <tr>
-      <td>Root relative</td>
-      <td><ul><li>when you want to use the GitHub file viewer (e.g. for source files)</li></ul></td>
+      <td>Relativo à raiz</td>
+      <td><ul><li>quando quiser usar o visualizador de arquivos do GitHub (ex.: para arquivos fonte)</li></ul></td>
       <td>/src/ledger/AccountFrame.cpp</td>
-      <td>https://github.com/stellar/CURRENT-REPOSITORY/tree/master/src</td>
+      <td>https://github.com/stellar/REPOSITÓRIO-ATUAL/tree/master/src</td>
     </tr>
     <tr>
-      <td>Absolute links</td>
+      <td>Links absolutos</td>
       <td>
         <ul>
-          <li>cross repository links (should link to the dev portal at www.stellar.org/developers/)</li>
-          <li>links to external sites (like https://www.google.com/)</li>
+          <li>links entre repositórios (deve linkar ao portal para desenvolvedores em www.stellar.org/developers/)</li>
+          <li>links a sites externos (como https://www.google.com/)</li>
         </ul>
       </td>
       <td>https://www.stellar.org/developers/js-stellar-base/learn/building-transactions.html</td>
@@ -82,14 +82,14 @@ There are three different kinds of links, and each different kind of link has a 
   </tbody>
 </table>
 
-### Non-markdown files
+### Arquivos que não estejam em Markdown
 
-Sometimes we want to include other types of content such as `.pdf`'s. To add front matter to the PDF, create a sibling file with the PDF file name and an added extension of `.metadata`. This file can then define metadata for the title of the `.pdf`.
+Às vezes vamos incluir outros tipos de conteúdo, como em `.pdf`. Para adicionar front matter ao PDF, crie um arquivo irmão com o nome do arquivo PDF e uma extensão adicional de `.metadata`. Esse arquivo pode então definir metadados para o título do `.pdf`.
 
-An example can be seen in [stellar-core's software folder](https://github.com/stellar/stellar-core/tree/master/docs/software).
+Veja um exemplo na [pasta software do stellar-core](https://github.com/stellar/stellar-core/tree/master/docs/software).
 
-## Contributing
+## Contribuições
 
-Your contributions to the Stellar network will help improve the world’s financial infrastructure, faster.
+Suas contribuições à rede Stellar vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
 
-We want to make it as easy as possible to contribute changes that help the Stellar network grow and thrive. There are a few guidelines that we ask contributors to follow so that we can merge your changes quickly. Please read our [Contribution Guide](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) and sign our [Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).
+Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente. Por favor leia nosso [Guia de Contribuições](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) e assine nosso [Acordo de Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).
