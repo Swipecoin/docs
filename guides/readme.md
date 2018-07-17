@@ -1,16 +1,16 @@
 ---
-title: Guias de Desenvolvimento Stellar
+title: Guias de Desenvolvimento do Stellar
 ---
 
-Estes guias são feitos para ajudar você a aprender mais sobre os aspectos técnicos de integrar Stellar em sua aplicação ou serviço, desde [o mais básico](./get-started) até tópicos mais detalhados, como [submeter transações a alta frequência com canais](./channels.md).
+Estes guias são feitos para ajudar você a aprender mais sobre os aspectos técnicos de integrar Stellar a sua aplicação ou serviço, desde [o mais básico](./get-started) até tópicos mais detalhados, como [submeter transações a alta frequência com canais](./channels.md).
 
-Se você procura por documentação mais detalhada sobre o API HTTP de Stellar ou bibliotecas cliente para sua linguagem de programação favorita, dê uma olhada na seção de [Referência da API](../reference).
+Se você procura por documentação mais detalhada sobre o API HTTP do Stellar ou bibliotecas cliente para sua linguagem de programação favorita, dê uma olhada na seção de [Referência da API](../reference).
 
 Alguns guias estão agrupados juntos:
 
 ## Para Começar
 
-O [guia Para Começar](./get-started) faz uma apresentação dos aspectos técnicos básicos de Stellar, começando com uma introdução às várias partes da rede Stellar, para em seguida abordar como criar contas e realizar transações programaticamente.
+O [guia Para Começar](./get-started) faz uma apresentação dos aspectos técnicos básicos do Stellar, começando com uma introdução às várias partes da rede Stellar, para em seguida abordar como criar contas e realizar transações programaticamente.
 
 ## Conceitos
 
@@ -18,7 +18,7 @@ A seção Conceitos contém visões gerais e explicações sobre vários objetos
 
 ## SDKs
 
-Procurando por mais detalhes sobre os SDKs cliente de Stellar? Veja a documentação detalhada para cada SDK cliente na seção [Referência da API](../reference).
+Procurando por mais detalhes sobre os SDKs cliente do Stellar? Veja a documentação detalhada para cada SDK cliente na seção [Referência da API](../reference).
 
 ## Guias Passo a Passo
 

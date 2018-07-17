@@ -1,4 +1,4 @@
-# Como contribuir para um projeto Stellar
+# Como contribuir para um projeto do Stellar
 
 Suas contribuições à [rede Stellar](https://www.stellar.org/) vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
 
