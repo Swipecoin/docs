@@ -1,26 +1,26 @@
 ---
-title: Channels
+title: Canais
 ---
-*Method for submitting transactions to the network at a high rate*
+*Método para submeter transações à rede em uma frequência elevada*
 
-If you are submitting [transactions](./concepts/transactions.md) to the network at a high rate or from different processes you must be careful that the transactions are submitted in the correct order of their sequence numbers. This can be problematic since typically you are submitting through Horizon and there is no guarantee that a given transaction is received by [stellar-core](https://github.com/stellar/stellar-core) until ledger close. This means that they can reach stellar-core out of order and will bounce with a bad sequence error. If you do wait for ledger close to avoid this issue that will greatly reduce the rate you can submit transactions to the network.
+Caso esteja submetendo [transações](./concepts/transactions.md) à rede em uma frequência elevada ou a partir de diferentes processos, é necessário ter cuidado para submeter as transações na ordem correta de seus números sequenciais. Isso pode ser problemático, já que tipicamente o envio é feito por meio do Horizon e não há nenhuma garantia de que uma transação tenha sido recebida pelo [stellar-core](https://github.com/stellar/stellar-core) antes do fechamento do ledger. Isso quer dizer que as transações podem chegar ao stellar-core fora de ordem e irão voltar com um erro de sequência incorreta (bad sequence). Caso escolha esperar o fechamento do ledger para evitar este problema, isso irá reduzir consideravelmente sua frequência de envio de transações à rede.
 
-The way to avoid this is with the concept of **channels**.
+A maneira de evitar isso é com o conceito de **channels**, ou canais.
 
-A channel is simply another Stellar account that is used not to send the funds but as the "source" account of the transaction. Remember transactions in Stellar each have a source account that can be different than the accounts being effected by the operations in the transaction. The source account of the transaction pays the fee and consumes a sequence number. You can then use one common account (your base account) to make the payment [operation](./concepts/operations.md) inside each transaction. The various channel accounts will consume their sequence numbers even though the funds are being sent from your base account. 
+Um canal é simplesmente outra conta Stellar que é usada não para enviar fundos, mas como a conta "fonte" da transação. Lembre-se que cada transação no Stellar tem uma conta fonte que pode ser distinta das contas que são afetadas pelas operações na transação. A conta fonte da transação paga a tarifa e consome um número sequencial. Daí é possível usar uma conta comum (a sua conta base) para fazer a [operação](./concepts/operations.md) Payment dentro de cada transação. As várias contas canal irão consumir seus números sequenciais, apesar de os fundos terem sido enviados por sua conta base.
 
-Channels take advantage of the fact that the "source" account of a transaction can be different than the source account of the operations inside the transaction. With this set up you can make as many channels as you need to maintain your desired transaction rate.
+Canais aproveitam o fato de que a conta "fonte" de uma transação pode ser diferente da conta fonte das operações dentro da transação. Com essa configuração, é possível fazer tantos canais quanto for preciso para manter sua frequência de transação desejada.
 
-You of course will have to sign the transaction with both the base account key and the channel account key.  
+É claro, você terá de assinar a transação, tanto com a chave da conta base como com a chave da conta canal.
 
-For example:
+Por exemplo:
 ```
 StellarSdk.Network.useTestNetwork();
-// channelAccounts[] is an array of accountIDs, one for each channel
-// channelKeys[] is an array of secret keys, one for each channel
-// channelIndex is the channel you want to send this transaction over
+// channelAccounts[] é um array de accountIDs, um para cada canal
+// channelKeys[] é um array de chaves secretas, um para cada canal
+// channelIndex é o canal pelo qual você quer enviar esta transação
 
-// create payment from baseAccount to customerAddress
+// criar payment da baseAccount (conta base) para customerAddress
 var transaction =
   new StellarSdk.TransactionBuilder(channelAccounts[channelIndex])
     .addOperation(StellarSdk.Operation.payment({
@@ -31,6 +31,6 @@ var transaction =
     }))
     .build();
 
-  transaction.sign(baseAccountKey);   // base account must sign to approve the payment
-  transaction.sign(channelKeys[channelIndex]);  // channel must sign to approve it being the source of the transaction
-``` 
+  transaction.sign(baseAccountKey);   // conta base deve assinar para aprovar o pagamento
+  transaction.sign(channelKeys[channelIndex]);  // canal deve assinar para aprovar que ele seja a fonte da transação
+```
