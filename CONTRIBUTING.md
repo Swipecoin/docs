@@ -8,8 +8,8 @@ Queremos que seja o mais fácil possível para contribuir alterações que ajude
 
 * Certifique-se de que você tem uma [conta no GitHub](https://github.com/signup/free).
 * Crie uma issue no GitHub para sua contribuição, se já não houver.
-  * Descreva claramente o problema, incluindo passos para reproduzí-lo casjo seja um bug.
-* Faça um fork do repisitório no GitHub.
+  * Descreva claramente o problema, incluindo passos para reproduzí-lo caso seja um bug.
+* Faça um fork do repositório no GitHub.
 
 ### Pequenas Mudanças
 
@@ -51,7 +51,7 @@ Nesse momento, a bola fica com a gente. Gostamos de pelo menos comentar as pull 
 * canal #dev no [Slack](http://slack.stellar.org)
 * canal IRC #stellar-dev no freenode.org
 
-Esse documento tem como inspiração:
+Este documento tem como inspiração:
 
 * https://github.com/puppetlabs/puppet/blob/master/CONTRIBUTING.md
 * https://github.com/thoughtbot/factory_girl_rails/blob/master/CONTRIBUTING.md
