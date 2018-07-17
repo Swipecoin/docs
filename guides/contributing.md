@@ -1,67 +1,59 @@
 ---
-title: Contribution Guide
+title: Guia de Contribuições
 ---
 
-# How to contribute to a Stellar project
+# Como contribuir para um projeto Stellar
 
-Your contributions to the Stellar network will help improve the world’s financial
-infrastructure, faster.
+Suas contribuições à rede Stellar vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
 
-We want to make it as easy as possible to contribute changes that
-help the Stellar network grow and thrive. There are a few guidelines that we
-ask contributors to follow so that we can merge your changes quickly.
+Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente.
 
-## Getting Started
+## Para Começar
 
-* Make sure you have a [GitHub account](https://github.com/join)
-* Create a GitHub issue for your contribution, assuming one does not already exist.
-  * Clearly describe the issue including steps to reproduce if it is a bug.
-* Fork the repository on GitHub
+* Certifique-se de que você tem uma [conta no GitHub](https://github.com/join)
+* Crie uma issue no GitHub para sua contribuição, se já não houver.
+  * Descreva claramente o problema, incluindo passos para reproduzí-lo caso seja um bug.
+* Faça um fork do repositório no GitHub.
 
-## Finding things to work on
+## Encontrar coisas para trabalhar
 
-The first place to start is always looking over the current github issues for the project you are interested in contributing to. Issues marked with [help wanted](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Astellar+label%3A%22help+wanted%22) are usually pretty self contained and a good place to get started.
+O melhor lugar para começar é sempre dando uma olhada nas issues atuais no GitHub referentes ao projeto em que você tem interesse em contribuir. Issues marcadas com [help wanted](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Astellar+label%3A%22help+wanted%22) costumam não ser muito abrangentes e são um bom lugar para começar.
 
-Stellar.org also uses these same github issues to keep track of what we are working on. If you see any issues that are assigned to a particular person or have the `in progress` label, that means someone is currently working on that issue. The `orbit` label means we will likely be working on this issue in the next week or two. The `ready` label means that the issue is one we have prioritized and will be working on in our next orbit (stellar term for sprint) or two.
+O Stellar.org também usa essas mesmas issues do GitHub para acompanhar aquilo em que estamos trabalhando. Caso veja alguma issue atribuída a uma pessoa específica ou que tenha um rótulo `in progress`, significa que alguém está trabalhando nessa issue. O rótulo `orbit` quer dizer que provavelmente vamos trabalhar nessa issue nas próximas semanas. O rótulo `ready` significa que é uma issue prioritária e que trabalharemos nela na nossa próxima "orbit" (o termo que usamos no lugar de um sprint) ou na seguinte.
 
-Feel free to make your own issues if you think something needs to added or fixed.
+ E, é claro, sinta-se livre para criar uma nova issue se achar que algo precisa ser adicionado ou consertado.
 
-## Making Changes
+## Fazer Alterações
 
-* Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
-  * Please avoid working directly on the `master` branch.
-* Make sure you have added the necessary tests for your changes and make sure all tests pass.
+* Crie um topic branch a partir do branch no qual você quer basear seu trabalho.
+  * Normalmente seria criado a partir do branch `master`.
+  * Por favor evite trabalhar diretamente no branch `master`.
+* Certifique-se de que tenha adicionado os testes necessários para suas alterações e que todos os testes tenham passado.
 
-## Submitting Changes
+## Submeter Alterações
 
-* [Sign the Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form)
-* All content, comments, and pull requests must follow the [Stellar Community Guidelines](https://www.stellar.org/community-guidelines/). 
-* Push your changes to a topic branch in your fork of the repository.
-* Submit a pull request to the repository for the project you’re working on in the Stellar organization.
- * Include a descriptive [commit message](https://github.com/erlang/otp/wiki/Writing-good-commit-messages).
- * Changes contributed via pull request should focus on a single issue at a time.
- * Rebase your local changes against the master branch. Resolve any conflicts that arise.
+* [Assine o Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form).
+* Todo o conteúdo, comentários e pull requests devem seguir as [Orientações da Comunidade Stellar](https://www.stellar.org/community-guidelines/).
+* Dê push em suas alterações para um topic branch no seu fork do repositório.
+* Submeta uma pull request para o repositório do projeto em que você está trabalhando na organização Stellar.
+ * Inclua uma [mensagem de commit](https://github.com/erlang/otp/wiki/Writing-good-commit-messages) descritiva.
+ * Mudanças contribuídas por meio de pull requests devem se focar em uma issue por vez.
+ * Dê rebase em suas mudanças locais em relação ao branch `master`. Resolva todos os conflitos que surgirem.
 
-At this point you're waiting on us. We like to at least comment on pull requests within three
-business days (typically, one business day). We may suggest some changes, improvements or alternatives.
+Nesse momento, a bola fica com a gente. Gostamos de pelo menos comentar as pull requests dentro de três dias úteis (tipicamente um dia útil). Podemos sugerir algumas mudanças, melhorias ou alternativas.
 
-## Minor Changes
+## Pequenas Mudanças
 
-### Documentation
-For small changes to comments and documentation, it is not
-always necessary to create a new GitHub issue. In this case, it is
-appropriate to start the first line of a commit with 'doc' instead of
-an issue number.
+### Documentação
+Para pequenas alterações nos comentários e na documentação, nem sempre é preciso criar uma nova issue no GitHub. Nesse caso, é adequado começar a primeira linha de um commit com 'doc' em vez do número de uma issue.
 
-# Additional Resources
-* [Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form)
-* [Explore the API](https://www.stellar.org/developers/reference/)
-* #dev channel on [Slack](http://slack.stellar.org)
-* #stellar-dev IRC channel on freenode.org
+# Recursos Adicionais
+* [Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform?usp=send_form)
+* [Explore a API](https://www.stellar.org/developers/reference/)
+* canal #dev no [Slack](http://slack.stellar.org)
+* canal IRC #stellar-dev no freenode.org
 
-
-This document is inspired by:
+Este documento tem como inspiração:
 
 https://github.com/puppetlabs/puppet/blob/master/CONTRIBUTING.md
 
