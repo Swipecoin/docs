@@ -30,5 +30,5 @@ Todos esses Stellar Cores — a rede de nós — eventualmente concordam em conj
 Para ajudá-lo a testar suas ferramentas e aplicativos, Stellar.org opera uma pequena rede de testes e uma instância do Horizon. [Comece a mexer na testnet.](../concepts/test-net.md)
 
 <div class="sequence-navigation">
-  <a class="button button--next" href="create-account.html">Em Seguida: Criar uma Conta</a>
+  <a class="button button--next" href="create-account.html">Próximo: Criar uma Conta</a>
 </div>
