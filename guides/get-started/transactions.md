@@ -171,15 +171,15 @@ func main () {
 
 </code-example>
 
-What exactly happened there? Let’s break it down.
+O que exatamente aconteceu aí? Vamos ver por partes.
 
-1. Confirm that the account ID you are sending to actually exists by loading the associated account data from the Stellar network. Everything will actually be OK if you skip this step, but doing it gives you an opportunity to avoid making a transaction you know will fail. You can also use this call to perform any other verification you might want to do on a destination account. If you are writing banking software, for example, this is a good place to insert regulatory compliance checks and <abbr title="Know Your Customer">KYC</abbr> verification.
+1. Confirmar que o ID da conta para a qual está enviando realmente existe, carregando a partir da rede Stellar os dados associados à conta. Nada vai dar errado se pular essa parte, mas fazer isso dá uma oportunidade de evitar fazer uma transação que você sabe que irá falhar. Você também pode usar esta chamada para realizar qualquer outra verificação que possa querer fazer na conta de destino. Se estiver escrevendo um software bancário, por exemplo, esse é um bom lugar para inserir checagens regulatórias de compliance e verificações <abbr title="Know Your Customer">KYC</abbr>.
 
-    <code-example name="Load an Account">
+    <code-example name="Carregar uma conta">
 
     ```js
     server.loadAccount(destinationId)
-      .then(function(account) { /* validate the account */ })
+      .then(function(account) { /* validar a conta */ })
     ```
 
     ```java
@@ -194,9 +194,9 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-2. Load data for the account you are sending from. An account can only perform one transaction at a time[^5] and has something called a [**sequence number**,](../concepts/accounts.md#sequence-number) which helps Stellar verify the order of transactions. A transaction’s sequence number needs to match the account’s sequence number, so you need to get the account’s current sequence number from the network.
+2. Carregar dados da conta a partir da qual você está enviando. Uma conta pode realizar apenas uma transação por vez[^5] e possui algo chamado [**número sequencial**,](../concepts/accounts.md#sequence-number) (sequence number) que ajuda o Stellar a verificar a ordem das transações. O número sequencial de uma transação precisa bater com o número sequencial da conta, sendo assim necessário puxar da rede o número sequencial da conta.
 
-    <code-example name="Load Source Account">
+    <code-example name="Carregar a Conta Fonte">
 
     ```js
     .then(function() {
@@ -210,11 +210,11 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-    The SDK will automatically increment the account’s sequence number when you build a transaction, so you won’t need to retrieve this information again if you want to perform a second transaction.
+    O SDK vai automaticamente incrementar o número sequencial da conta quando você construir uma transação, então não será preciso puxar essa informação novamente caso queira realizar uma segunda transação.
 
-3. Start building a transaction. This requires an account object, not just an account ID, because it will increment the account’s sequence number.
+3. Começar a construir a transação. Isso requer um objeto account (conta), não só um ID de conta, porque ele irá incrementar o número sequencial da conta.
 
-    <code-example name="Build a Transaction">
+    <code-example name="Construir uma Transação">
 
     ```js
     var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -232,9 +232,9 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-4. Add the payment operation to the account. Note that you need to specify the type of asset you are sending—Stellar’s “native” currency is the lumen, but you can send any type of asset or currency you like, from dollars to bitcoin to any sort of asset you trust the issuer to redeem [(more details below)](#transacting-in-other-currencies). For now, though, we’ll stick to lumens, which are called “native” assets in the SDK:
+4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode liquidar [(mais detalhes abaixo)](#transacting-in-other-currencies). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
 
-    <code-example name="Add an Operation">
+    <code-example name="Adicionar uma Operação">
 
     ```js
     .addOperation(StellarSdk.Operation.payment({
@@ -253,7 +253,7 @@ What exactly happened there? Let’s break it down.
 		build.Network{passphrase},
 		build.SourceAccount{from},
 		build.AutoSequence{horizon.DefaultTestNetClient},
-		build.MemoText{"Test Transaction"},
+		build.MemoText{"Transação Teste"},
 		build.Payment(
 			build.Destination{to},
 			build.NativeAmount{"10"},
@@ -263,29 +263,29 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-    You should also note that the amount is a string rather than a number. When working with extremely small fractions or large values, [floating point math can introduce small inaccuracies](https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems). Since not all systems have a native way to accurately represent extremely small or large decimals, Stellar uses strings as a reliable way to represent the exact amount across any system.
+    Note também que o valor é uma string em vez de um número. Quando se trabalha com frações extremamente pequenas ou valores altos, [cálculos baseados em ponto flutuante podem introduzir pequenas imprecisões](https://pt.wikipedia.org/wiki/V%C3%ADrgula_flutuante#Problemas_com_o_uso_de_ponto_flutuante). Já que nem todos os sistemas têm uma maneira nativa de representar com precisão decimais extremamente pequenos ou grandes, Stellar usa strings como uma maneira confiável de representar o valor exato em qualquer sistema.
 
-5. Optionally, you can add your own metadata, called a [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with this data, but you can use it for any purpose you’d like. If you are a bank that is receiving or sending payments on behalf of other people, for example, you might include the actual person the payment is meant for here.
+5. Opcionalmente, você pode adicionar seus próprios metadados, chamados [**memo,**](../concepts/transactions.md#memo) a uma transação. O Stellar não faz nada com esses dados, mas você pode usá-los para qualquer fim que quiser. Se você é um banco que está recebendo ou enviando pagamentos em nome de outras pessoas, por exemplo, você poderia incluir aqui informações sobre a pessoa à qual se destina o pagamento.
 
-    <code-example name="Add a Memo">
+    <code-example name="Adicionar um Memo">
 
     ```js
-    .addMemo(StellarSdk.Memo.text('Test Transaction'))
+    .addMemo(StellarSdk.Memo.text('Transação Teste'))
     ```
 
     ```java
-    .addMemo(Memo.text("Test Transaction"));
+    .addMemo(Memo.text("Transação Teste"));
     ```
 
     ```go
-    build.MemoText{"Test Transaction"},
+    build.MemoText{"Transação Teste"},
     ```
 
     </code-example>
 
-6. Now that the transaction has all the data it needs, you have to cryptographically sign it using your secret seed. This proves that the data actually came from you and not someone impersonating you.
+6. Agora que a transação tem todos os dados que precisa, você tem que assiná-la criptograficamente usando sua seed secreta. Isso prova que os dados realmente vieram de você e não de alguém fingindo ser você.
 
-    <code-example name="Sign the Transaction">
+    <code-example name="Assinar a Transação">
 
     ```js
     transaction.sign(sourceKeys);
@@ -301,9 +301,9 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-7. And finally, send it to the Stellar network!
+7. E finalmente, enviá-la à rede Stellar!
 
-    <code-example name="Submit the Transaction">
+    <code-example name="Submeter a Transação">
 
     ```js
     server.submitTransaction(transaction);
@@ -319,7 +319,7 @@ What exactly happened there? Let’s break it down.
 
     </code-example>
 
-**IMPORTANT** It's possible that you will not receive a response from Horizon server due to a bug, network conditions, etc. In such situation it's impossible to determine the status of your transaction. That's why you should always save a built transaction (or transaction encoded in XDR format) in a variable or a database and resubmit it if you don't know it's status. If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
+**IMPORTANTE** É possível que você não receba uma resposta do servidor Horizon devido a um bug, condições de conexão, etc. Nessas situações é impossível determinar o status da sua transação. É por isso que se recomenda sempre salvar uma transação construída (ou uma transação codificada em formato XDR) em uma variável ou base de dados e reenviá-la caso não souber seu status. Se a transação já tiver sido aplicada ao ledger com sucesso, o Horizon irá simplesmente retornar o resultado salvo e não irá tentar submeter a transação novamente. Somente em casos em que o status de uma transação é desconhecido (e assim terá uma chance de ser incluída em um ledger) é que ocorrerá um reenvio à rede.
 
 ## Receive Payments
 
@@ -588,4 +588,4 @@ Now that you can send and receive payments using Stellar’s API, you’re on yo
 
 [^4]: Embora a maioria das respostas da API REST do Horizon use JSON, a maior parte dos dados no Stellar na verdade é armazenada em um formato chamado XDR, ou External Data Representation. XDR não só é mais compacto do que JSON, como também armazena dados de uma maneira previsível, o que torna mais fácil assinar e verificar uma mensagem codificada em XDR. Pegue mais detalhes na [nossa página sobre XDR](https://www.stellar.org/developers/horizon/reference/xdr.html).
 
-[^5]: In situations where you need to perform a high number of transactions in a short period of time (for example, a bank might perform transactions on behalf of many customers using one Stellar account), you can create several Stellar accounts that work simultaneously. Read more about this in [the guide to channels](../channels.md).
+[^5]: Em situações em que é preciso realizar um número alto de transações em um curto período de tempo (por exemplo, um banco pode realizar transações em nome de vários clientes usando uma conta Stellar), você pode criar várias contas Stellar que trabalham simultaneamente. Leia mais sobre isso no [guia para canais](../channels.md).
