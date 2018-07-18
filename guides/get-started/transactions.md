@@ -1,18 +1,18 @@
 ---
-title: Send and Receive Money
+title: Enviar e Receber Dinheiro
 ---
 
-Now that you have an account, you can send and receive funds through the Stellar network. If you haven’t created an account yet, read [step 2 of the Get Started guide](./create-account.md).
+Agora que você tem uma conta, você pode enviar e receber fundos por meio da rede Stellar. Se não tiver criado uma conta ainda, leia o [passo 2 do guia Para Começar](./create-account.md).
 
-Most of the time, you’ll be sending money to someone else who has their own account. For this interactive guide, however, you should make a second account to transact with using the same method you used to make your first account.
+Na maioria das vezes, você estará enviando dinheiro para outra pessoa que tem sua própria conta. Porém, para este guia interativo, é melhor você fazer uma segunda conta com a qual transacionar, pelo mesmo método que usou para fazer sua primeira conta.
 
-## Send Payments
+## Enviar Pagamentos
 
-Actions that change things in Stellar, like sending payments, changing your account, or making offers to trade various kinds of currencies, are called **operations.**[^1] In order to actually perform an operation, you create a **transaction**, which is just a group of operations accompanied by some extra information, like what account is making the transaction and a cryptographic signature to verify that the transaction is authentic.[^2]
+Ações que alteram coisas no Stellar, como enviar pagamentos, mudar sua conta, ou fazer ofertas de troca entre vários tipos de moedas, são chamadas **operações**, ou operations.[^1] Para realizar de fato uma operação, cria-se uma **transação** (transaction), que é apenas um grupo de operações acompanhado de algumas informações adicionais, como que conta está fazendo a transação e uma assinatura criptográfica para verificar que a transação é autêntica.[^2]
 
-If any operation in the transaction fails, they all fail. For example, let’s say you have 100 lumens and you make two payment operations of 60 lumens each. If you make two transactions (each with one operation), the first will succeed and the second will fail because you don’t have enough lumens. You’ll be left with 40 lumens. However, if you group the two payments into a single transaction, they will both fail and you’ll be left with the full 100 lumens still in your account.
+Se qualquer operação na transação falhar, todas falham. Por exemplo, digamos que você tem 100 lumens e faz duas operações de pagamento de 60 lumens cada. Se fizer duas transações (cada uma com uma operação), a primeira terá sucesso e a segunda irá falhar, pois você não terá lumens suficientes. Restarão 40 lumens. No entanto, se agrupar os dois pagamentos em apenas uma transação, ambos irão falhar e todos os 100 lumens permanecerão na sua conta.
 
-Finally, every transaction costs a small fee. Like the minimum balance on accounts, this fee helps stop people from overloading the system with lots of transactions. Known as the **base fee**, it is very small—100 stroops per operation (that’s 0.00001 XLM; stroops are easier to talk about than such tiny fractions of a lumen). A transaction with two operations would cost 200 stroops.[^3]
+Por último, toda transação custa uma pequena tarifa. Assim como o saldo mínimo nas contas, a tarifa ajuda a impedir que pessoas sobrecarreguem o sistema com um monte de transações. Conhecida como **tarifa base** (base fee), é uma tarifa bem pequena — 100 stroops por operação (igual a 0.00001 XLM; é mais fácil falar em stroops do que em frações de lumen tão minúsculas). Uma transação com duas operações custaria 200 stroops.[^3]
 
 ### Building a Transaction
 
@@ -580,11 +580,11 @@ Now that you can send and receive payments using Stellar’s API, you’re on yo
 </div>
 
 
-[^1]: A list of all the possible operations can be found on the [operations page](../concepts/operations.md).
+[^1]:  Uma lista de todas as operações possíveis pode ser encontrada na [página de operações](../concepts/operations.md).
 
-[^2]: The full details on transactions can be found on the [transactions page](../concepts/transactions.md).
+[^2]: Os detalhes completos sobre transações podem ser encontrados na [página de transações](../concepts/transactions.md).
 
-[^3]: The 100 stroops is called Stellar’s **base fee**. The base fee can be changed, but a change in Stellar’s fees isn’t likely to happen more than once every several years. You can look up the current fees by [checking the details of the latest ledger](https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html).
+[^3]: Os 100 stroops são a **tarifa base** do Stellar. A tarifa base pode ser mudada, mas é improvável que mudanças nas tarifas do Stellar aconteçam mais do que uma vez a cada vários anos. Você pode descobrir as tarifas atuais [checando os detalhes do último ledger](https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html).
 
 [^4]: Even though most responses from the Horizon REST API use JSON, most of the data in Stellar is actually stored in a format called XDR, or External Data Representation. XDR is both more compact than JSON and stores data in a predictable way, which makes signing and verifying an XDR-encoded message easier. You can get more details on [our XDR page](https://www.stellar.org/developers/horizon/reference/xdr.html).
 
