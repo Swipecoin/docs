@@ -14,11 +14,11 @@ Se qualquer operação na transação falhar, todas falham. Por exemplo, digamos
 
 Por último, toda transação custa uma pequena tarifa. Assim como o saldo mínimo nas contas, a tarifa ajuda a impedir que pessoas sobrecarreguem o sistema com um monte de transações. Conhecida como **tarifa base** (base fee), é uma tarifa bem pequena — 100 stroops por operação (igual a 0.00001 XLM; é mais fácil falar em stroops do que em frações de lumen tão minúsculas). Uma transação com duas operações custaria 200 stroops.[^3]
 
-### Building a Transaction
+### Construir uma Transação
 
-Stellar stores and communicates transaction data in a binary format called XDR.[^4] Luckily, the Stellar SDKs provide tools that take care of all that. Here’s how you might send 10 lumens to another account:
+Stellar armazena e comunica os dados das transações em um formato binário chamado XDR.[^4] Por sorte, os SDKs de Stellar dão ferramentas que cuidam de tudo isso. Aqui está como você poderia enviar 10 lumens para outra conta:
 
-<code-example name="Submitting a Transaction">
+<code-example name="Submeter uma Transação">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -27,47 +27,47 @@ var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 var sourceKeys = StellarSdk.Keypair
   .fromSecret('SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4');
 var destinationId = 'GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5';
-// Transaction will hold a built transaction we can resubmit if the result is unknown.
+// A variável transaction irá guardar uma transação pré-construída caso o resultado seja desconhecido.
 var transaction;
 
-// First, check to make sure that the destination account exists.
-// You could skip this, but if the account does not exist, you will be charged
-// the transaction fee when the transaction fails.
+// Primeiro, checar para ter certeza de que a conta de destino existe.
+// Você pode pular isso, mas se a conta não existir, será cobrada
+// a tarifa de transação quando a transação falhar.
 server.loadAccount(destinationId)
-  // If the account is not found, surface a nicer error message for logging.
+  // Se a conta não for encontrada, subir uma mensagem de erro mais agradável.
   .catch(StellarSdk.NotFoundError, function (error) {
-    throw new Error('The destination account does not exist!');
+    throw new Error('A conta de destino não existe!');
   })
-  // If there was no error, load up-to-date information on your account.
+  // Se não houver erro, carregar informações atualizadas sobre a sua conta.
   .then(function() {
     return server.loadAccount(sourceKeys.publicKey());
   })
   .then(function(sourceAccount) {
-    // Start building the transaction.
+    // Começar a construir a transação.
     transaction = new StellarSdk.TransactionBuilder(sourceAccount)
       .addOperation(StellarSdk.Operation.payment({
         destination: destinationId,
-        // Because Stellar allows transaction in many currencies, you must
-        // specify the asset type. The special "native" asset represents Lumens.
+        // Como o Stellar permite transações em várias moedas, é preciso
+        // especificar o tipo do ativo (asset). O ativo especial "native" representa Lumens.
         asset: StellarSdk.Asset.native(),
         amount: "10"
       }))
-      // A memo allows you to add your own metadata to a transaction. It's
-      // optional and does not affect how Stellar treats the transaction.
-      .addMemo(StellarSdk.Memo.text('Test Transaction'))
+      // Um memo permite adicionar seus próprios metadados a uma transação.
+      // É opcional e não afeta como o Stellar trata a transação.
+      .addMemo(StellarSdk.Memo.text('Transação teste'))
       .build();
-    // Sign the transaction to prove you are actually the person sending it.
+    // Assinar a transação para provar que você é realmente a pessoa que está enviando.
     transaction.sign(sourceKeys);
-    // And finally, send it off to Stellar!
+    // E, finalmente, enviar para o Stellar!
     return server.submitTransaction(transaction);
   })
   .then(function(result) {
-    console.log('Success! Results:', result);
+    console.log('Successo! Resultados:', result);
   })
   .catch(function(error) {
-    console.error('Something went wrong!', error);
-    // If the result is unknown (no response body, timeout etc.) we simply resubmit
-    // already built transaction:
+    console.error('Algo deu errado!', error);
+    // Se o resultado for desconhecido (sem body da resposta, tempo esgotado, etc.),
+    // simplesmente reenviamos a transação já construída:
     // server.submitTransaction(transaction);
   });
 ```
@@ -79,35 +79,35 @@ Server server = new Server("https://horizon-testnet.stellar.org");
 KeyPair source = KeyPair.fromSecretSeed("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
 KeyPair destination = KeyPair.fromAccountId("GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5");
 
-// First, check to make sure that the destination account exists.
-// You could skip this, but if the account does not exist, you will be charged
-// the transaction fee when the transaction fails.
-// It will throw HttpResponseException if account does not exist or there was another error.
+// Primeiro, checar para ter certeza de que a conta de destino existe.
+// Você pode pular isso, mas se a conta não existir, será cobrada
+// a tarifa de transação quando a transação falhar.
+// Será lançada uma HttpResponseException se a conta não existir ou se tiver tido outro erro.
 server.accounts().account(destination);
 
-// If there was no error, load up-to-date information on your account.
+// Se não houver erro, carregar informações atualizadas sobre a sua conta.
 AccountResponse sourceAccount = server.accounts().account(source);
 
-// Start building the transaction.
+// Começar a construir a transação.
 Transaction transaction = new Transaction.Builder(sourceAccount)
         .addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
-        // A memo allows you to add your own metadata to a transaction. It's
-        // optional and does not affect how Stellar treats the transaction.
-        .addMemo(Memo.text("Test Transaction"))
+        // Um memo permite adicionar seus próprios metadados a uma transação.
+        // É opcional e não afeta como o Stellar trata a transação.
+        .addMemo(Memo.text("Transação Teste"))
         .build();
-// Sign the transaction to prove you are actually the person sending it.
+// Assinar a transação para provar que você é realmente a pessoa que está enviando.
 transaction.sign(source);
 
-// And finally, send it off to Stellar!
+// E, finalmente, enviar para o Stellar!
 try {
   SubmitTransactionResponse response = server.submitTransaction(transaction);
-  System.out.println("Success!");
+  System.out.println("Successo!");
   System.out.println(response);
 } catch (Exception e) {
-  System.out.println("Something went wrong!");
+  System.out.println("Algo deu errado!");
   System.out.println(e.getMessage());
-  // If the result is unknown (no response body, timeout etc.) we simply resubmit
-  // already built transaction:
+  // Se o resultado for desconhecido (sem body da resposta, tempo esgotado, etc.),
+  // simplesmente reenviamos a transação já construída:
   // SubmitTransactionResponse response = server.submitTransaction(transaction);
 }
 ```
@@ -125,7 +125,7 @@ func main () {
 	source := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
 	destination := "GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5"
 
-	// Make sure destination account exists
+	// Verificar que a conta de destino existe
 	if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func main () {
 		panic(err)
 	}
 
-	// Sign the transaction to prove you are actually the person sending it.
+	// Assinar a transação para provar que você é realmente a pessoa que está enviando.
 	txe, err := tx.Sign(source)
 	if err != nil {
 		panic(err)
@@ -157,13 +157,13 @@ func main () {
 		panic(err)
 	}
 
-	// And finally, send it off to Stellar!
+	// E, finalmente, enviar para o Stellar!
 	resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Successful Transaction:")
+	fmt.Println("Transação bem-sucedida:")
 	fmt.Println("Ledger:", resp.Ledger)
 	fmt.Println("Hash:", resp.Hash)
 }
@@ -586,6 +586,6 @@ Now that you can send and receive payments using Stellar’s API, you’re on yo
 
 [^3]: Os 100 stroops são a **tarifa base** do Stellar. A tarifa base pode ser mudada, mas é improvável que mudanças nas tarifas do Stellar aconteçam mais do que uma vez a cada vários anos. Você pode descobrir as tarifas atuais [checando os detalhes do último ledger](https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html).
 
-[^4]: Even though most responses from the Horizon REST API use JSON, most of the data in Stellar is actually stored in a format called XDR, or External Data Representation. XDR is both more compact than JSON and stores data in a predictable way, which makes signing and verifying an XDR-encoded message easier. You can get more details on [our XDR page](https://www.stellar.org/developers/horizon/reference/xdr.html).
+[^4]: Embora a maioria das respostas da API REST do Horizon use JSON, a maior parte dos dados no Stellar na verdade é armazenada em um formato chamado XDR, ou External Data Representation. XDR não só é mais compacto do que JSON, como também armazena dados de uma maneira previsível, o que torna mais fácil assinar e verificar uma mensagem codificada em XDR. Pegue mais detalhes na [nossa página sobre XDR](https://www.stellar.org/developers/horizon/reference/xdr.html).
 
 [^5]: In situations where you need to perform a high number of transactions in a short period of time (for example, a bank might perform transactions on behalf of many customers using one Stellar account), you can create several Stellar accounts that work simultaneously. Read more about this in [the guide to channels](../channels.md).
