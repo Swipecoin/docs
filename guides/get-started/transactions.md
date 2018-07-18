@@ -321,15 +321,15 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
 **IMPORTANTE** É possível que você não receba uma resposta do servidor Horizon devido a um bug, condições de conexão, etc. Nessas situações é impossível determinar o status da sua transação. É por isso que se recomenda sempre salvar uma transação construída (ou uma transação codificada em formato XDR) em uma variável ou base de dados e reenviá-la caso não souber seu status. Se a transação já tiver sido aplicada ao ledger com sucesso, o Horizon irá simplesmente retornar o resultado salvo e não irá tentar submeter a transação novamente. Somente em casos em que o status de uma transação é desconhecido (e assim terá uma chance de ser incluída em um ledger) é que ocorrerá um reenvio à rede.
 
-## Receive Payments
+## Receber Pagamentos
 
-You don’t actually need to do anything to receive payments into a Stellar account—if a payer makes a successful transaction to send assets to you, those assets will automatically be added to your account.
+Não é realmente necessário fazer nada para receber pagamentos em uma conta Stellar — se um pagante fizer uma transação bem-sucedida enviando ativos a você, esses ativos serão automaticamente adicionados a sua conta.
 
-However, you’ll want to know that someone has actually paid you. If you are a bank accepting payments on behalf of others, you need to find out what was sent to you so you can disburse funds to the intended recipient. If you are operating a retail business, you need to know that your customer actually paid you before you hand them their merchandise. And if you are an automated rental car with a Stellar account, you’ll probably want to verify that the customer in your front seat actually paid before that person can turn on your engine.
+No entanto, você vai querer saber que alguém pagou de fato a você. Se você for um banco que aceita pagamentos em nome de outros, precisa descobrir o que foi enviado a você para poder repassar os fundos ao recipiente final. Se estiver operando um negócio de varejo, você precisa saber que seu cliente fez um pagamento para então entregar a ele a mercadoria. E se você for um carro para locação automatizada com uma conta Stellar, provavelmente vai querer verificar que o cliente sentado ao volante tenha pago antes de poder ligar o motor.
 
-A simple program that watches the network for payments and prints each one might look like:
+Um programa simples que escuta payments na rede e dá print a partir de cada um pode ser assim:
 
-<code-example name="Receive Payments">
+<code-example name="Receber Pagamentos">
 
 ```js
 var StellarSdk = require('stellar-sdk');
