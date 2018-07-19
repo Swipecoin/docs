@@ -337,31 +337,31 @@ var StellarSdk = require('stellar-sdk');
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 var accountId = 'GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF';
 
-// Create an API call to query payments involving the account.
+// Criar uma chamada de API para consultar (query) pagamentos envolvendo a conta.
 var payments = server.payments().forAccount(accountId);
 
-// If some payments have already been handled, start the results from the
-// last seen payment. (See below in `handlePayment` where it gets saved.)
+// Se já houver pagamentos que foram abordados, iniciar os resultados a partir
+// do último pagamento visto. (Veja abaixo em `handlePayment` onde ele é salvo.)
 var lastToken = loadLastPagingToken();
 if (lastToken) {
   payments.cursor(lastToken);
 }
 
-// `stream` will send each recorded payment, one by one, then keep the
-// connection open and continue to send you new payments as they occur.
+// `stream` vai enviar cada pagamento gravado, um por um, para depois manter
+// a conexão aberta e continuar a enviar novos pagamentos enquanto eles ocorrem.
 payments.stream({
   onmessage: function(payment) {
-    // Record the paging token so we can start from here next time.
+    // Gravar o token de paginação para podermos começar daqui da próxima vez.
     savePagingToken(payment.paging_token);
 
-    // The payments stream includes both sent and received payments. We only
-    // want to process received payments here.
+    // O stream de pagamentos inclui tanto pagamentos enviados como recebidos.
+    // Aqui, queremos processar apenas pagamentos recebidos.
     if (payment.to !== accountId) {
       return;
     }
 
-    // In Stellar’s API, Lumens are referred to as the “native” type. Other
-    // asset types have more detailed information.
+    // Na API do Stellar, refere-se aos Lumens como sendo do tipo "native".
+    // Outros tipos de ativo têm informações mais detalhadas.
     var asset;
     if (payment.asset_type === 'native') {
       asset = 'lumens';
@@ -374,17 +374,17 @@ payments.stream({
   },
 
   onerror: function(error) {
-    console.error('Error in payment stream');
+    console.error('Erro no stream de pagamentos');
   }
 });
 
 function savePagingToken(token) {
-  // In most cases, you should save this to a local database or file so that
-  // you can load it next time you stream new payments.
+  // Na maioria das vezes, recomenda-se salvar isto em um arquivo ou base de dados local
+  // para poder carregá-lo da próxima vez que fizer stream com novos pagamentos.
 }
 
 function loadLastPagingToken() {
-  // Get the last paging token from a local database or file
+  // Pegar o último token de paginação a partir de um arquivo ou base de dados local
 }
 ```
 
@@ -392,26 +392,26 @@ function loadLastPagingToken() {
 Server server = new Server("https://horizon-testnet.stellar.org");
 KeyPair account = KeyPair.fromAccountId("GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF");
 
-// Create an API call to query payments involving the account.
+// Criar uma chamada de API para consultar (query) pagamentos envolvendo a conta.
 PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account);
 
-// If some payments have already been handled, start the results from the
-// last seen payment. (See below in `handlePayment` where it gets saved.)
+// Se já houver pagamentos que foram abordados, iniciar os resultados a partir
+// do último pagamento visto. (Veja abaixo em `handlePayment` onde ele é salvo.)
 String lastToken = loadLastPagingToken();
 if (lastToken != null) {
   paymentsRequest.cursor(lastToken);
 }
 
-// `stream` will send each recorded payment, one by one, then keep the
-// connection open and continue to send you new payments as they occur.
+// `stream` vai enviar cada pagamento gravado, um por um, para depois manter
+// a conexão aberta e continuar a enviar novos pagamentos enquanto eles ocorrem.
 paymentsRequest.stream(new EventListener<OperationResponse>() {
   @Override
   public void onEvent(OperationResponse payment) {
-    // Record the paging token so we can start from here next time.
+    // Gravar o token de paginação para podermos começar daqui da próxima vez.
     savePagingToken(payment.getPagingToken());
 
-    // The payments stream includes both sent and received payments. We only
-    // want to process received payments here.
+    // O stream de pagamentos inclui tanto pagamentos enviados como recebidos.
+    // Aqui, queremos processar apenas pagamentos recebidos.
     if (payment instanceof PaymentOperationResponse) {
       if (((PaymentOperationResponse) payment).getTo().equals(account)) {
         return;
@@ -459,19 +459,19 @@ func main() {
 
 	cursor := horizon.Cursor("now")
 
-	fmt.Println("Waiting for a payment...")
+	fmt.Println("Aguardando pagamento...")
 
 	err := horizon.DefaultTestNetClient.StreamPayments(ctx, address, &cursor, func(payment horizon.Payment) {
-		fmt.Println("Payment type", payment.Type)
-		fmt.Println("Payment Paging Token", payment.PagingToken)
-		fmt.Println("Payment From", payment.From)
-		fmt.Println("Payment To", payment.To)
-		fmt.Println("Payment Asset Type", payment.AssetType)
-		fmt.Println("Payment Asset Code", payment.AssetCode)
-		fmt.Println("Payment Asset Issuer", payment.AssetIssuer)
-		fmt.Println("Payment Amount", payment.Amount)
-		fmt.Println("Payment Memo Type", payment.Memo.Type)
-		fmt.Println("Payment Memo", payment.Memo.Value)
+		fmt.Println("Tipo de Pagamento", payment.Type)
+		fmt.Println("Token de Paginação", payment.PagingToken)
+		fmt.Println("Pagamento de", payment.From)
+		fmt.Println("Pagamento para", payment.To)
+		fmt.Println("Tipo de Ativo", payment.AssetType)
+		fmt.Println("Código do Ativo", payment.AssetCode)
+		fmt.Println("Emissor do Ativo", payment.AssetIssuer)
+		fmt.Println("Valor", payment.Amount)
+		fmt.Println("Tipo do Memo", payment.Memo.Type)
+		fmt.Println("Memo", payment.Memo.Value)
 	})
 
 	if err != nil {
@@ -483,7 +483,7 @@ func main() {
 
 </code-example>
 
-There are two main parts to this program. First, you create a query for payments involving a given account. Like most queries in Stellar, this could return a huge number of items, so the API returns paging tokens, which you can use later to start your query from the same point where you previously left off. In the example above, the functions to save and load paging tokens are left blank, but in a real application, you’d want to save the paging tokens to a file or database so you can pick up where you left off in case the program crashes or the user closes it.
+Há duas partes principais neste programa. Primeiro, cria-se uma query para pagamentos que envolvam uma conta específica. Como a maioria dos queries no Stellar, isso poderia retornar um número enorme de itens, então a API retorna tokens de paginação, que você pode usar depois para começar sua query do mesmo ponto onde parou. No exemplo acima, as funções para salvar e carregar tokens de paginação são deixadas em branco, mas em um aplicativo real é recomendado salvar os tokens de paginação em um arquivo ou base de dados para poder continuar de onde parou caso o programa dê crash ou seja fechado pelo usuário.
 
 <code-example name="Create a Payments Query">
 
