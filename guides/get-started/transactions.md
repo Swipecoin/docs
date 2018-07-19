@@ -232,7 +232,7 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode liquidar [(mais detalhes abaixo)](#transacting-in-other-currencies). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
+4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode resgatar [(mais detalhes abaixo)](#transacting-in-other-currencies). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
 
     <code-example name="Adicionar uma Operação">
 
@@ -485,7 +485,7 @@ func main() {
 
 Há duas partes principais neste programa. Primeiro, cria-se uma query para pagamentos que envolvam uma conta específica. Como a maioria dos queries no Stellar, isso poderia retornar um número enorme de itens, então a API retorna tokens de paginação, que você pode usar depois para começar sua query do mesmo ponto onde parou. No exemplo acima, as funções para salvar e carregar tokens de paginação são deixadas em branco, mas em um aplicativo real é recomendado salvar os tokens de paginação em um arquivo ou base de dados para poder continuar de onde parou caso o programa dê crash ou seja fechado pelo usuário.
 
-<code-example name="Create a Payments Query">
+<code-example name="Criar um Query de Pagamentos">
 
 ```js
 var payments = server.payments().forAccount(accountId);
@@ -505,16 +505,16 @@ if (lastToken != null) {
 
 </code-example>
 
-Second, the results of the query are streamed. This is the easiest way to watch for payments or other transactions. Each existing payment is sent through the stream, one by one. Once all existing payments have been sent, the stream stays open and new payments are sent as they are made.
+Segundo, se faz `stream` com os resultados da query. Essa é maneira mais fácil de vigiar se há pagamentos ou outras transações. Cada pagamento existente é enviado pelo stream, um por um. Quando todos os pagamentos existentes tiverem sido enviados, o stream se mantém aberto e novos pagamentos são enviados assim que forem feitos.
 
-Try it out: Run this program, and then, in another window, create and submit a payment. You should see this program log the payment.
+Experimente: Rode este programa, e então, em outra janela, crie e submeta um pagamento. Você verá este programa logar o pagamento.
 
-<code-example name="Stream Payments">
+<code-example name="Stream de Pagamentos">
 
 ```js
 payments.stream({
   onmessage: function(payment) {
-    // handle a payment
+    // cuidar de um pagamento
   }
 });
 ```
@@ -523,21 +523,21 @@ payments.stream({
 paymentsRequest.stream(new EventListener<OperationResponse>() {
   @Override
   public void onEvent(OperationResponse payment) {
-    // Handle a payment
+    // Cuidar de um pagamento
   }
 });
 ```
 
 </code-example>
 
-You can also request payments in groups, or pages. Once you’ve processed each page of payments, you’ll need to request the next one until there are none left.
+Também é possível solicitar pagamentos em grupos, ou páginas. Quando tiver processado cada página de pagamentos, será preciso solicitar a próxima até não sobrar nenhuma.
 
-<code-example name="Paged Payments">
+<code-example name="Pagamentos Paginados">
 
 ```js
 payments.call().then(function handlePage(paymentsPage) {
   paymentsPage.records.forEach(function(payment) {
-    // handle a payment
+    // cuidar de um pagamento
   });
   return paymentsPage.next().then(handlePage);
 });
@@ -547,7 +547,7 @@ payments.call().then(function handlePage(paymentsPage) {
 Page<OperationResponse> page = payments.execute();
 
 for (OperationResponse operation : page.getRecords()) {
-	// handle a payment
+	// cuidar de um pagamento
 }
 
 page = page.getNextPage();
@@ -556,27 +556,27 @@ page = page.getNextPage();
 </code-example>
 
 
-## Transacting in Other Currencies
+## Transacionar em Outras Moedas
 
-One of the amazing things about the Stellar network is that you can send and receive many types of assets, such as US dollars, Nigerian naira, digital currencies like bitcoin, or even your own new kind of asset.
+Uma das coisas incríveis sobre a rede Stellar é que é possível enviar e receber muitos tipos de ativos como dólares americanos, nairas nigerianos, moedas digitais como o Bitcoin, ou até mesmo ou seu próprio e inédito tipo de ativo.
 
-While Stellar’s native asset, the lumen, is fairly simple, all other assets can be thought of like a credit issued by a particular account. In fact, when you trade US dollars on the Stellar network, you don’t actually trade US dollars—you trade US dollars *from a particular account.* That’s why the assets in the example above had both a `code` and an `issuer`. The `issuer` is the ID of the account that created the asset. Understanding what account issued the asset is important—you need to trust that, if you want to redeem your dollars on the Stellar network for actual dollar bills, the issuer will be able to provide them to you. Because of this, you’ll usually only want to trust major financial institutions for assets that represent national currencies.
+Enquanto que o ativo nativo do Stellar, o lumen, é bem simples, pode-se pensar em todos os outros ativos como um crédito emitido por uma conta específica. Inclusive, ao trocar dólares na rede Stellar, não se troca dólares realmente — troca-se dólares *de uma conta específica*. É por isso que os ativos no exemplo acima tinham tanto um `code` (código) e um `issuer` (emissor). O `issuer` é o ID da conta que criou o ativo. Entender que conta emitiu o ativo é importante — é preciso confiar que, se você quiser resgatar seus dólares da rede Stellar e recebê-los em cédulas, o emissor irá providenciá-los a você. Por isso, normalmente recomenda-se confiar apenas em grandes instituições financeiras quanto a ativos que representem moedas nacionais.
 
-Stellar also supports payments sent as one type of asset and received as another. You can send Nigerian naira to a friend in Germany and have them receive euros. These multi-currency transactions are made possible by a built-in market mechanism where people can make offers to buy and sell different types of assets. Stellar will automatically find the best people to exchange currencies with in order to convert your naira to euros. This system is called [distributed exchange](../concepts/exchange.md).
+Stellar também permite pagamentos enviados como um tipo de ativo e recebidos em outro. É possível enviar nairas nigerianos a um amigo na Alemanha e fazer que ele receba em euros. Essas transações multimoedas são possíves por causa de um mecanismo de mercado embutido onde pessoas podem fazer ofertas para comprar e vender diferentes tipos de ativos. O Stellar vai automaticamente encontrar as melhores pessoas com quem trocar moedas para converter seus nairas em euros. Esse sistema é chamado de [exchange distribuída](../concepts/exchange.md).
 
-You can read more about the details of assets in the [assets overview](../concepts/assets.md).
+Leia mais sobre os detalhes dos ativos na [visão geral sobre ativos](../concepts/assets.md).
 
-## What Next?
+## E Agora?
 
-Now that you can send and receive payments using Stellar’s API, you’re on your way to writing all kinds of amazing financial software. Experiment with other parts of the API, then read up on more detailed topics:
+Agora que você consegue enviar e receber pagamentos usando a API do Stellar, você já está encaminhado para escrever softwares financeiros incríveis de todos os tipos. Teste outras partes da API, depois dê uma lida em tópicos mais detalhados:
 
-- [Become an anchor](../anchor/)
-- [Security](../security.md)
+- [Tornar-se uma âncora](../anchor/)
+- [Segurança](../security.md)
 - [Federation](../concepts/federation.md)
 - [Compliance](../compliance-protocol.md)
 
 <div class="sequence-navigation">
-  <a class="button button--previous" href="create-account.html">Back to Step 2: Create an Account</a>
+  <a class="button button--previous" href="create-account.html">Voltar para Passo 2: Criar uma Conta</a>
 </div>
 
 
