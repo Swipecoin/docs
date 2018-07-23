@@ -1,11 +1,11 @@
 ---
-title: Operations
+title: Operações
 ---
 
-[Transactions](./transactions.md) are made up of a [list of operations](./list-of-operations.md). Each
-operation is an individual command that mutates the ledger.
+[Transações](./transactions.md) são compostas de uma [lista de operações](./list-of-operations.md). Cada
+operação (operation) é um comando individual que altera (mutate) o ledger.
 
-Here are the possible operation types:
+Aqui estão os tipos possíves de operações:
 - [Create Account](./list-of-operations.md#create-account)
 - [Payment](./list-of-operations.md#payment)
 - [Path Payment](./list-of-operations.md#path-payment)
@@ -19,36 +19,37 @@ Here are the possible operation types:
 - [Manage Data](./list-of-operations.md#manage-data)
 - [Bump Sequence](./list-of-operations.md#bump-sequence)
 
-Operations are executed on behalf of the source account specified in the
-transaction, unless there is an override defined for the operation.
+Operações são executadas em nome da conta fonte especificada na
+transação, a não ser que haja algo definido na operação que ignore isso.
 
 ## Thresholds
 
-Each operation falls under a specific threshold category: low, medium, or high.
-Thresholds define the level of privilege an operation needs in order to succeed.
+Cada operação pertence a uma categoria de threshold (limiar) específica: baixa, média ou alta.
+Thresholds definem o nível de privilégio que uma operação precisa para obter sucesso.
 
-* Low Security:
+* Low Security (baixa segurança):
   * AllowTrustTx
-    * Used to allow other signers to allow people to hold credit from this account but not issue credit.
+    * Usado para permitir que outros signatários (signers) autorizem pessoas a deter crédito desta conta mas não emitir crédito.
   * BumpSequence
-* Medium Security:
-  * All else
-* High Security:
+* Medium Security (segurança média):
+  * Todo o resto
+* High Security (alta segurança):
   * AccountMerge
-    * merge an account into another one
-  * SetOptions for Signer and threshold
-    * Used to change the Set of signers and the thresholds.
+    * Fundir uma conta com outra.
+  * SetOptions para Signer e threshold
+    * Usado para alterar o Set de signers e os thresholds.
 
 
-## Validity of an operation
+## Validade de uma operação
 
-There are two places in a [transaction life cycle](./transactions.md#life-cycle) when operations can fail. The first time is when a transaction is submitted to the network. The node to which the transaction is submitted checks the validity of the operation: in the **validity check**, the node performs some cursory checks to make sure the transaction is properly formed before including it in its transaction set and forwarding the transaction to the rest of the network.
+Há dois lugares no [ciclo de vida de uma transação](./transactions.md#life-cycle) onde operações podem falhar. O primeiro é quando uma transação é submetida à rede. O nó para onde a transação é enviada verifica a validade da operação: no **validity check** (verificação de validade), o nó realiza algumas verificações superficiais para conferir que a transação está formada adequadamente antes de incluí-la em seu set de transações e enviá-la ao resto da rede.
 
-The validity check only looks at the state of the source account. It ensures that:
-1) the outer transaction has enough signatures for the source account of the operation to meet the threshold for that operation.
-2) Operations-specific validity checks pass. These checks are ones that would stay true regardless of the ledger state—for example, are the parameters within the expected bounds? Checks that depend on ledger state don't happen until apply time—for example, a send operation won't check if you have enough balance to send until apply time.
+A verificação de validade somente olha para o estado da conta fonte, assegurando que:
 
-Once a transaction passes this first validity check, it is propagated to the network and eventually included in a transaction set. As part of a transaction set, the transaction is applied to the ledger. At that point a fee is taken from the source account regardless of success/failure. Later, the transaction is processed: sequence number and signatures are verified before operations are attempted in the order they occur in the transaction. If any operation fails, the whole transaction fails and the effects of previous operations are rolled back.
+1) A transação saindo tem assinaturas suficientes para a conta fonte da operação atingir o threshold daquela operação.
+2) Sejam aprovadas as verificações de validade específicas a operações. Essas verificações são aquelas que permaneceriam verdadeiras indepentendemente do estado do ledger — por exemplo, os parâmetros estão dentro dos limites esperados? Verificações que dependem do estado do ledger não acontecem até o momento da aplicação — por exemplo, uma operação de envio não irá verificar se há saldo suficiente para enviar até o momento da aplicação.
+
+Depois de uma transação passar essa primeira validação, ela é propagada à rede e incluída em um set de transações em algum momento. Fazendo parte de um set de transações, a transação é aplicada ao ledger. Nesse momento uma tarifa é retirada da conta fonte independentemente de sucesso/falha. Depois, a transação é processada: número sequencial e assinaturas são verificados antes da tentativa de efetuar as operações na ordem que elas ocorrem na transação. Se alguma operação falhar, toda a transação falha e os efeitos das operações anteriores são anulados.
 
 
 ## Result
