@@ -1,51 +1,51 @@
 ---
-title: Accounts
+title: Contas
 ---
 
-Accounts are the central data structure in Stellar. Accounts are identified by a public key and saved in the ledger.
-Everything else in the ledger, such as offers or [trustlines](./assets.md#trustlines), are owned by a particular account.
+Contas são a estrutura de dados central no Stellar. Contas são identificadas por uma chave pública e salvas no ledger.
+Todo o resto que está dentro do ledger, como ofertas ou [trustlines](./assets.md#trustlines), são detidos por alguma conta específica.
 
-Accounts are created with the [Create Account](./list-of-operations.md#create-account) operation.
+Contas são criadas com a operação [Create Account](./list-of-operations.md#create-account).
 
-Account access is controlled by public/private key cryptography. For an account to perform a transaction--e.g., make a
-payment--the transaction must be signed by the private key that corresponds to that account's public key. You can also
-set up more complicated [multi-signature](./multi-sig.md) schemes for authorizing transactions on an account.
+O acesso às contas é controlado por criptografia de chave pública/privada. Para uma conta realizar uma transação – ex.: realizar um
+pagamento – a transação deve ser assinada pela chave privada que corresponde à chave pública daquela conta. Também é possível
+preparar esquemas de [multi-assinatura](./multi-sig.md) mais complexos para autorizar transações em uma conta.
 
 
-## Account fields
+## Campos da Conta
 
-Accounts have the following fields:
+Contas possuem os seguintes campos:
 
 > #### Account ID
-> The public key that was first used to create the account. You can replace the key used for signing the account's transactions with a different public key, but the original account ID will always be used to identify the account.
+> ID da Conta. É a chave pública inicialmente usada para criar a conta. É possível substituir a chave usada para assinar as transações da conta por uma chave pública diferente, mas o ID original da conta sempre será usado para identificá-la.
 >
 > #### Balance
-> The number of lumens held by the account. The balance is denominated in 1/10,000,000th of a lumen, the smallest divisible unit of a lumen.
+> Saldo. É o número de lumens mantidos na conta. O saldo é denominado por 1/10.000.000 avos de um lumen, a menor unidade divisível de um lumen.
 >
 > #### Sequence number
-> The current transaction sequence number of the account. This number starts equal to the ledger number at which the account was created.
+> Número sequencial atual da conta. Este número começa igual ao número do ledger no qual a conta foi criada.
 >
 > #### Number of subentries
-> Number of other [entries](./ledger.md#ledger-entries) the account owns. This number is used to calculate the account's [minimum balance](./fees.md#minimum-account-balance).
+> Número de outras [entradas](./ledger.md#ledger-entries) detidas pela conta. Este número é usado para calcular o [saldo mínimo](./fees.md#minimum-account-balance) da conta.
 >
 > #### Inflation destination
-> (optional) Account designated to receive inflation. Every account can vote to send [inflation](./inflation.md) to a destination account.
+> (opcional) Conta designada a receber inflação. Toda conta pode votar para enviar [inflação](./inflation.md) a uma conta de destino.
 >
 > #### Flags
-> Currently there are three flags, used by issuers of [assets](./assets.md).
+> Atualmente há três flags, usadas por emissores de [ativos](./assets.md).
 >
->   - **Authorization required (0x1)**: Requires the issuing account to give other accounts permission before they can hold the issuing account's credit.
->   - **Authorization revocable (0x2)**: Allows the issuing account to revoke its credit held by other accounts.
->   - **Authorization immutable (0x4)**: If this is set then none of the authorization flags can be set and the account can never be deleted.
+>   - **Authorization required (0x1)**: Autorização requerida. Requer que a conta emissora dê permissão a outras contas para deter crédito da conta emissora.
+>   - **Authorization revocable (0x2)**: Autorização revogável. Permite que a conta emissora revogue seu crédito mantido por outras contas.
+>   - **Authorization immutable (0x4)**: Autorização imutável. Se for usada, nenhuma outra flag de autorização pode ser usada e a conta nunca pode ser deletada.
 >
 > #### Home domain
-> A domain name that can optionally be added to the account. Clients can look up a [stellar.toml](./stellar-toml.md) from this domain. This should be in the format of a [fully qualified domain name](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) such as `example.com`.
+> Um nome de domínio que pode ser opcionalmente adicionado à conta. Clientes podem acessar um [stellar.toml](./stellar-toml.md) hospedado neste domínio. Deve estar no formato de um [nome de domínio completamente qualificado (FQDN)](https://pt.wikipedia.org/wiki/FQDN) como `exemplo.com.br`.
 >
-> The federation protocol can use the home domain to look up more details about a transaction's memo or [address](https://www.stellar.org/developers/learn/concepts/federation.html#stellar-addresses) details about an account. For more on federation, see the [federation guide](./federation.md).
+> O protocolo federation pode usar o home domain para obter mais detalhes sobre um memo de uma transação ou detalhes do [endereço](https://www.stellar.org/developers/learn/concepts/federation.html#stellar-addresses) de uma conta. Para saber mais sobre federation, veja o [guia do federation](./federation.md).
 >
 >
 > #### Thresholds
-> Operations have varying levels of access. This field specifies thresholds for low-, medium-, and high-access levels, as well as the weight of the master key. For more info, see [multi-sig](./multi-sig.md).
+> Operações têm níveis de acesso variáveis. Este campo especifica thresholds (limiares) para os níveis de acesso baixo, médio e alto, assim como o peso da chave mestra. Para mais informações, ver [multi-sig](./multi-sig.md).
 >
 > #### Signers
-> Used for [multi-sig](./multi-sig.md). This field lists other public keys and their weights, which can be used to authorize transactions for this account.
+> Signatários; usado para [multi-sig](./multi-sig.md). Este campo lista outras chaves públicas e seus pesos, que podem ser usados para autorizar transações para esta conta.
