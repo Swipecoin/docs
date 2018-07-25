@@ -244,7 +244,7 @@ Erros possíveis:
 ## Change Trust
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.changeTrust) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ChangeTrustOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#ChangeTrustBuilder)
 
-Creates, updates, or deletes a trustline.  For more on trustlines, please refer to the [assets documentation](./assets.md).
+Cria, atualiza ou deleta uma trustline. Para saber mais sobre trustlines, favor consultar o [documento sobre ativos](./assets.md).
 
 Limiar: Médio
 
@@ -252,26 +252,27 @@ Resultado: `ChangeTrustResult`
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Line| asset| The asset of the trustline.  For example, if a user extends a trustline of up to 200 USD to an anchor, the `line` is USD:anchor.|
-|Limit| integer| The limit of the trustline.  In the previous example, the `limit` would be 200.|
+|Line| asset| O ativo da trustline. Por exemplo, se um usuário estender uma trustline de até 200 USD a uma âncora (anchor), a `line` é USD:anchor.|
+|Limit| integer| O limite da trustline. No exemplo anterior, o `limit` seria igual a 200.|
 
 Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|CHANGE_TRUST_MALFORMED| -1| The input to this operation is invalid.|
-|CHANGE_TRUST_NO_ISSUER| -2| The issuer of the asset cannot be found.|
-|CHANGE_TRUST_INVALID_LIMIT| -3| This operation would drop the `limit` of this trustline below the amount of the asset the account currently holds.|
-|CHANGE_TRUST_LOW_RESERVE| -4| The account does not have enough lumens.  For every new trustline added by the account, the minimum reserve of XLM it must hold increases.|
+|CHANGE_TRUST_MALFORMED| -1| O input a esta operação é inválido.|
+|CHANGE_TRUST_NO_ISSUER| -2| O emissor do ativo não pode ser encontrado. |
+|CHANGE_TRUST_INVALID_LIMIT| -3| Esta operação iria reduzir o `limit` desta trustline para um valor mais baixo do que a conta atualmente detém do ativo.|
+|CHANGE_TRUST_LOW_RESERVE| -4| A conta não possui lumens suficientes. Para cada nova trustline adicionada pela conta, a reserva mínima de XLM que ela deve manter aumenta.|
 
 
 
 ## Allow Trust
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.allowTrust) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/AllowTrustOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#AllowTrustBuilder)
 
-Updates the `authorized` flag of an existing trustline. This can only be called by the issuer of a trustline's [asset](./assets.md).
+Atualiza a flag `authorized` de uma trustline existente. Esta operação somente pode ser chamada pelo emissor do [ativo](./assets.md) de uma trustline.
 
-The issuer can only clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.
+O emissor pode apenas limpar a flag `authorized` se tiver a flag `AUTH_REVOCABLE_FLAG` definida.
+Senão, o emissor pode somente setar a flag `authorized`.
 
 Limiar: Baixo
 
@@ -279,23 +280,23 @@ Resultado: `AllowTrustResult`
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Trustor| account ID| The account of the recipient of the trustline.|
-|Tipo| asset | The asset of the trustline the source account is authorizing. For example, if an anchor wants to allow another account to hold its USD credit, the `type` is USD:anchor.|
-|Authorize| boolean| Flag indicating whether the trustline is authorized.|
+|Trustor| account ID| A conta do recipiente da trustline.|
+|Type| asset | O ativo da trustline que a conta fonte está autorizando. Por exemplo, se uma âncora quiser permitir que outra conta detenha seu crédito em USD, o `type` é USD:anchor.|
+|Authorize| boolean| Flag que indica se a trustline é autorizada ou não.|
 
 Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|ALLOW_TRUST_MALFORMED| -1| The asset specified in `type` is invalid.|
-|ALLOW_TRUST_NO_TRUST_LINE| -2| The `trustor` does not have a trustline with the issuer performing this operation.|
-|ALLOW_TRUST_TRUST_NOT_REQUIRED| -3| The source account (issuer performing this operation) does not require trust.  In other words, it does not have the flag `AUTH_REQUIRED_FLAG` set.|
-|ALLOW_TRUST_CANT_REVOKE| -4| The source account is trying to revoke the trustline of the `trustor`, but it cannot do so.|
+|ALLOW_TRUST_MALFORMED| -1| O ativo especificado em `type` é inválido.|
+|ALLOW_TRUST_NO_TRUST_LINE| -2| O `trustor` não tem uma trustline com o emissor que está realizando esta operação.|
+|ALLOW_TRUST_TRUST_NOT_REQUIRED| -3| A conta fonte (emissor que está realizando esta operação) não requer confiança. Em outras palavras, ela não tem a flag `AUTH_REQUIRED_FLAG` definida.|
+|ALLOW_TRUST_CANT_REVOKE| -4| A conta fonte está tentando revogar a trustline do `trustor`, mas não pode fazê-lo.|
 
 ## Account Merge
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.accountMerge) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/AccountMergeOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#AccountMergeBuilder)
 
-Transfers the native balance (the amount of XLM an account holds) to another account and removes the source account from the ledger.
+Transfere o saldo nativo (a quantidade de XLM detida pela conta) para outra conta e remove a conta fonte do ledger.
 
 Limiar: Alto
 
@@ -303,22 +304,22 @@ Resultado: `AccountMergeResult`
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Destination| account ID| The account that receives the remaining XLM balance of the source account.|
+|Destination| account ID| A conta que recebe o saldo em XLM restante da conta fonte.|
 
 Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|ACCOUNT_MERGE_MALFORMED| -1| The operation is malformed because the source account cannot merge with itself. The `destination` must be a different account.|
-|ACCOUNT_MERGE_NO_ACCOUNT| -2| The `destination` account does not exist.|
-|ACCOUNT_MERGE_IMMUTABLE_SET| -3| The source account has `AUTH_IMMUTABLE` flag set.|
-|ACCOUNT_MERGE_HAS_SUB_ENTRIES | -4| The source account has trust lines/offers.|
-|ACCOUNT_MERGE_SEQNUM_TOO_FAR | -5| Source's account sequence number is too high. It must be less than `(ledgerSeq << 32) = (ledgerSeq * 0x100000000)`. *(protocol version 10 and above)*|
+|ACCOUNT_MERGE_MALFORMED| -1| A operação está malformada porque a conta fonte não pode ser fundida (merged) consigo mesma. A `destination` deve ser uma conta distinta.|
+|ACCOUNT_MERGE_NO_ACCOUNT| -2| A conta `destination` não existe.|
+|ACCOUNT_MERGE_IMMUTABLE_SET| -3| A conta fonte possui a flag `AUTH_IMMUTABLE` definida.|
+|ACCOUNT_MERGE_HAS_SUB_ENTRIES | -4| A conta fonte tem trustlines/ofertas.|
+|ACCOUNT_MERGE_SEQNUM_TOO_FAR | -5| O número sequencial da conta fonte é muito alto.  Deve ser menor que `(ledgerSeq << 32) = (ledgerSeq * 0x100000000)`. *(versão 10 e posteriores do protocolo)*|
 
 ## Inflation
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.inflation) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/InflationOperation.html) | [Go](https://godoc.org/github.com/stellar/go/build#InflationBuilder)
 
-This operation runs inflation.
+Esta operação roda a inflação.
 
 Limiar: Baixo
 
@@ -328,15 +329,15 @@ Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|INFLATION_NOT_TIME| -1| Inflation only runs once a week. This failure means it is not time for a new inflation round yet.|
+|INFLATION_NOT_TIME| -1| A inflação roda apenas uma vez por semana. Esta falha significa que ainda não é hora de uma nova rodada de inflação.|
 
 
 ## Manage Data
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.manageData) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ManageDataOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#ManageDataBuilder)
 
-Allows you to set,modify or delete a Data Entry (name/value pair) that is attached to a particular account. An account can have an arbitrary amount of DataEntries attached to it. Each DataEntry increases the minimum balance needed to be held by the account.
+Permite setar, modificar ou deletar uma Data Entry (par name/value) que é anexada a uma conta específica. Uma conta pode ter uma quantidade arbitrária de DataEntries anexadas a si. Cada DataEntry aumenta o saldo mínimo que a conta deve manter.
 
-DataEntries can be used for application specific things. They are not used by the core Stellar protocol.
+DataEntries podem ser usadas para coisas específicas a aplicativos. Elas não são usadas pelo protocolo Stellar básico.
 
 Limiar: Médio
 
@@ -344,27 +345,27 @@ Resultado: `ManageDataResult`
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Name| string | String up to 64 bytes long. If this is a new Name it will add the given name/value pair to the account. If this Name is already present then the associated value will be modified.  |
-|Value| binary data | (optional) If not present then the existing Name will be deleted. If present then this value will be set in the DataEntry. Up to 64 bytes long.  |
+|Name| string | String de até 64 bytes. Se isso for um novo Name, será adicionado à conta o par name/value dado. Se este Name já estiver presente, o value associado será modificado.  |
+|Value| binary data | (opcional) Se não estiver presente, o Name existente será deletado. Se presente, então este valor será setado na DataEntry. De até 64 bytes.  |
 
 Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|MANAGE_DATA_NOT_SUPPORTED_YET| -1| The network hasn't moved to this protocol change yet. This failure means the network doesn't support this feature yet.|
-|MANAGE_DATA_NAME_NOT_FOUND| -2| Trying to remove a Data Entry that isn't there. This will happen if Name is set (and Value isn't) but the Account doesn't have a DataEntry with that Name.|
-|MANAGE_DATA_LOW_RESERVE| -3| Not enough lumens in the account to create a new Data Entry. Each additional Data Entry increases the minimum balance of the Account.|
-|MANAGE_DATA_INVALID_NAME| -4| Name not a valid string.|
+|MANAGE_DATA_NOT_SUPPORTED_YET| -1| A rede ainda não adotou esta mudança do protocolo. Esta falha significa que a rede ainda não dá suporte a este recurso.|
+|MANAGE_DATA_NAME_NOT_FOUND| -2| Tentar remover uma Data Entry que não existe. Isso acontece quando o Name está setado (e o Value não) mas a conta não tem uma DataEntry com esse Name.|
+|MANAGE_DATA_LOW_RESERVE| -3| Não há lumens suficientes na conta pra criar uma nova Data Entry. Cada Data Entry adicional aumenta o saldo mínimo da conta.|
+|MANAGE_DATA_INVALID_NAME| -4| Name não é uma string válida.|
 
 ## Bump Sequence
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.bumpSequence) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/BumpSequenceOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#BumpSequenceBuilder)
 
-*Only available in protocol version 10 and above*
+*Apenas disponível na versão 10 ou posterior do protocolo*
 
-Bump sequence allows to bump forward the sequence number of the source account of the operation, allowing to invalidate any transactions with a smaller sequence number.
+Bump sequence permite "empurrar" (bump) para frente o número sequencial da conta fonte da operação, permitindo invalidar quaisquer transações que tenham um número sequencial menor.
 
-If the specified `bumpTo` sequence number is greater than the source account's sequence number,
-the account's sequence number is updated with that value, otherwise it's not modified.
+Se o número sequencial `bumpTo` especificado for maior do que o número sequencial da conta fonte,
+o número sequencial da conta é atualizado com aquele valor. Caso contrário, não é modificado.
 
 Limiar: Baixo
 
@@ -372,10 +373,10 @@ Resultado: `BumpSequenceResult`
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|bumpTo| SequenceNumber| desired value for the operation's source account sequence number.|
+|bumpTo| SequenceNumber| Valor desejado para o número sequencial da conta fonte da operação.|
 
 Erros possíveis:
 
 | Erro | Código | Descrição |
 | ----- | ---- | ------|
-|BUMP_SEQUENCE_BAD_SEQ| -1| The specified `bumpTo` sequence number is not a valid sequence number. It must be between 0 and `INT64_MAX` (9223372036854775807 or 0x7fffffffffffffff).|
+|BUMP_SEQUENCE_BAD_SEQ| -1| O número sequencial `bumpTo` especificado não é um número sequencial válido. Ele deve estar entre 0 e `INT64_MAX` (9223372036854775807 or 0x7fffffffffffffff).|
