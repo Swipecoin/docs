@@ -1,10 +1,10 @@
 ---
-title: List of Operations
+title: Lista de Operações
 ---
 
-For a description of how operations work in Stellar, see [Operations](./operations.md).
+Para uma descrição sobre como operações funcionam no Stellar, veja [Operações](./operations.md).
 
-For the protocol specification, see [stellar-transactions.x](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-transaction.x).
+Para a especificação do protocolo, veja [stellar-transactions.x](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-transaction.x).
 
 - [Create Account](#create-account)
 - [Payment](#payment)
@@ -22,242 +22,242 @@ For the protocol specification, see [stellar-transactions.x](https://github.com/
 ## Create Account
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.createAccount) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/CreateAccountOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#CreateAccountBuilder)
 
-This operation creates and funds a new account with the specified starting balance.
+Esta operação cria uma nova conta e coloca fundos correspondentes ao saldo inicial especificado.
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `CreateAccountResult`
+Resultado: `CreateAccountResult`
 
-Parameters:
+Parâmetros:
 
-| Parameter        | Type       | Description                                                                                |
+| Parâmetros        | Tipo       | Descrição                                                                                |
 | ---------------- | ---------- | ------------------------------------------------------------------------------------------ |
-| Destination      | account ID | Account address that is created and funded.                                                |
-| Starting Balance | integer    | Amount of XLM to send to the newly created account. This XLM comes from the source account.|
+| Destination      | account ID | Endereço da conta a ser criada e preenchida com fundos.                                                |
+| Starting Balance | integer    | Quantidade de XLM a ser enviada à conta criada. Esses XLM vêm da conta fonte (source).|
 
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
-|CREATE_ACCOUNT_MALFORMED| -1| The `destination` is invalid.|
-|CREATE_ACCOUNT_UNDERFUNDED| -2| The source account performing the command does not have enough funds to give `destination` the `starting balance` amount of XLM and still maintain its minimum XLM reserve.  |
-|CREATE_ACCOUNT_LOW_RESERVE| -3| This operation would create an account with fewer than the minimum number of XLM an account must hold.|
-|CREATE_ACCOUNT_ALREADY_EXIST| -4| The `destination` account already exists.|
+|CREATE_ACCOUNT_MALFORMED| -1| A `destination` é inválida.|
+|CREATE_ACCOUNT_UNDERFUNDED| -2| A conta fonte que realiza o comando não tem fundos suficientes para dar à `destination` a quantidade `starting balance` de XLM e ainda manter sua reserva mínima de XLM.  |
+|CREATE_ACCOUNT_LOW_RESERVE| -3| Essa operação criaria uma conta com menos do que o número mínimo necessário de XLM que uma conta deve deter.|
+|CREATE_ACCOUNT_ALREADY_EXIST| -4| A conta `destination` já existe.|
 
 
 
 ## Payment
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.payment) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/PaymentOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#PaymentBuilder)
 
-Sends an amount in a specific asset to a destination account.
+Envia uma quantidade em um ativo específico à conta de destino.
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `PaymentResult`
+Resultado: `PaymentResult`
 
-Parameters:
+Parâmetros:
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Destination| account ID| Account address that receives the payment.|
-|Asset| asset| Asset to send to the destination account.|
-|Amount| integer| Amount of the aforementioned asset to send.|
+|Destination| account ID| Endereço da conta a receber o pagamento.|
+|Asset| asset| Ativo a ser enviado à conta de destino.|
+|Amount| integer| Quantidade do ativo referido a ser enviada.|
 
-Possible errors:
+Erros possíveis:
 
-|Error| Code| Description|
+|Erro| Código| Descrição|
 | --- | --- | --- |
-|PAYMENT_MALFORMED| -1| The input to the payment is invalid.|
-|PAYMENT_UNDERFUNDED| -2| The source account (sender) does not have enough funds to send this transaction.  Note that the sender has a minimum reserve of XLM it must hold at all times.|
-|PAYMENT_SRC_NO_TRUST| -3| The source account does not trust the issuer of the asset it is trying to send.|
-|PAYMENT_SRC_NOT_AUTHORIZED| -4| The source account is not authorized to send this payment.|
-|PAYMENT_NO_DESTINATION| -5| The receiving account does not exist.|
-|PAYMENT_NO_TRUST| -6| The receiver does not trust the issuer of the asset being sent. For more information, see the [assets doc](./assets.md).|
-|PAYMENT_NOT_AUTHORIZED| -7| The destination account is not authorized by the asset's issuer to hold the asset.|
-|PAYMENT_LINE_FULL| -8| The receiving account only trusts an asset's issuer for a certain amount of credit.  If this transaction succeeded, the receiver's trust limit would be exceeded.|
-|PAYMENT_NO_ISSUER| -9| The issuer of the asset does not exist.|
+|PAYMENT_MALFORMED| -1| O input ao pagamento é inválido.|
+|PAYMENT_UNDERFUNDED| -2| A conta fonte (remetente) não possui fundos suficientes para enviar esta transação. Note que o remetente tem uma reserva mínima de XLM que deve ser sempre mantida.|
+|PAYMENT_SRC_NO_TRUST| -3| A conta fonte não confia no emissor do ativo que está tentando enviar.|
+|PAYMENT_SRC_NOT_AUTHORIZED| -4| A conta fonte não está autorizada a enviar este pagamento.|
+|PAYMENT_NO_DESTINATION| -5| A conta destinatária não existe.|
+|PAYMENT_NO_TRUST| -6| O destinatário não confia no emissor do ativo que está sendo enviado. Para mais informações, veja o [documento sobre ativos](./assets.md).|
+|PAYMENT_NOT_AUTHORIZED| -7| A conta de destino não está autorizada pelo emissor do ativo a deter o ativo.|
+|PAYMENT_LINE_FULL| -8| A conta destinatária apenas confia no emissor do ativo para certa quantia de crédito. Se esta transação fosse bem-sucedida, o limite confiado ao destinatário seria excedido.|
+|PAYMENT_NO_ISSUER| -9| O emissor do ativo não existe.|
 
 ## Path Payment
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.pathPayment) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/PathPaymentOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#PayWithPath)
 
-Sends an amount in a specific asset to a destination account through a path of offers. This allows the asset sent (e.g., 450 XLM) to be different from the asset received (e.g, 6 BTC).
+Envia uma quantidade de um ativo específico a uma conta de destino por meio de um caminho (path) de ofertas. Isso permite que o ativo enviado (ex.: 450 XLM) seja diferente do ativo recebido (ex.: 6 BTC).
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `PathPaymentResult`
+Resultado: `PathPaymentResult`
 
-Parameters:
+Parâmetros:
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Send asset| asset| The asset deducted from the sender's account.|
-|Send max| integer| The maximum amount of `send asset` to deduct (excluding fees).|
-|Destination| account ID| Account ID of the recipient.|
-|Destination asset| asset| The asset the destination account receives.|
-|Destination amount| integer| The amount of `destination asset` the destination account receives.|
-|Path| list of assets| The assets (other than `send asset` and `destination asset`) involved in the offers the path takes. For example, if you can only find a path from USD to EUR through XLM and BTC, the path would be USD -> XLM -> BTC -> EUR and the `path` field would contain XLM and BTC.|
+|Send asset| asset| O ativo deduzido da conta remetente.|
+|Send max| integer| A quantidade máxima de `send asset` a ser deduzida (excluindo tarifas).|
+|Destination| account ID| ID da conta do recipiente.|
+|Destination asset| asset| O ativo a ser recebido pela conta de destino.|
+|Destination amount| integer| A quantidade de `destination asset` a ser recebida pela conta de destino.|
+|Path| list of assets| Os ativos (além de `send asset` e `destination asset`) envolvidos nas ofertas pelas quais o caminho passa. Por exemplo, se o único caminho encontrado de USD a EUR passar por XLM e BTC, o caminho seria USD -> XLM -> BTC -> EUR e o campo `path` conteria XLM e BTC.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
-|PATH_PAYMENT_MALFORMED| -1| The input to this path payment is invalid.|
-|PATH_PAYMENT_UNDERFUNDED| -2| The source account (sender) does not have enough funds to send this transaction. Note that the sender has a minimum reserve of XLM it must hold at all times.|
-|PATH_PAYMENT_SRC_NO_TRUST| -3| The source account does not trust the issuer of the asset it is trying to send.|
-|PATH_PAYMENT_SRC_NOT_AUTHORIZED| -4| The source account is not authorized to send this payment. |
-|PATH_PAYMENT_NO_DESTINATION| -5| The receiving account does not exist. |
-|PATH_PAYMENT_NO_TRUST| -6| The receiver does not trust the issuer of the asset being sent. For more, see the [assets doc](./assets.md).|
-|PATH_PAYMENT_NOT_AUTHORIZED| -7| The destination account is not authorized by the asset's issuer to hold the asset. |
-|PATH_PAYMENT_LINE_FULL| -8| The receiving account only trusts an asset's issuer for a certain amount of credit.  If this transaction succeeded, the receiver's trust limit would be exceeded.|
-|PATH_PAYMENT_NO_ISSUER| -9| The issuer on one of assets is missing.|
-|PATH_PAYMENT_TOO_FEW_OFFERS| -10| There is no path of offers connecting the `send asset` and `destination asset`.  Stellar only considers paths of length 5 or shorter.|
-|PATH_PAYMENT_OFFER_CROSS_SELF| -11| The payment would cross one of its own offers.|
-|PATH_PAYMENT_OVER_SENDMAX| -12| The paths that could send `destination amount` of `destination asset` would exceed `send max`.|
+|PATH_PAYMENT_MALFORMED| -1| O input a este path payment é inválido.|
+|PATH_PAYMENT_UNDERFUNDED| -2| A conta fonte (remetente) não possui fundos suficientes para enviar esta transação. Note que o remetente tem uma reserva mínima de XLM que deve ser sempre mantida.|
+|PATH_PAYMENT_SRC_NO_TRUST| -3| A conta fonte não confia no emissor do ativo que está tentando enviar.|
+|PATH_PAYMENT_SRC_NOT_AUTHORIZED| -4| A conta fonte não está autorizada a enviar este pagamento. |
+|PATH_PAYMENT_NO_DESTINATION| -5| A conta destinatária não existe. |
+|PATH_PAYMENT_NO_TRUST| -6| O destinatário não confia no emissor do ativo que está sendo enviado. Para mais informações, veja o [documento sobre ativos](./assets.md).|
+|PATH_PAYMENT_NOT_AUTHORIZED| -7| A conta de destino não está autorizada pelo emissor do ativo a deter o ativo. |
+|PATH_PAYMENT_LINE_FULL| -8| A conta destinatária apenas confia no emissor do ativo para certa quantia de crédito. Se esta transação fosse bem-sucedida, o limite confiado ao destinatário seria excedido.|
+|PATH_PAYMENT_NO_ISSUER| -9| O emissor de um dos ativos está faltando.|
+|PATH_PAYMENT_TOO_FEW_OFFERS| -10| Não há caminho de ofertas que conecte `send asset` e `destination asset`. Stellar apenas considera paths de comprimento 5 ou menos.|
+|PATH_PAYMENT_OFFER_CROSS_SELF| -11| O pagamento iria cruzar uma de suas próprias ofertas.|
+|PATH_PAYMENT_OVER_SENDMAX| -12| Os caminhos que poderiam enviar o `destination amount` do `destination asset` iriam exceder o `send max`.|
 
 ## Manage Offer
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.manageOffer) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ManageOfferOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#ManageOfferBuilder)
 
-Creates, updates, or deletes an offer.
+Cria, atualiza ou deleta uma oferta.
 
-If you want to create a new offer set Offer ID to `0`.
+Se quiser criar uma nova oferta, defina o Offer ID como `0`.
 
-If you want to update an existing offer set Offer ID to existing offer ID.
+Se quiser atualizar uma oferta já existente, defina o Offer ID como o mesmo da oferta em questão.
 
-If you want to delete an existing offer set Offer ID to existing offer ID and set Amount to `0`.
+Se quiser deletar uma oferta existente, defina o Offer ID como o mesmo da oferta em questão e defina Amount como `0`.
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `ManageOfferResult`
+Resultado: `ManageOfferResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-| Selling| asset| Asset the offer creator is selling. |
-| Buying| asset| Asset the offer creator is buying. |
-| Amount| integer| Amount of `selling` being sold. Set to `0` if you want to delete an existing offer. |
-| Price| {numerator, denominator} | Price of 1 unit of `selling` in terms of `buying`.  For example, if you wanted to sell 30 XLM and buy 5 BTC, the price would be {5,30}.|
-| Offer ID| unsigned integer| The ID of the offer. `0` for new offer. Set to existing offer ID to update or delete. |
+| Selling| asset| Ativo que o criador da oferta está vendendo. |
+| Buying| asset| Ativo que o criador da oferta está comprando. |
+| Amount| integer| Ativo de `selling` que está sendo vendido. Defina como `0` se quiser deletar uma oferta existente. |
+| Price| {numerador, denominador} |  Preço de 1 unidade de `selling` em termos de `buying`. Por exemplo, se quiser vender 30 XLM e comprar 5 BTC, o preço seria {5,30}.|
+| Offer ID| unsigned integer| O ID da oferta. `0` para uma nova oferta. Defina como uma oferta já existente para atualizá-la ou deletá-la. |
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
-|MANAGE_OFFER_MALFORMED| -1| The input is incorrect and would result in an invalid offer.|
-|MANAGE_OFFER_SELL_NO_TRUST| -2| The account creating the offer does not have a trustline for the asset it is selling.|
-|MANAGE_OFFER_BUY_NO_TRUST| -3| The account creating the offer does not have a trustline for the asset it is buying.|
-|MANAGE_OFFER_SELL_NOT_AUTHORIZED| -4| The account creating the offer is not authorized to sell this asset.|
-|MANAGE_OFFER_BUY_NOT_AUTHORIZED| -5| The account creating the offer is not authorized to buy this asset.|
-|MANAGE_OFFER_LINE_FULL| -6| The account creating the offer only trusts the issuer of `buying` to a certain credit limit. If this offer succeeded, the account would exceed its trust limit with the issuer.|
-|MANAGE_OFFER_UNDERFUNDED| -7| The account does not have enough of `selling` to fund this offer.|
-|MANAGE_OFFER_CROSS_SELF| -8| The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself.|
-|MANAGE_OFFER_SELL_NO_ISSUER| -9| The issuer of selling asset does not exist.|
-|MANAGE_OFFER_BUY_NO_ISSUER| -10| The issuer of buying asset does not exist.|
-|MANAGE_OFFER_NOT_FOUND| -11| An offer with that `offerID` cannot be found.|
-|MANAGE_OFFER_LOW_RESERVE| -12| The account creating this offer does not have enough XLM. For every offer an account creates, the minimum amount of XLM that account must hold will increase.|
+|MANAGE_OFFER_MALFORMED| -1| O input está incorreto e resultaria em uma oferta inválida.|
+|MANAGE_OFFER_SELL_NO_TRUST| -2| A conta criadora da oferta não possui uma trustline referente ao ativo que está vendendo.|
+|MANAGE_OFFER_BUY_NO_TRUST| -3| A conta criadora da oferta não possui uma trustline referente ao ativo que está comprando.|
+|MANAGE_OFFER_SELL_NOT_AUTHORIZED| -4| A conta criadora da oferta não está autorizada a vender este ativo.|
+|MANAGE_OFFER_BUY_NOT_AUTHORIZED| -5| A conta criadora da oferta não está autorizada a comprar este ativo.|
+|MANAGE_OFFER_LINE_FULL| -6| A conta criadora da oferta apenas confia no emissor de `buying` para certa quantia de crédito. Se esta oferta fosse bem-sucedida, a conta iria exceder seu limite de confiança com o emissor.|
+|MANAGE_OFFER_UNDERFUNDED| -7| A conta não possui `selling` o suficiente para financiar esta oferta.|
+|MANAGE_OFFER_CROSS_SELF| -8| A conta possui uma oferta oposta de igual ou menor preço ativa, e então a conta criadora desta oferta iria imediatamente cruzar a si mesma.|
+|MANAGE_OFFER_SELL_NO_ISSUER| -9| O emissor do ativo sendo vendido não existe.|
+|MANAGE_OFFER_BUY_NO_ISSUER| -10| O emissor do ativo sendo comprado não existe.|
+|MANAGE_OFFER_NOT_FOUND| -11| Uma oferta com o `offerID` definido não foi encontrada.|
+|MANAGE_OFFER_LOW_RESERVE| -12| A conta criadora desta oferta não tem XLM suficientes. Para cada oferta criada pela conta, a quantidade mínima de XLM que a conta deve possuir irá aumentar.|
 
 ## Create Passive Offer
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.createPassiveOffer) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/CreatePassiveOfferOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#ManageOfferBuilder)
 
-A passive offer is an offer that does not act on and take a reverse offer of equal price. Instead, they only take offers
-of lesser price. For example, if an offer exists to buy 5 BTC for 30 XLM, and you make a passive offer to buy 30 XLM for 5 BTC,
-your passive offer *does not* take the first offer.
+Uma passive offer, ou oferta passiva, é uma oferta que não age e toma uma oferta oposta de preço equivalente. Em vez disso, ela apenas toma ofertas
+de preço menor. Por exemplo, se uma oferta existe para comprar 5 BTC por 30 XLM, e você fizer uma oferta passiva para comprar 30 XLM por 5 BTC,
+sua oferta passiva *não* vai tomar a primeira oferta.
 
-Note that regular offers made later than your passive offer can act on and take your passive offer, even if the regular
-offer is of the same price as your passive offer.
+Note que ofertas normais feitas depois da sua oferta passiva podem agir e tomar sua oferta passiva, mesmo que a oferta
+normal for do mesmo preço que sua oferta passiva.
 
-Passive offers allow market makers to have zero spread. If you want to trade EUR for USD at 1:1 price and USD for EUR also
- at 1:1, you can create two passive offers so the two offers don't immediately act on each other.
+Ofertas passivas permitem que formadores de mercado tenham spread igual a zero. Se quiser trocar EUR por USD a preço 1:1 e USD por EUR
+também 1:1, você pode criar duas ofertas passivas para que as duas ofertas não ajam imediatamente uma sobre a outra.
 
-Once the passive offer is created, you can manage it like any other offer using the [manage offer](#manage-offer) operation.
+Após a oferta passiva ser criada, você pode gerenciá-la como qualquer outra oferta usando a operação [manage offer](#manage-offer).
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `CreatePassiveOfferResult`
+Resultado: `CreatePassiveOfferResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|Selling| asset| The asset you would like to sell. |
-|Buying| asset| The asset you would like to buy.|
-|Amount| integer| Amount of `selling` being sold.|
-|Price| {numerator, denominator}| Price of 1 unit of `selling` in terms of `buying`.  For example, if you wanted to sell 30 XLM and buy 5 BTC, the price would be {5,30}. |
+|Selling| asset| O ativo que gostaria de vender. |
+|Buying| asset| O ativo que gostaria de comprar.|
+|Amount| integer| Quantidade de `selling` sendo vendida.|
+|Price| {numerador, denominador}| Preço de 1 unidade de `selling` em termos de `buying`. Por exemplo, se quiser vender 30 XLM e comprar 5 BTC, o preço seria {5,30}. |
 
-Possible errors:
+Erros possíveis:
 
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
-|MANAGE_OFFER_MALFORMED| -1| The input is incorrect and would result in an invalid offer.|
-|MANAGE_OFFER_SELL_NO_TRUST| -2| The account creating the offer does not have a trustline for the asset it is selling.|
-|MANAGE_OFFER_BUY_NO_TRUST| -3| The account creating the offer does not have a trustline for the asset it is buying.|
-|MANAGE_OFFER_SELL_NOT_AUTHORIZED| -4| The account creating the offer is not authorized to sell this asset.|
-|MANAGE_OFFER_BUY_NOT_AUTHORIZED| -5| The account creating the offer is not authorized to buy this asset.|
-|MANAGE_OFFER_LINE_FULL| -6| The account creating the offer only trusts the issuer of `buying` to a certain credit limit. If this offer succeeded, the account would exceed its trust limit with the issuer.|
-|MANAGE_OFFER_UNDERFUNDED| -7| The account does not have enough of `selling` to fund this offer.|
-|MANAGE_OFFER_CROSS_SELF| -8| The account has opposite offer of equal or lesser price active, so the account creating this offer would immediately cross itself.|
-|MANAGE_OFFER_SELL_NO_ISSUER| -9| The issuer of selling asset does not exist.|
-|MANAGE_OFFER_BUY_NO_ISSUER| -10| The issuer of buying asset does not exist.|
-|MANAGE_OFFER_NOT_FOUND| -11| An offer with that `offerID` cannot be found.|
-|MANAGE_OFFER_LOW_RESERVE| -12| The account creating this offer does not have enough XLM. For every offer an account creates, the minimum amount of XLM that account must hold will increase.|
+|MANAGE_OFFER_MALFORMED| -1| O input está incorreto e resultaria em uma oferta inválida.|
+|MANAGE_OFFER_SELL_NO_TRUST| -2| A conta criadora da oferta não possui uma trustline referente ao ativo que está vendendo.|
+|MANAGE_OFFER_BUY_NO_TRUST| -3| A conta criadora da oferta não possui uma trustline referente ao ativo que está comprando.|
+|MANAGE_OFFER_SELL_NOT_AUTHORIZED| -4| A conta criadora da oferta não está autorizada a vender este ativo.|
+|MANAGE_OFFER_BUY_NOT_AUTHORIZED| -5| A conta criadora da oferta não está autorizada a comprar este ativo.|
+|MANAGE_OFFER_LINE_FULL| -6| A conta criadora da oferta apenas confia no emissor de `buying` para certa quantia de crédito. Se esta oferta fosse bem-sucedida, a conta iria exceder seu limite de confiança com o emissor.|
+|MANAGE_OFFER_UNDERFUNDED| -7| A conta não possui `selling` o suficiente para financiar esta oferta.|
+|MANAGE_OFFER_CROSS_SELF| -8| A conta possui uma oferta oposta de igual ou menor preço ativa, e então a conta criadora desta oferta iria imediatamente cruzar a si mesma.|
+|MANAGE_OFFER_SELL_NO_ISSUER| -9| O emissor do ativo sendo vendido não existe.|
+|MANAGE_OFFER_BUY_NO_ISSUER| -10| O emissor do ativo sendo comprado não existe.|
+|MANAGE_OFFER_NOT_FOUND| -11| Uma oferta com o `offerID` definido não foi encontrada.|
+|MANAGE_OFFER_LOW_RESERVE| -12| A conta criadora desta oferta não tem XLM suficientes. Para cada oferta criada pela conta, a quantidade mínima de XLM que a conta deve possuir irá aumentar.|
 
 
 ## Set Options
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.setOptions) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/SetOptionsOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#SetOptionsBuilder)
 
-This operation sets the options for an account.
+Esta operação define as opções de uma conta.
 
-For more information on the signing options, please refer to the [multi-sig doc](./multi-sig.md).
+Para mais informações sobre as opções de assinatura, favor consultar o [documento sobre multi-sig](./multi-sig.md).
 
-When updating signers or other thresholds, the threshold of this operation is high.
+Ao atualizar signatários ou outros limiares, o limiar desta operação é alto.
 
-Threshold: Medium or High
+Limiar: Médio ou Alto
 
-Result: `SetOptionsResult`
+Resultado: `SetOptionsResult`
 
-Parameters:
+Parâmetros:
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|inflation Destination| account ID| Account of the inflation destination.|
-|Clear flags| integer| Indicates which flags to clear. For details about the flags, please refer to the [accounts doc](./accounts.md). The bit mask integer subtracts from the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
-|Set flags| integer| Indicates which flags to set. For details about the flags, please refer to the [accounts doc](./accounts.md). The bit mask integer adds onto the existing flags of the account. This allows for setting specific bits without knowledge of existing flags.|
-|Master weight| integer| Weight of the master key. This account may also add other keys with which to sign transactions using `signer` below.|
-|Low threshold| integer| A number from 0-255 representing the threshold this account sets on all operations it performs that have [a low threshold](./multi-sig.html).|
-|Medium threshold| integer| A number from 0-255 representing the threshold this account sets on all operations it performs that have [a medium threshold](./multi-sig.html).|
-|High threshold| integer| A number from 0-255 representing the threshold this account sets on all operations it performs that have [a high threshold](./multi-sig.html). |
-|Home domain| string| Sets the home domain of an account. See [Federation](./federation.md).|
-|Signer| {Public Key, weight}| Add, update, or remove a signer from an account.  The signer is deleted if the weight is 0.|
+|inflation Destination| account ID| Conta definida como destinatária da inflação. Saiba mais no [documento sobre inflação](/inflation.md).|
+|Clear flags| integer| Indica quais flags limpar. Para detalhes sobre as flags, favor consultar o [documento sobre contas](./accounts.md). A máscara de bits (um integer, ou número inteiro) subtrai das flags existentes na conta. Isso permite setar bits específicos sem conhecimento das flags existentes.|
+|Set flags| integer| Indica quais flags setar. Para detalhes sobre as flags, favor consultar o [documento sobre contas](./accounts.md). A máscara de bits (um integer, ou número inteiro) adiciona às flags existentes na conta. Isso permite setar bits específicos sem conhecimento das flags existentes.|
+|Master weight| integer| Peso da chave mestra. Esta conta pode também adicionar outras chaves a serem usadas para assinar transações usando `signer` abaixo.|
+|Low threshold| integer| Um número no intervalo 0-255 que representa o limiar que esta conta define para todas as operações realizadas que tenham [um limiar baixo](./multi-sig.html).|
+|Medium threshold| integer| Um número no intervalo 0-255 que representa o limiar que esta conta define para todas as operações realizadas que tenham [um limiar médio](./multi-sig.html).|
+|High threshold| integer| Um número no intervalo 0-255 que representa o limiar que esta conta define para todas as operações realizadas que tenham [um limiar alto](./multi-sig.html).|
+|Home domain| string| Defino o home domain de uma conta. Ver [Federation](./federation.md).|
+|Signer| {Chave Pública, peso}| Adicionar, atualizar ou remover um signatário de uma conta. O signatário é deletado se o peso é 0.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
-|SET_OPTIONS_LOW_RESERVE| -1| The account setting the options does not have enough XLM. For every new signer added to an account, the minimum reserve of XLM that account must hold increases.|
-|SET_OPTIONS_TOO_MANY_SIGNERS| -2| 20 is the maximum number of signers an account can have, and adding another signer would exceed that.|
-|SET_OPTIONS_BAD_FLAGS| -3| The flags set and/or cleared are invalid by themselves or in combination.|
-|SET_OPTIONS_INVALID_INFLATION| -4| The destination account set in the `inflation` field does not exist.|
-|SET_OPTIONS_CANT_CHANGE| -5| This account can no longer change the option it wants to change.|
-|SET_OPTIONS_UNKNOWN_FLAG| -6| The account is trying to set a flag that is unknown.|
-|SET_OPTIONS_THRESHOLD_OUT_OF_RANGE| -7| The value for a key weight or threshold is invalid.|
-|SET_OPTIONS_BAD_SIGNER| -8| Any additional signers added to the account cannot be the master key.|
-|SET_OPTIONS_INVALID_HOME_DOMAIN| -9| Home domain is malformed.|
+|SET_OPTIONS_LOW_RESERVE| -1| A conta que está definindo as opções não possui XLM suficientes. Para cada novo signer adicionado à conta, o valor da reserva mínima de XLM que a conta deve manter aumenta.|
+|SET_OPTIONS_TOO_MANY_SIGNERS| -2| 20 é o número máximo de signers que uma conta pode ter, e adicionar outro signer iria exceder este limite.|
+|SET_OPTIONS_BAD_FLAGS| -3| As flags sendo definidas e/ou limpadas são inválidas por si mesmas ou em conjunto.|
+|SET_OPTIONS_INVALID_INFLATION| -4| A conta de destino definida no campo `inflation` não existe.|
+|SET_OPTIONS_CANT_CHANGE| -5| Esta conta não pode mais mudar a opção que está tentando mudar.|
+|SET_OPTIONS_UNKNOWN_FLAG| -6| A conta está tentando definir uma flag que é desconhecida.|
+|SET_OPTIONS_THRESHOLD_OUT_OF_RANGE| -7| O valor de um peso de chave ou limiar é inválido.|
+|SET_OPTIONS_BAD_SIGNER| -8| Qualquer signer a ser adicionado à conta não pode ser a chave mestra.|
+|SET_OPTIONS_INVALID_HOME_DOMAIN| -9| O home domain está malformado.|
 
 ## Change Trust
 [JavaScript](http://stellar.github.io/js-stellar-sdk/Operation.html#.changeTrust) | [Java](http://stellar.github.io/java-stellar-sdk/org/stellar/sdk/ChangeTrustOperation.Builder.html) | [Go](https://godoc.org/github.com/stellar/go/build#ChangeTrustBuilder)
 
 Creates, updates, or deletes a trustline.  For more on trustlines, please refer to the [assets documentation](./assets.md).
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `ChangeTrustResult`
+Resultado: `ChangeTrustResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
 |Line| asset| The asset of the trustline.  For example, if a user extends a trustline of up to 200 USD to an anchor, the `line` is USD:anchor.|
 |Limit| integer| The limit of the trustline.  In the previous example, the `limit` would be 200.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |CHANGE_TRUST_MALFORMED| -1| The input to this operation is invalid.|
 |CHANGE_TRUST_NO_ISSUER| -2| The issuer of the asset cannot be found.|
@@ -273,19 +273,19 @@ Updates the `authorized` flag of an existing trustline. This can only be called 
 
 The issuer can only clear the `authorized` flag if the issuer has the `AUTH_REVOCABLE_FLAG` set. Otherwise, the issuer can only set the `authorized` flag.
 
-Threshold: Low
+Limiar: Baixo
 
-Result: `AllowTrustResult`
+Resultado: `AllowTrustResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
 |Trustor| account ID| The account of the recipient of the trustline.|
-|Type| asset | The asset of the trustline the source account is authorizing. For example, if an anchor wants to allow another account to hold its USD credit, the `type` is USD:anchor.|
+|Tipo| asset | The asset of the trustline the source account is authorizing. For example, if an anchor wants to allow another account to hold its USD credit, the `type` is USD:anchor.|
 |Authorize| boolean| Flag indicating whether the trustline is authorized.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |ALLOW_TRUST_MALFORMED| -1| The asset specified in `type` is invalid.|
 |ALLOW_TRUST_NO_TRUST_LINE| -2| The `trustor` does not have a trustline with the issuer performing this operation.|
@@ -297,17 +297,17 @@ Possible errors:
 
 Transfers the native balance (the amount of XLM an account holds) to another account and removes the source account from the ledger.
 
-Threshold: High
+Limiar: Alto
 
-Result: `AccountMergeResult`
+Resultado: `AccountMergeResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
 |Destination| account ID| The account that receives the remaining XLM balance of the source account.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |ACCOUNT_MERGE_MALFORMED| -1| The operation is malformed because the source account cannot merge with itself. The `destination` must be a different account.|
 |ACCOUNT_MERGE_NO_ACCOUNT| -2| The `destination` account does not exist.|
@@ -320,13 +320,13 @@ Possible errors:
 
 This operation runs inflation.
 
-Threshold: Low
+Limiar: Baixo
 
-Result: `InflationResult`
+Resultado: `InflationResult`
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |INFLATION_NOT_TIME| -1| Inflation only runs once a week. This failure means it is not time for a new inflation round yet.|
 
@@ -338,18 +338,18 @@ Allows you to set,modify or delete a Data Entry (name/value pair) that is attach
 
 DataEntries can be used for application specific things. They are not used by the core Stellar protocol.
 
-Threshold: Medium
+Limiar: Médio
 
-Result: `ManageDataResult`
+Resultado: `ManageDataResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
 |Name| string | String up to 64 bytes long. If this is a new Name it will add the given name/value pair to the account. If this Name is already present then the associated value will be modified.  |
 |Value| binary data | (optional) If not present then the existing Name will be deleted. If present then this value will be set in the DataEntry. Up to 64 bytes long.  |
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |MANAGE_DATA_NOT_SUPPORTED_YET| -1| The network hasn't moved to this protocol change yet. This failure means the network doesn't support this feature yet.|
 |MANAGE_DATA_NAME_NOT_FOUND| -2| Trying to remove a Data Entry that isn't there. This will happen if Name is set (and Value isn't) but the Account doesn't have a DataEntry with that Name.|
@@ -366,16 +366,16 @@ Bump sequence allows to bump forward the sequence number of the source account o
 If the specified `bumpTo` sequence number is greater than the source account's sequence number,
 the account's sequence number is updated with that value, otherwise it's not modified.
 
-Threshold: Low
+Limiar: Baixo
 
-Result: `BumpSequenceResult`
+Resultado: `BumpSequenceResult`
 
-|Parameters| Type| Description|
+|Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
 |bumpTo| SequenceNumber| desired value for the operation's source account sequence number.|
 
-Possible errors:
+Erros possíveis:
 
-| Error | Code | Description |
+| Erro | Código | Descrição |
 | ----- | ---- | ------|
 |BUMP_SEQUENCE_BAD_SEQ| -1| The specified `bumpTo` sequence number is not a valid sequence number. It must be between 0 and `INT64_MAX` (9223372036854775807 or 0x7fffffffffffffff).|
