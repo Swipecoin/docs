@@ -93,7 +93,7 @@ Outras maneiras mais complexas de submeter esta transação são possíveis, mas
 
   Uma âncora quer dividir o processamento de sua conta online ("base") entre máquinas. Assim, cada máquina irá submeter transações de sua conta local e acompanhar seu próprio número sequencial. Para mais sobre números sequenciais das transações, por favor consulte [o documento sobre transações](./transactions.md).
 
-   * Cada máquina ganha uma chave privada ou par de chaves associada a si. Digamos que haja apenas 3 máquinas: Machine_1, Machine_2, and Machine_3. (Na prática, podem haver tantas máquinas quanto a âncora quiser.)
+   * Cada máquina ganha um par de chaves associadas a si. Digamos que haja apenas 3 máquinas: Machine_1, Machine_2, and Machine_3. (Na prática, podem haver tantas máquinas quanto a âncora quiser.)
    * Todas as três máquinas são adicionadas como Signers (signatárias) à conta base da âncora, "baseAccount", com
     um peso que as dá direitos medianos. Essas máquinas (workers) podem então assinar em nome da conta base. (Para mais sobre assinaturas, favor consultar a [documentação sobre multi-sig](multi-sig.md).)
    * Quando uma máquina (digamos, a Machine_2) quer submeter uma transação à rede, ela constrói a transação:
