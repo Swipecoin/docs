@@ -232,7 +232,7 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode resgatar [(mais detalhes abaixo)](#transacting-in-other-currencies). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
+4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode resgatar [(mais detalhes abaixo)](#transacionar-em-outras-moedas). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
 
     <code-example name="Adicionar uma Operação">
 
