@@ -1,26 +1,26 @@
 ---
-title: Fees
+title: Tarifas
 ---
 
-The Stellar network requires small [fees on transactions](#transaction-fee) and [minimum balances on accounts](#minimum-account-balance) in order to prevent people from overwhelming the network and to aid in prioritization.
+A rede Stellar requer pequenas [tarifas por transação](#tarifa-de-transação) e [saldos mínimos nas contas](#minimum-account-balance) para prevenir que pessoas sobrecarreguem a rede e para ajudar com priorização.
 
-There are two special values used to calculate fees:
+Há dois valores especiais usados para calcular tarifas:
 
-1. The **base fee** (currently 100 stroops) is used in transaction fees.
-2. The **base reserve** (currently 0.5 XLM) is used in minimum account balances.
+1. A **base fee** (tarifa base), atualmente de 100 stroops, é usada nas tarifas de transação.
+2. A **base reserve** (reserva base), atualmente de 0.5 XLM, é usada nos saldos mínimos das contas.
 
 
-## Transaction Fee
+## Tarifa de transação
 
-The fee for a transaction is the number of operations the transaction contains multiplied by the **base fee**, which is **100 stroops** (0.00001 XLM).
+A tarifa por uma transação é o número de operações contidas pela transação, multiplicado pela **base fee**, que é de **100 stroops** (0.00001 XLM).
 
 ```math-formula
-([# of operations] * [base fee])
+([# de operações] * [base fee])
 ```
 
-For example, a transaction that allows trust on an account’s trustline *(operation 1)* and sends a payment to that account *(operation 2)* would have a fee of $$2 * [base fee] = 200 stroops$$.
+Por exemplo, uma transação que permite a confiança na trustline de uma conta *(operação 1)* e envia um pagamento para aquela conta *(operação 2)* teria uma tarifa de $$2 * [base fee] = 200 stroops$$.
 
-Stellar deducts the entire fee from the transaction’s [source account](./transactions.md#source-account), regardless of which accounts are involved in each operation or who signed the transaction.
+Stellar subtrai toda a tarifa da [conta fonte](./transactions.md#conta-fonte) da transação, independente de que contas estão envolvidas em cada operação ou quem assinou a transação.
 
 
 ### Transaction Limits
@@ -33,9 +33,9 @@ See [transaction life cycle](./transactions.md#life-cycle) for more information.
 
 The fee pool is the lot of lumens collected from [transaction fees](./fees.md#transaction-fee).
 
-Stellar does not retain these lumens. They are distributed in the weekly process of [inflation voting](./inflation.md). 
+Stellar does not retain these lumens. They are distributed in the weekly process of [inflation voting](./inflation.md).
 
-If there are any unallocated lumens after the vote, those lumens return to the fee pool for dispersal in the next round. 
+If there are any unallocated lumens after the vote, those lumens return to the fee pool for dispersal in the next round.
 
 ## Minimum Account Balance
 
