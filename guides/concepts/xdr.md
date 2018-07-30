@@ -2,20 +2,19 @@
 title: XDR
 ---
 
-**XDR**, also known as _External Data Representation_, is used throughout the Stellar network and protocol.  The ledger, transactions, results, history, and even the messages passed between computers running stellar-core are encoded using XDR.
+**XDR**, também conhecido como _External Data Representation_, é usado por toda a rede e protocolo Stellar. O ledger, transações, resultados, histórico, e até as mensagens passadas entre computadores que rodam o stellar-core são codificadas usando XDR.
 
-XDR is specified in [RFC 4506](http://tools.ietf.org/html/rfc4506.html) and is similar to tools like Protocol Buffers or Thrift. XDR provides a few important features:
+XDR é especificado em [RFC 4506](http://tools.ietf.org/html/rfc4506.html) e é similar a ferramentas como Protocol Buffers ou Thrift. XDR oferece alguns recursos importantes:
 
-- It is very compact, so it can be transmitted quickly and stored with minimal disk space.
-- Data encoded in XDR is reliably and predictably stored. Fields are always in the same order, which makes cryptographically signing and verifying XDR messages simple.
-- XDR definitions include rich descriptions of data types and structures, which is not possible in simpler formats like JSON, TOML, or YAML.
+- É muito compacto, podendo assim ser transmitido rapidamente e armazenado com espaço mínimo de disco.
+- Dados codificados em XDR são armazenados de maneira confiável e previsível. Os campos estão sempre na mesma ordem, o que torna simples assinar criptograficamente e verificar mensagens em XDR.
+- Definições em XDR incluem descrições ricas de tipos e estruturas de dados, o que não é possível em formatos mais simples como JSON, TOML, ou YAML.
 
-Since XDR is a binary format and not as widely known as simpler formats like JSON, the Stellar SDKs all include tools for parsing XDR and will do so automatically when retrieving data.
+Como XDR é um formato binário e não é tão bem conhecido quanto formatos mais simples como JSON, os SDKs de Stellar incluem ferramentas para parsear XDR e o farão automaticamente ao recuperar dados.
 
-In addition, the Horizon API server generally exposes the most important parts of the XDR data in JSON, so they are easier to parse if you are not using an SDK. The XDR data is still included (encoded as a base64 string) inside the JSON in case you need direct access to it.
+Além disso, o servidor da API Horizon geralmente expõe as partes mais importantes dos dados XDR em JSON, o que torna mais fácil para parsear caso não esteja usando um SDK. Os dados XDR ainda estão incluídos (codificados como um string base64) dentro do JSON caso precise acessá-los diretamente.
 
-## .X files
+## Arquivos .X
 
-Data structures in XDR are specified in an _interface definition file_ (IDL).
-The IDL files used for the Stellar Network are available
-[on GitHub](https://github.com/stellar/stellar-core/tree/master/src/xdr).
+Estruturas de dados em XDR são especificadas em um _interface definition file_ (IDL).
+Os arquivos IDL usados para a rede Stellar estão disponíveis [no GitHub](https://github.com/stellar/stellar-core/tree/master/src/xdr).
