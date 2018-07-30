@@ -2,8 +2,8 @@
 title: Testnet
 ---
 
-The testnet is a small test Stellar network, open to developers.
+A testnet é uma pequena rede Stellar de testes, aberta para desenvolvedores.
 
-Stellar.org runs 3 stellar-core validators on this test network. Set your stellar-core to connect to us by using this [configuration](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_testnet.cfg). You can also find a [Horizon instance](https://horizon-testnet.stellar.org/) that is connected to the testnet.
+Stellar.org roda 3 validadores do stellar-core nessa rede de testes. Configure seu stellar-core para se conectar conosco usando esta [configuração](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_testnet.cfg). Você também pode encontrar uma [instância de Horizon](https://horizon-testnet.stellar.org/) que está conectada à testnet.
 
-The testnet is for, well, testing. It's occasionally reset, so don't get attached to any balances or accounts that you have on it.
+A testnet é feita para, bom, testar. Ela é resetada ocasionalmente, então não se apegue aos saldos e contas que você tiver nela.
