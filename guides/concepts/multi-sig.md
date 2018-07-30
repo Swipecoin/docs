@@ -78,79 +78,79 @@ Para determinar se uma transação tem a autorização necessária para rodar, o
 Este esquema é bem flexível. Pode-se requerer que muitos signatários autorizem pagamentos de uma conta individual. É possível ter uma conta em nome da qual qualquer número de pessoas possa autorizar. Pode-se ter uma chave mestra que concede acesso ou revoga o acesso de outros. Isso suporta qualquer esquema m de n.
 
 
-## Operations
-### Example 1: Anchors
-> You run an anchor that would like to keep its issuing key offline. That way, it's less likely a bad actor can get ahold of the anchor's key and start issuing credit improperly. However, your anchor needs to authorize people holding credit by running the `Allow Trust` operation. Before you issue credit to an account, you need to verify that account is OK.
+## Operações
+### Exemplo 1: Âncoras
+> Você opera uma âncora que gostaria de manter sua chave emissora offline. Assim, é menos provável que um mau agente possa se apossar da chave da âncora e começar a emitir crédito de maneira imprópria. Porém, sua âncora precisa autorizar pessoas que detêm crédito por meio da operação `Allow Trust`. Antes de emitir crédito a uma conta, você precisa verificar que aquela conta está OK.
 
-Multisig allows you to do all of this without exposing the master key of your anchor. You can add another signing key
-to your account with the operation `Set Options`.  This additional key should have a weight below your anchor account's
-medium threshold. Since `Allow Trust` is a low-threshold operation, this extra key authorizes users to hold your anchor's
-credit. But, since `Payment` is a medium-threshold operation, this key does not allow anyone who compromises your anchor to issue credit.
+Multisig permite que você faça tudo isso sem expor a chave mestra de sua âncora. Você pode adicionar outra chave signatária
+para sua conta com a operação `Set Options`. Esta chave adicional deve ter um peso menor que o limiar médio da sua conta âncora.
+Como `Allow Trust` é uma operação de limiar baixo, esta chave extra autoriza usuários a deter o crédito de sua âncora.
+No entanto, como `Payment` é uma operação de limiar médio,  esta chave não permite que ninguém sabote sua âncora para emitir crédito.
 
-Your account setup:
+Configuração da sua conta:
 ```
-  master key weight: 2
-  additional signing key weight: 1
-  low threshold: 0
-  medium threshold: 2
-  high threshold: 2
-```
-
-### Example 2: Joint Accounts
-> You want to set up a joint account with Bilal and Carina such that any of you can authorize a payment. You also want to set up the account so that, if you choose to change signers (e.g., remove or add someone), a high-threshold operation, all 3 of you must agree. You add Bilal and Carina as signers to the joint account. You also ensure that it takes all of your key weights to clear the high threshold but only one to clear the medium threshold.
-
-Joint account setup:
-```
-  master key weight: 1
-  low threshold: 0
-  medium threshold: 0
-  high threshold: 3
-  Bilal's signing key weight: 1
-  Carina's signing key weight: 1
+  peso da chave mestra: 2
+  peso da chave signatária adicional: 1
+  limiar baixo: 0
+  limiar médio: 2
+  limiar alto: 2
 ```
 
-### Example 3: Company Accounts
-> Your company wants to set up an account that requires 3 of 6 employees to agree to *any* transaction from that account.
+### Exemplo 2: Contas Conjuntas
+> Você quer montar uma conta conjunta com Kalil e Bruna, em que qualquer um de vocês possa autorizar um pagamento. Você quer também montar uma conta tal que, se você decidir alterar signatários (ex.: remover ou adicionar alguém), uma operação de limiar alto, todos os 3 devem concordar. Você adiciona Kalil e Bruna como signatários à conta conjunta. Você também confirma que seja necessário os pesos de todas as suas chaves para alcançar o limiar alto, mas apenas o peso de uma para cruzar o limiar médio.
 
-Company account setup:
+Configuração de uma conta conjunta:
 ```
-  master key weight: 0 (Turned off so this account can't do anything without an employee)
-  low threshold: 3
-  medium threshold: 3
-  high threshold: 3
-  Employee 1 key weight: 1
-  Employee 2 key weight: 1
-  Employee 3 key weight: 1
-  Employee 4 key weight: 1
-  Employee 5 key weight: 1
-  Employee 6 key weight: 1
+  peso da chave mestra: 1
+  limiar baixo: 0
+  limiar médio: 0
+  limiar alto: 3
+  peso da chave de Kalil: 1
+  peso da chave de Bruna: 1
 ```
 
-### Example 4: Expense Accounts
-> You fully control an expense account, but you want your two coworkers Diyuan and Emil to be able to authorize transactions
-from this account. You add Diyuan and Emil's signing keys to the expense account. If either Diyuan or Emil leave the company,
-you can remove their signing key, a high-threshold operation.
+### Exemplo 3: Contas Corporativas
+> Sua empresa quer montar uma conta que precise que 3 de 6 funcionários concordem com *qualquer* transação que saia dessa conta.
 
-Expense account setup:
+Configuração de uma conta corporativa:
 ```
-  master key weight: 3
-  low: 0
-  medium: 0
-  high: 3
-  Diyuan's key weight: 1
-  Emil's key weight: 1
+  peso da chave mestra: 0 (Desligada para esta conta não poder fazer nada sem um funcionário)
+  limiar baixo: 3
+  limiar médio: 3
+  limiar alto: 3
+  peso da chave do Funcionário 1: 1
+  peso da chave do Funcionário 2: 1
+  peso da chave do Funcionário 3: 1
+  peso da chave do Funcionário 4: 1
+  peso da chave do Funcionário 5: 1
+  peso da chave do Funcionário 6: 1
 ```
 
-### Example 5: Custom Currencies
-> You want to issue a custom currency and ensure that no more will ever be created. You make a source account and issue
-the maximum amount of currency to a holding account. Then you set the master weight of the source account to below the
-medium threshold--the source account can no longer issue currency.
+### Exemplo 4: Contas para Despesas
+> Você controla por completo uma conta para despesas, mas você quer que seus dois colaboradores Diyuan e Emil sejam capazes de autorizar transações
+dessa conta. Você adiciona as chaves de Diyuan e Emil à conta. Se tanto Diyuan como Emil deixarem a empresa,
+você pode remover suas chaves, uma operação de limiar alto.
 
-Source account setup:
+Configuração de uma conta para despesas:
 ```
-  master key weight: 0
-  low threshold: 0
-  medium threshold: 0
-  high threshold: 0
+  peso da chave mestra: 3
+  limiar baixo: 0
+  limiar médio: 0
+  limiar alto: 3
+  peso da chave de Diyuan: 1
+  peso da chave de Emil: 1
 ```
-Note that even though the thresholds are 0 here, the master key cannot successfully sign a transaction because it's own weight is 0, which makes it an invalid signing key.
+
+### Exemplo 5: Moedas Personalizadas
+> Você quer emitir uma moeda personalizada e garantir que nunca será criado mais dessa moeda. Você faz uma conta fonte e emite
+a quantidade máxima da moeda a uma conta detentora. Então, você define o peso da chave mestra da conta fonte para abaixo do limiar médio
+– a conta fonte não pode mais emitir moeda.
+
+Configuração da conta fonte:
+```
+  peso da chave mestra: 0
+  limiar baixo: 0
+  limiar médio: 0
+  limiar alto: 0
+```
+Note que, embora os limiares sejam 0 aqui, chave mestra não pode assinar uma transação com sucesso porque seu próprio peso é 0, o que a torna uma chave inválida.
