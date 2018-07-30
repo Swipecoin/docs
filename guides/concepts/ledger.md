@@ -2,17 +2,17 @@
 title: Ledger
 ---
 
-A **ledger** represents the state of the Stellar universe at a given point in time. It contains the list of all the accounts and balances, all the orders in the distributed exchange, and any other data that persists.
+Um **ledger** representa o estado do universo Stellar em dado momento. Um ledger contém a lista de todas as contas e saldos, todas as ordens na exchange distribuída, e qualquer outro dado que persista.
 
-The first ledger in the history of the network is called the genesis ledger.
+O primeiro ledger na história da rede é chamado de ledger gênesis.
 
-Every [Stellar Consensus Protocol (SCP)](https://www.stellar.org/developers/learn/concepts/scp.html) round, the network reaches consensus on which [transaction set](./transactions.md#transaction-set) to apply to the last closed ledger; when the new set is applied, a new "last closed ledger" is defined.
+A cada rodada do [Protocolo de Consenso Stellar (SCP)](https://www.stellar.org/developers/learn/concepts/scp.html), a rede chega a um consenso sobre que [conjunto de transações](./transactions.md#conjuntos-de-transações) aplicar ao último ledger fechado; quando um novo conjunto é aplicado, é definido um novo "último ledger fechado".
 
-Each ledger is cryptographically linked to a unique previous ledger, creating a historical ledger chain that goes back to the genesis ledger.
+Cada ledger está criptograficamente conectado a um ledger anterior único, criando uma corrente histórica de ledgers que chegam até o ledger gênesis.
 
-We define the sequence number of a ledger recursively:
-* Genesis ledger has sequence number 1
-* Ledger directly following a ledger with sequence number n has sequence number n+1
+Definimos o número sequencial de um ledger recursivamente:
+* Ledger gênesis possui número sequencial 1
+* O ledger que segue diretamente um ledger com número sequencial n possui número sequencial igual a n+1
 
 ## Ledger header
 Every ledger has a **ledger header**. This header has references to the actual data within the ledger as well as a reference to the previous ledger. References here are cryptographic hashes of the content being referenced--the hashes behave like pointers in typical data structures but with added security guarantees.
