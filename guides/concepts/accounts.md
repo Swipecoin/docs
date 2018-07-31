@@ -9,7 +9,7 @@ Contas são criadas com a operação [Create Account](./list-of-operations.md#cr
 
 O acesso às contas é controlado por criptografia de chave pública/privada. Para uma conta realizar uma transação – ex.: realizar um
 pagamento – a transação deve ser assinada pela chave privada que corresponde à chave pública daquela conta. Também é possível
-preparar esquemas de [multi-assinatura](./multi-sig.md) mais complexos para autorizar transações em uma conta.
+preparar esquemas [multi-sig](./multi-sig.md) (multiassinaturas) mais complexos para autorizar transações em uma conta.
 
 
 ## Campos da Conta
@@ -34,7 +34,7 @@ Contas possuem os seguintes campos:
 > #### Flags
 > Atualmente há três flags, usadas por emissores de [ativos](./assets.md).
 >
->   - **Authorization required (0x1)**: Autorização requerida. Requer que a conta emissora dê permissão a outras contas para deter crédito da conta emissora.
+>   - **Authorization required (0x1)**: Autorização necessária. Requer que a conta emissora dê permissão a outras contas para deter crédito da conta emissora.
 >   - **Authorization revocable (0x2)**: Autorização revogável. Permite que a conta emissora revogue seu crédito mantido por outras contas.
 >   - **Authorization immutable (0x4)**: Autorização imutável. Se for usada, nenhuma outra flag de autorização pode ser usada e a conta nunca pode ser deletada.
 >
