@@ -2,94 +2,94 @@
 title: Federation
 ---
 
-The Stellar federation protocol maps Stellar addresses to more information about a given user. It's a way for Stellar client software
-to resolve email-like addresses such as `name*yourdomain.com` into account IDs like: `GCCVPYFOHY7ZB7557JKENAX62LUAPLMGIWNZJAFV2MITK6T32V37KEJU`. Stellar addresses provide
-an easy way for users to share payment details by using a syntax that interoperates across different domains and providers.
+O protocolo federation do Stellar mapeia endereços Stellar a mais informações sobre dado usuário. É uma maneira para softwares clientes do Stellar
+pegarem endereços parecidos como e-mails como `nome*seudominio.com` e resolvê-los em IDs de conta como: `GCCVPYFOHY7ZB7557JKENAX62LUAPLMGIWNZJAFV2MITK6T32V37KEJU`. Endereços Stellar dão uma maneira fácil
+para usuários compartilharem detalhes de pagamentos usando uma sintaxe que interopera entre diferentes domínios e provedores.
 
 ![Mockup of using a payment address](assets/mockup.png)
 
-## Stellar addresses
+## Endereços Stellar
 
-Stellar addresses are divided into two parts separated by `*`, the username and the domain.
+Endereços Stellar são divididos em duas partes separadas por `*`, o nome de usuário e o domínio.
 
-For example:  `jed*stellar.org`:
-* `jed` is the username,
-* `stellar.org` is the domain.
+Por exemplo, em  `jed*stellar.org`:
+* `jed` é o nome de usuário,
+* `stellar.org` é o domínio.
 
-The domain can be any valid RFC 1035 domain name.
-The username is limited to printable UTF-8 with whitespace and the following characters excluded: <*,> Although of course the domain administrator can place additional restrictions on usernames of its domain.
+O domínio pode ser qualquer nome de domínio RFC 1035 válido.
+O nome de usuário é limitado a UTF-8 printável, excluídos espaços em branco e os seguintes caracteres: <*,> É claro, o administrator do domínio pode colocar restrições adicionais aos nomes de usuário que usem seu domínio.
 
-Note that the `@` symbol is allowed in the username. This allows for using email addresses in the username of an address. For example: `maria@gmail.com*stellar.org`.
+Note que o símbolo `@` é permitido no nome de usuário. Isso permite usar endereços de e-mail no nome de usuário de um endereço Stellar. Por exemplo: `maria@gmail.com*stellar.org`.
 
-## Supporting Federation
+## Dar Suporte ao Federation
 
-### Step 1: Create a [stellar.toml](./stellar-toml.md) file
+### Passo 1: Criar um arquivo [stellar.toml](./stellar-toml.md)
 
-Create a file called stellar.toml and put it at `https://YOUR_DOMAIN/.well-known/stellar.toml`.
+Crie um arquivo chamado stellar.toml e coloque-o em `https://SEU_DOMINIO/.well-known/stellar.toml`.
 
-### Step 2: Add federation_url
+### Passo 2: Adicionar federation_url
 
-Add a `FEDERATION_SERVER` section to your stellar.toml file that tells other people the URL of your federation endpoint.
+Adicione uma seção `FEDERATION_SERVER` em seu arquivo stellar.toml que informe a outras pessoas a URL do seu endpoint para federation.
 
-For example: `FEDERATION_SERVER="https://api.yourdomain.com/federation"`
+Por exemplo: `FEDERATION_SERVER="https://api.seudominio.com/federation"`
 
-Please note that your federation server **must** use `https` protocol.
+Por favor note que o seu servidor federation **deve** usar o protocolo `https`.
 
-### Step 3: Implement federation url HTTP endpoint
+### Passo 3: Implementar o endpoint HTTP do federation
 
-The federation URL specified in your stellar.toml file should accept an HTTP GET request and issue responses of the form detailed below.
+A URL para federation especificada em seu arquivo stellar.toml deve aceitar um GET request HTTP e emitir respostas na forma detalhada abaixo.
 
-Instead of building your own server you can use the [`federation server`](https://github.com/stellar/go/tree/master/services/federation) built by Stellar Development Foundation.
+Em vez de construir seu próprio servidor, é possível usar o [`federation server`](https://github.com/stellar/go/tree/master/services/federation) construído pela Stellar Development Foundation.
 
 ## Federation Requests
-You can use the federation endpoint to look up an account id if you have a stellar address. You can also do reverse federation and look up a stellar addresses from account ids or transaction ids. This is useful to see who has sent you a payment.
+Você pode usar o endpoint federation para pesquisar IDs de conta a partir de um endereço Stellar. Também é possível fazer o que se chama de **federation reverso** e consultar endereços Stellar a partir de IDs de conta ou IDs de transações. Isso é útil para ver quem enviou um pagamento a você.
 
-Federation requests are http `GET` requests with the following form:
+Federation requests são `GET` requests HTTP com a seguinte forma:
 
-`?q=<string to look up>&type=<name,forward,id,txid>`
+`?q=<string a ser pesquisada>&type=<name,forward,id,txid>`
 
-Supported types:
- - **name**: Example: `https://YOUR_FEDERATION_SERVER/federation?q=jed*stellar.org&type=name`
- - **forward**: Used for forwarding the payment on to a different network or different financial institution. The other parameters of the query will vary depending on what kind of institution is the ultimate destination of the payment and what you as the forwarding anchor supports. Your [stellar.toml](./stellar-toml.html) file should specify what parameters you expect in a `forward` federation request. If you are unable to forward or the other parameters in the request are incorrect you should return an error to this effect. Example request:   `https://YOUR_FEDERATION_SERVER/federation?type=forward&forward_type=bank_account&swift=BOPBPHMM&acct=2382376`
- - **id**: *not supported by all federation servers* Reverse federation will return the federation record of the Stellar address associated with the given account ID. In some cases this is ambiguous. For instance if an anchor sends transactions on behalf of its users the account id will be of the anchor and the federation server won't be able to resolve the particular user that sent the transaction. In cases like that you may need to use **txid** instead. Example: `https://YOUR_FEDERATION_SERVER/federation?q=GD6WU64OEP5C4LRBH6NK3MHYIA2ADN6K6II6EXPNVUR3ERBXT4AN4ACD&type=id`
- - **txid**: *not supported by all federation servers* Will return the federation record of the sender of the transaction if known by the server. Example: `https://YOUR_FEDERATION_SERVER/federation?q=c1b368c00e9852351361e07cc58c54277e7a6366580044ab152b8db9cd8ec52a
+Tipos suportados:
+ - **name**: Exemplo: `https://SEU_SERVIDOR_FEDERATION/federation?q=jed*stellar.org&type=name`
+ - **forward**: Usado para encaminhar o pagamento a diferentes redes ou instituições financeiras. Os outros parâmetros do query irão variar dependendo de que tipo de instituição é o destino final do pagamento e o que você, como a âncora que o está encaminhando, suporta. Seu arquivo [stellar.toml](./stellar-toml.html) deve especificar que parâmetros você espera em uma federation request `forward`. Se você não conseguir encaminhar o pagamento, ou se os outros parâmetros na request forem incorretos, você deverá retornar um erro para este efeito. Exemplo de request:  `https://SEU_SERVIDOR_FEDERATION/federation?type=forward&forward_type=bank_account&swift=BOPBPHMM&acct=2382376`
+ - **id**: *não suportado por todos os servidores federation* Um federation reverso retorna o endereço Stellar registrado no federation que está associado a dado ID de conta. Em alguns casos isso é ambíguo. Por exemplo, se uma âncora envia transações em nome de seus usuários, o ID da conta será da âncora e o servidor federation não será capaz de resolver o usuário particular que enviou a transação. Em casos assim pode ser preciso usar **txid** no lugar. Exemplo: `https://SEU_SERVIDOR_FEDERATION/federation?q=GD6WU64OEP5C4LRBH6NK3MHYIA2ADN6K6II6EXPNVUR3ERBXT4AN4ACD&type=id`
+ - **txid**: *não suportado por todos os servidores federation* Retorna o registro federation do remetente da transação, se for conhecido pelo servidor. Exemplo: `https://SEU_SERVIDOR_FEDERATION/federation?q=c1b368c00e9852351361e07cc58c54277e7a6366580044ab152b8db9cd8ec52a
 &type=txid`
 
-### Federation Response
-The federation server should respond with an appropriate HTTP status code, headers and a JSON response.
+### Resposta do Federation
+O servidor federation deve responder com um código de status HTTP apropriado, headers e uma resposta JSON.
 
-You must enable CORS on the federation server so clients can send requests from other sites. The following HTTP header must be set for all federation server responses.
+Você deve habilitar CORS no servidor federation para clientes poderem enviar requests a partir de outros sites. O header HTTP a seguir deve ser setado para todas as respostas de servidores federation.
 
 ```
 Access-Control-Allow-Origin: *
 ```
 
-When a record has been found the response should return `200 OK` http status code and the following JSON body:
+Quando um registro for encontrado, a resposta deve retornar o código de status HTTP `200 OK` e o seguinte body em JSON:
 
 ```
 {
   "stellar_address": <username*domain.tld>,
   "account_id": <account_id>,
-  "memo_type": <"text", "id" , or "hash"> *optional*
-  "memo": <memo to attach to any payment. if "hash" type then will be base64 encoded> *optional*
+  "memo_type": <"text", "id" , ou "hash"> *opcional*
+  "memo": <memo anexo a qualquer pagamento. se for do tipo "hash", estará codificado em base64> *opcional*
 }
 ```
 
-If a redirect is needed the federation server should return `3xx` http status code and immediately redirect the user to the correct URL using the `Location` header.
+Se um redirecionamento for necessário, o servidor federation deve retornar o código de status HTTP `3xx` e redirecionar imediatamente o usuário à URL correta utilizando o header `Location`.
 
-When a record has not been found `404 Not Found` http status code should be returned.
+Quando um registro não for encontrado, deve-se retornar o código de status HTTP `404 Not Found`.
 
-Every other http status code will be considered an error. The body should contain error details:
+Todo outro tipo de código de status HTTP será considerado um erro. O body deve conter detalhes sobre o erro:
 
 ```
 {
-   "detail": "extra details provided by the federation server"
+   "detail": "detalhes adicionais dados pelo servidor federation"
 }
 ```
 
-## Looking up federation provider via a home domain entry
-Accounts may optionally have a [home domain](./accounts.md#home-domain) specified. This allows an account to programmatically specify where is the main federation provider for that account.
+## Consultar um provedor federation por uma entrada home domain
+Facultativamente, contas podem ter um [home domain](./accounts.md#home-domain) especificado. Isso permite que uma conta especifique programaticamente onde está o provedor federation daquela conta.
 
-## Caching
+## Cache
 
-You shouldn't cache responses from federation servers. Some organizations may generate random IDs to protect their users' privacy. Those IDs may change over time.
+Recomenda-se não manter respostas de servidores federation em cache. Algumas organizações podem gerar IDs aleatórios para proteger a privacidade de seus usuários. Esses IDs podem mudar ao longo do tempo.
