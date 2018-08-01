@@ -1,35 +1,35 @@
 ---
-title: Add Stellar to your Exchange
+title: Adicione Stellar a sua Exchange
 ---
 
-This guide will walk you through the integration steps to add Stellar to your exchange. This example uses Node.js and the [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk), but it should be easy to adapt to other languages.
+Este guia irá indicar os passos de integração para adicionar Stellar a sua exchange. Este exemplo usa Node.js e o [SDK de Stellar para JS](https://github.com/stellar/js-stellar-sdk), mas deve ser fácil adaptá-los a outras linguagens.
 
-There are many ways to architect an exchange. This guide uses the following design:
- - `issuing account`: One Stellar account that holds the majority of customer deposits offline.
- - `base account`: One Stellar account that holds a small amount of customer deposits online and is used to payout to withdrawal requests.
- - `customerID`: Each user has a customerID, used to correlate incoming deposits with a particular user's account on the exchange.
+Há várias maneiras de arquitetar uma exchange. Este guia usa o seguinte design:
+ - `issuing account`: Conta emissora. Uma conta Stellar que detém offline a maioria dos depósitos dos clientes.
+ - `base account`: Conta base. Uma conta Stellar que detém online uma pequena quantidade de depósitos dos clientes e é usada para custear pedidos de saque.
+ - `customerID`: ID do cliente. Cada usuário possui um customerID, usado para correlacionar envios de depósito e a conta de um usuário específico na exchange.
 
-The two main integration points to Stellar for an exchange are:<br>
-1) Listening for deposit transactions from the Stellar network<br>
-2) Submitting withdrawal transactions to the Stellar network
+Os dois pontos principais de integração ao Stellar para uma exchange são:<br>
+1) Escutar transações de depósito a partir da rede Stellar<br>
+2) Submeter transações de saque à rede Stellar
 
-## Setup
+## Configuração
 
-### Operational
-* *(optional)* Set up [Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html)
-* *(optional)* Set up [Horizon](https://www.stellar.org/developers/horizon/reference/index.html)
+### Operacional
+* *(opcional)* Configurar [Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html)
+* *(opcional)* Configurar [Horizon](https://www.stellar.org/developers/horizon/reference/index.html)
 
-If your exchange doesn't see a lot of volume, you don't need to set up your own instances of Stellar Core and Horizon. Instead, use one of the Stellar.org public-facing Horizon servers.
+Se sua exchange não tiver que lidar com muito volume, não é preciso montar suas próprias instâncias de Stellar Core e Horizon. Ao invés disso, use um dos servidores públicos de Horizon do Stellar.org.
 ```
   test net: {hostname:'horizon-testnet.stellar.org', secure:true, port:443};
   live: {hostname:'horizon.stellar.org', secure:true, port:443};
 ```
 
-### Issuing account
-An issuing account is typically used to keep the bulk of customer funds secure. An issuing account is a Stellar account whose secret keys are not on any device that touches the Internet. Transactions are manually initiated by a human and signed locally on the offline machine—a local install of `js-stellar-sdk` creates a `tx_blob` containing the signed transaction. This `tx_blob` can be transported to a machine connected to the Internet via offline methods (e.g., USB or by hand). This design makes the issuing account secret key much harder to compromise.
+### Conta emissora
+Uma conta emissora é tipicamente usada para guardar com segurança a maior parte dos fundos dos clientes. Uma conta emissora é uma conta Stellar cujas chaves secretas não estão em nenhum dispositivo que tenha contato com a Internet. transações são iniciadas manualmente por um humano e assinadas localmente na máquina offline — uma instalação local de `js-stellar-sdk` cria uma `tx_blob` que contém a transação assinada. Esta `tx_blob` pode ser transportada para uma máquina conectada à Internet por métodos offline (ex.: USB ou manualmente). Esta operação torna a chave secreta da conta emissora muito mais difícil de ser comprometida.
 
-### Base account
-A base account contains a more limited amount of funds than an issuing account. A base account is a Stellar account used on a machine that is connected to the Internet. It handles the day-to-day sending and receiving of lumens. The limited amount of funds in a base account restricts loss in the event of a security breach.
+### Conta base
+Uma conta base contém um número mais limitado de fundos que uma conta emissora. Uma conta base é uma conta Stellar usada em uma máquina que está conectada à Internet. Ela realiza operações cotidianas de envio e recebimento de lumens. O número limitado de fundos numa conta base evita maiores perdas em caso de uma quebra de segurança.
 
 ### Database
 - Need to create a table for pending withdrawals, `StellarTransactions`.
@@ -282,7 +282,7 @@ If you're an exchange, it's easy to become a Stellar anchor as well. The integra
 To learn more about what it means to be an anchor, see the [anchor guide](./anchor/index.html).
 
 ### Accepting non-native assets
-First, open a [trustline](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) with the issuing account of the non-native asset -- without this you cannot begin to accept this asset. 
+First, open a [trustline](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) with the issuing account of the non-native asset -- without this you cannot begin to accept this asset.
 
 ```js
 var someAsset = new StellarSdk.Asset('ASSET_CODE', issuingKeys.publicKey());
@@ -300,7 +300,7 @@ Then, make a few small changes to the example code above:
 
 *Note*: the user cannot send us non-native assets whose issuing account we have not explicitly opened a trustline with.
 
-* In the `withdraw` function, when we add an operation to the transaction, we must specify the details of the asset we are sending. For example: 
+* In the `withdraw` function, when we add an operation to the transaction, we must specify the details of the asset we are sending. For example:
 ```js
 var someAsset = new StellarSdk.Asset('ASSET_CODE', issuingKeys.publicKey());
 
