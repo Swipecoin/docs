@@ -2,26 +2,26 @@
 title: Stellar.toml
 ---
 
-# Introduction
+# Introdução
 
-The `stellar.toml` file is used to provide a common place where the Internet can find information about your domain's Stellar integration. Any website can publish Stellar network information. You can announce your validation key, your [federation](./federation.md) server, peers you are running, your quorum set, if you are a anchor, etc.
+O arquivo `stellar.toml` é usado para fornecer um lugar comum onde a Internet pode encontrar informações sobre a integração do seu domínio ao Stellar. Qualquer site pode publicar informações referentes à rede Stellar. Pode-se anunciar sua chave de validação, seu servidor [federation](./federation.md), peers que você está rodando, seu conjunto de quóruns, se você é uma âncora, etc.
 
-The stellar.toml file is a text file in the [TOML format](https://github.com/toml-lang/toml).
+O arquivo stellar.toml é um arquivo de texto no [formato TOML](https://github.com/toml-lang/toml).
 
-## Publishing stellar.toml
+## Publicar um stellar.toml
 
-Given the domain "DOMAIN", the stellar.toml will be searched for at the following location:
+Dado o domínio "DOMAIN", o stellar.toml será pesquisado no seguinte local:
 
 `https://DOMAIN/.well-known/stellar.toml`
 
-## Enabling cross-origin resource sharing (CORS)
-You must enable CORS on the stellar.toml so people can access this file from other sites. The following HTTP header *must* be set for a HTTP response for `stellar.toml` file request.
+## Habilitar cross-origin resource sharing (CORS)
+É necessário habilitar CORS no stellar.toml para que pessoas possam acessar este arquivo a partir de outros sites. O seguinte header HTTP *deve* estar definido para uma resposta HTTP para um request pelo arquivo `stellar.toml`.
 
 ```
 Access-Control-Allow-Origin: *
 ```
 
-**Important**: Only enable CORS for stellar.toml (or any files it references). For example, in Apache you would set something like:
+**Importante**: Apenas habilite CORS para stellar.toml (ou quaisquer arquivos referenciados por ele). Por exemplo, em Apache seria definido algo como:
 
 ```xml
 <Location "/.well-known/stellar.toml">
@@ -29,7 +29,7 @@ Access-Control-Allow-Origin: *
 </Location>
 ```
 
-Or in nginx:
+Ou em nginx:
 
 ```
 location /.well-known/stellar.toml {
@@ -37,17 +37,17 @@ location /.well-known/stellar.toml {
 }
 ```
 
-For other web servers, see: http://enable-cors.org/server.html
+Para outros servidores web, veja: http://enable-cors.org/server.html
 
-## Testing CORS
+## Testar CORS
 
-1. Run a curl command in your terminal similar to the following (replace stellar.org with the hosting location of your stellar.toml file):
+1. Rode um comando curl em seu terminal, semelhante ao seguinte (substitua stellar.org pelo domínio que hospeda seu arquivo stellar.toml):
 
   ```bash
   curl --head https://stellar.org/.well-known/stellar.toml
   ```
 
-2. Verify the `Access-Control-Allow-Origin` header is present as shown below.
+2. Verifique que o header `Access-Control-Allow-Origin` esteja presente, como mostrado abaixo.
 
   ```bash
   curl --head https://stellar.org/.well-known/stellar.toml
@@ -58,32 +58,32 @@ For other web servers, see: http://enable-cors.org/server.html
   ...
   ```
 
-3. Also run the command on a page that should not have it and verify the `Access-Control-Allow-Origin` header is missing.
+3. Rode também o comando em uma página que não deveria tê-lo e verifique que o header `Access-Control-Allow-Origin` esteja ausente.
 
-## Stellar.toml example
+## Exemplo de Stellar.toml
 
-This file is UTF-8 with Dos-, UNIX-, or Mac-style end of lines.
-Blank lines and lines beginning with '#' are ignored.
-Undefined sections are reserved.
-All sections are optional.
-Many of these sections reflect what would be listed in your [stellar-core.cfg](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg)
+Este arquivo é em UTF-8 com finais de linha em estilo Dos, UNIX, ou Mac.
+Linhas em branco e linhas iniciadas por '#' são ignoradas.
+Seções indefinidas são reservadas.
+Todas as seções são opcionais.
+Muitas dessas seções refletem o que estaria listado em seu [stellar-core.cfg](https://github.com/stellar/stellar-core/blob/master/docs/stellar-core_example.cfg).
 
 ```toml
-# Sample stellar.toml
+# Exemplo de stellar.toml
 
-#   The endpoint which clients should query to resolve stellar addresses
-#   for users on your domain.
+#   O endpoint que clientes devem fazer query para resolver endereços Stellar
+#   para usuários em seu domínio.
 FEDERATION_SERVER="https://api.stellar.org/federation"
 
-# The endpoint used for the compliance protocol
+# O endpoint usado para o protocolo compliance
 AUTH_SERVER="https://api.stellar.org/auth"
 
-# The signing key is used for the compliance protocol
+# A chave de assinatura (signing key) é usada para o protocolo compliance
 SIGNING_KEY="GBBHQ7H4V6RRORKYLHTCAWP6MOHNORRFJSDPXDFYDGJB2LPZUFPXUEW3"
 
-# convenience mapping of common names to node IDs.
-# You can use these common names in sections below instead of the less friendly nodeID.
-# This is provided mainly to be compatible with the stellar-core.cfg
+# Mapeamento de conveniência de nomes comuns a IDs de nós.
+# Pode-se usar estes nomes comuns em seções abaixo em vez do ID de nó, que é menos amigável.
+# Isso é fornecido principalmente para ser compatível com o stellar-core.cfg
 NODE_NAMES=[
 "GD5DJQDDBKGAYNEAXU562HYGOOSYAEOO6AS53PZXBOZGCP5M2OPGMZV3  lab1",
 "GB6REF5GOGGSEHZ3L2YK6K4T4KX3YDMWHDCPMV7MZJDLHBDNZXEPRBGM  donovan",
@@ -92,32 +92,32 @@ NODE_NAMES=[
 "GAOO3LWBC4XF6VWRP5ESJ6IBHAISVJMSBTALHOQM2EZG7Q477UWA6L7U  anchor"
 ]
 
-#   A list of accounts that are controlled by this domain.
+#   Uma lista de contas que são controladas por este domínio.
 ACCOUNTS=[
 "$sdf_watcher1",
 "GAENZLGHJGJRCMX5VCHOLHQXU3EMCU5XWDNU4BGGJFNLI2EL354IVBK7"
 ]
 
-#   Any validation public keys that are declared
-#   to be used by this domain for validating ledgers and are
-#   authorized signers for the domain.
+#   Toda chave pública de validação que é declaradamente
+#   usada por este domínio para validar ledgers e são
+#   signatários autorizados do domínio.
 OUR_VALIDATORS=[
 "$sdf_watcher2",
 "GCGB2S2KGYARPVIA37HYZXVRM2YZUEXA6S33ZU5BUDC6THSB62LZSTYH"
 ]
 
-# DESIRED_BASE_FEE (integer)
-# This is what you would prefer the base fee to be. It is in stroops.
+# DESIRED_BASE_FEE (número inteiro)
+# É o valor preferível da base fee para você. Está em stroops.
 DESIRED_BASE_FEE=100
 
-# DESIRED_MAX_TX_PER_LEDGER (integer)
-# This is how many maximum transactions per ledger you would like to process.
+# DESIRED_MAX_TX_PER_LEDGER (número inteiro)
+# Este é o máximo de transações por ledger que você gostaria de processar.
 DESIRED_MAX_TX_PER_LEDGER=400
 
-#   List of IPs of known stellar-core's.
-#   These are IP:port strings.
-#   Port is optional.
-#   By convention, IPs are listed from most to least trusted, if that information is known.
+#   Lista dos IPs de stellar-cores conhecidos.
+#   São strings IP:port.
+#   Port é opcional.
+#   Por convenção, IPs são listados do mais confiável ao menos confiável, se isso for uma informação conhecida.
 KNOWN_PEERS=[
 "192.168.0.1",
 "core-testnet1.stellar.org",
@@ -125,57 +125,57 @@ KNOWN_PEERS=[
 "2001:0db8:0100:f101:0210:a4ff:fee3:9566"
 ]
 
-# list of history archives maintained by this domain
+# lista dos arquivos históricos mantidos por este domínio
 HISTORY=[
 "http://history.stellar.org/prd/core-live/core_live_001/",
 "http://history.stellar.org/prd/core-live/core_live_002/",
 "http://history.stellar.org/prd/core-live/core_live_003/"
 ]
 
-#   This section allows an anchor to declare currencies it currently issues.
-#   Can be used by wallets and clients to trust anchors by domain name
+#   Esta seção permite que uma âncora declare moedas (currencies) que emite atualmente.
+#   Pode ser usada por wallets e clientes para confiar em âncoras a partir do nome do domínio
 [[CURRENCIES]]
 code="USD"
 issuer="GCZJM35NKGVK47BB4SPBDV25477PZYIYPVVG453LPYFNXLS3FGHDXOCM"
-display_decimals=2 # Specifies how many decimal places should be displayed by clients to end users.
+display_decimals=2 # Especifica quantas casas decimais devem ser exibidas por clientes aos usuários finais.
 
 [[CURRENCIES]]
 code="BTC"
 issuer="$anchor"
-display_decimals=7 # Maximum decimal places that can be represented is 7
+display_decimals=7 # O máximo de casas decimais que podem ser representadas é 7
 
-# asset with meta info
+# ativo com meta informações
 [[CURRENCIES]]
-code="GOAT"
+code="BODE"
 issuer="GD5T6IPRNCKFOHQWT264YPKOZAWUMMZOLZBJ6BNQMUGPWGRLBK3U7ZNP"
 display_decimals=2
-name="goat share"
-desc="1 GOAT token entitles you to a share of revenue from Elkins Goat Farm."
-conditions="There will only ever be 10,000 GOAT tokens in existence. We will distribute the revenue share annually on Jan. 15th"
+name="participação BODE"
+desc="1 token BODE dá direito a uma porcentagem dos rendimentos da Fazenda de Bodes Elkins."
+conditions="Só haverá 10,000 tokens BODE em existência. Distribuiremos a porcentagem dos rendimentos anualmente em 15 de Janeiro."
 image="https://pbs.twimg.com/profile_images/666921221410439168/iriHah4f.jpg"
 
-#   Potential quorum set of this domain's validators.
+#   Conjunto de quóruns potenciais dos validadores deste domínio.
 [QUORUM_SET]
 VALIDATORS=[
 "$self", "$lab1", "$nelisky1","$jianing",
 "$eno","$donovan"
 ]
 
-# optional extra information for humans
-# Useful place for anchors to detail various policies and required info
+# informações adicionais opcionais para humanos
+# Lugar útil para âncoras detalharem várias políticas e informações exigidas
 
 ###################################
-# Required compliance fields:
-#      name=<recipient name>
-#      addr=<recipient address>
-# Federation Format:  
-#        <phone number>*anchor.com
-#        Forwarding supported by sending to: forward*anchor.com
+# Campos de compliance necessários:
+#      name=<nome do recipiente>
+#      addr=<endereço do recipiente>
+# Formato do Federation:  
+#        <n. de telefone>*anchor.com
+#        Encaminhamentos são suportados por envios a: forward*anchor.com
 #           forward_type=bank_account
-#           swift=<swift code of receiving bank>
-#           acct=<recipient account number at receiving bank>
-# Minimum Amount Forward: $2 USD
-# Maximum Amount Forward: $10000 USD
+#           swift=<código swift do banco recipiente>
+#           acct=<número da conta do recipiente no banco>
+# Quantia mínima para encaminhamento: $2 USD
+# Quantia máxima para encaminhamento: $10000 USD
 
 
 ```
