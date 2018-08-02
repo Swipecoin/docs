@@ -1,83 +1,83 @@
 ---
-title: Hardware Requirements
+title: Requisitos de Hardware
 ---
 
-# Considerations
+# Considerações
 
-The Stellar Network is a live system and the hardware requirements will grow along with usage of the network. Please keep this in mind as you decide what hardware you want to use for your Stellar integration.
+A Rede Stellar é um sistema em atividade e os requisitos de hardware irão crescer junto com o uso da rede. Por favor mantenha isso em mente ao decidir que hardware usar para sua integração ao Stellar.
 
-If you opt to go with the minimum requirements that we have listed below, you may experience some lag during times of peak traffic on the network as your node tries to catch up to the rest of the network. For a smooth experience you should opt to go with the recommended hardware requirements listed for each service.
+Se optar pelos requisitos mínimos que listamos abaixo, você pode sofrer lag durante picos de tráfego na rede enquanto seu nó tenta alcançar o resto da rede. Para ter uma experiência fluida, recomenda-se usar hardware que cumpra os requisitos recomendados listados para cada serviço.
 
-We will do our best to keep this doc up-to-date as we make further improvements to the codebase.
+Nos esforçaremos para deixar esta documentação atualizada enquanto fazemos melhorias no código.
 
-# Nodes
+# Nós
 
 ## Stellar-Core
 
-Instances of Stellar-Core are part of the network as a node and therefore need to be large enough to support the volume on the network.
+Instâncias de Stellar-Core participam da rede como um nó e, assim, precisam ser potentes o suficiente para suportar o volume da rede.
 
-### Minimum
-**CPU**: 4-Core (8-Thread) Intel i7/Xeon or equivalent (c5.xlarge on AWS)\
+### Mínimo
+**CPU**: 4-Core (8-Thread) Intel i7/Xeon ou equivalente (c5.xlarge na AWS)\
 **RAM**: 8GB DDR4\
 **SSD**: 64GB
 
-### Recommended
-**CPU**: 8-Core (16-Thread) Intel i7/Xeon or equivalent (c5.2xlarge on AWS)\
+### Recomendado
+**CPU**: 8-Core (16-Thread) Intel i7/Xeon ou equivalente (c5.2xlarge na AWS)\
 **RAM**: 16GB DDR4\
 **SSD**: 120GB
 
 ## Horizon
 
-Instances of Horizon ingest data from the network and therefore need to be large enough to support ingesting all of the latest transactions on the network.
+Instâncias de Horizon recebem dados da rede e logo precisam ser potentes o suficientes para suportar receber todas as transações mais recentes da rede.
 
-There is a significant amount of computation that is done on the DB side of Horizon, these requirements are only for the application side of horizon. If you are going by these requirements then you will need to account for using a larger machine if using the same machine for the DB, or a separate machine for the DB altogether.
+Há um volume considerável de computação que é feito no lado base de dados do Horizon; esses requisitos são apenas para o lado aplicação do Horizon. Se você está seguindo esses requisitos, é preciso considerar usar uma máquina mais potente se for usar a mesma máquina para a base de dados, ou mesmo uma máquina separada para a base de dados.
 
-### Minimum
-**CPU**: 8-Core (16-Thread) Intel i7/Xeon or equivalent (c5.2xlarge on AWS)\
+### Mínimo
+**CPU**: 8-Core (16-Thread) Intel i7/Xeon ou equivalente (c5.2xlarge na AWS)\
 **RAM**: 16GB DDR4\
 **SSD**: 64GB
 
-### Recommended
-**CPU**: 16-Core (32-Thread) Intel i7/Xeon or equivalent (c5.4xlarge on AWS)\
+### Recomendado
+**CPU**: 16-Core (32-Thread) Intel i7/Xeon ou equivalente (c5.4xlarge na AWS)\
 **RAM**: 32GB DDR4\
 **SSD**: 120GB
 
-# Anchor Servers
+# Servidores de Âncoras
 
-The hardware requirements for these anchor services depend on your own internal usage, i.e. these hardware requirements will not increase as the volume on the network increases. Our suggestions below assume that you will run one machine for each service, although you can combine services onto a single machine with a larger capacity using VMs if you prefer.
+Os requisitos de hardware para os serviços de âncoras dependem do seu próprio uso interno: estes requisitos de hardware não irão aumentar junto com o volume da rede. Nossas sugestões abaixo consideram que você irá rodar uma máquina para cada serviço, mas você pode combinar serviços em uma só máquina com uma capacidade maior usando máquinas virtuais se preferir.
 
-## Bridge Server
+## Servidor Bridge
 
-### Minimum
-**CPU**: 2-Core (4-Thread) Intel i7/Xeon or equivalent (c5.large on AWS)\
+### Mínimo
+**CPU**: 2-Core (4-Thread) Intel i7/Xeon ou equivalente (c5.large na AWS)\
 **RAM**: 4GB DDR3/DDR4\
-**SSD**: Needs a DB to hold processed transactions. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on your usage of the network. 20GB seems like a good starting point.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende do seu uso da rede. 20GB parece ser um bom ponto de partida.
 
-### Recommended
-**CPU**: 4-Core (8-Thread) Intel i7/Xeon or equivalent (c5.xlarge on AWS)\
+### Recomendado
+**CPU**: 4-Core (8-Thread) Intel i7/Xeon ou equivalente (c5.xlarge na AWS)\
 **RAM**: 8GB DDR4\
-**SSD**: Needs a DB to hold processed transactions. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on your usage of the network. 20GB seems like a good starting point.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende do seu uso da rede. 20GB parece ser um bom ponto de partida.
 
-## Federation Server
+## Servidor Federation
 
-### Minimum
-**CPU**: 2-Core (4-Thread) Intel i7/Xeon or equivalent (c5.large on AWS)\
+### Mínimo
+**CPU**: 2-Core (4-Thread) Intel i7/Xeon ou equivalente (c5.large na AWS)\
 **RAM**: 4GB DDR3/DDR4\
-**SSD**: Needs a DB to hold federation table. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on how many accounts you have. See callbacks for more information.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende de quantas contas você possui. Veja callbacks para mais informações.
 
-### Recommended
-**CPU**: 4-Core (8-Thread) Intel i7/Xeon or equivalent (c5.xlarge on AWS)\
+### Recomendado
+**CPU**: 4-Core (8-Thread) Intel i7/Xeon ou equivalente (c5.xlarge na AWS)\
 **RAM**: 8GB DDR4\
-**SSD**: Needs a DB to hold federation table. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on how many accounts you have. See callbacks for more information.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende de quantas contas você possui. Veja callbacks para mais informações.
 
-## Compliance Server
+## Servidor Compliance
 
-### Minimum
-**CPU**: 2-Core (4-Thread) Intel i7/Xeon or equivalent (c5.large on AWS)\
+### Mínimo
+**CPU**: 2-Core (4-Thread) Intel i7/Xeon ou equivalente (c5.large na AWS)\
 **RAM**: 4GB DDR3/DDR4\
-**SSD**: Needs a DB to hold processed transactions. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on your usage of the network. 20GB seems like a good starting point.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende do seu uso da rede. 20GB parece ser um bom ponto de partida.
 
-### Recommended
-**CPU**: 4-Core (8-Thread) Intel i7/Xeon or equivalent (c5.xlarge on AWS)\
+### Recomendado
+**CPU**: 4-Core (8-Thread) Intel i7/Xeon ou equivalente (c5.xlarge na AWS)\
 **RAM**: 8GB DDR4\
-**SSD**: Needs a DB to hold processed transactions. Above CPU and RAM requirements don’t account for running this database’s hardware. DB size depends on your usage of the network. 20GB seems like a good starting point.
+**SSD**: Requer uma base de dados para guardar transações processadas. Os requisitos de CPU e RAM acima não levam em conta o hardware que roda essa BD. O tamanho da BD depende do seu uso da rede. 20GB parece ser um bom ponto de partida.
