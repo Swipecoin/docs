@@ -28,73 +28,73 @@ A seguir está um passo a passo das transações necessárias para criar um toke
 **Signatários**: conta fonte
 
 
-A Transação 1 e a Transação 2 são submetidas à rede pelo criador do token. Isso cria as contas emissora e distribuidora e dá à entidade fonte o acesso às chaves pública e privada de cada conta. A conta emissora é financiada com o saldo mínimo e nenhuma entrada. Ela receberá dinheiro adicional para cobrir a tarifa que incorre ao transferir ativos no fim do acordo escrow, e para cobrir a tarifa envolvida ao transferir os ativos à conta distribuidora. A conta distribuidora deve receber fundos iguais ao saldo mínimo mais uma entrada, já que ela terá de criar uma trustline (uma entrada) no futuro. Os saldos iniciais são os mínimos necessários para tornar as contas válidas na Rede Stellar; a quantidade real usada para criar as duas contas pode ser de qualquer valor, contanto que seja maior do que o mínimo. A conta distribuidora pode começar apenas com o saldo mínimo sem entradas, mas a próxima transação irá criar uma trustline para a conta, aumentando assim o valor de seu saldo mínimo.
+A Transação 1 e a Transação 2 são submetidas à rede pelo criador do token. Isso cria as contas emissora e distribuidora e dá à entidade fonte o acesso às chaves pública e privada de cada conta. A conta emissora é financiada com o saldo mínimo e nenhuma entrada. Ela receberá dinheiro adicional para cobrir a tarifa que incorre ao transferir ativos no fim de um acordo escrow, e para cobrir a tarifa envolvida ao transferir os ativos à conta distribuidora. A conta distribuidora deve receber fundos iguais ao saldo mínimo mais uma entrada, já que ela terá de criar uma trustline (uma entrada) no futuro. Os saldos iniciais são os mínimos necessários para tornar as contas válidas na Rede Stellar; a quantidade real usada para criar as duas contas pode ser de qualquer valor, contanto que seja maior do que o mínimo. A conta distribuidora pode começar apenas com o saldo mínimo sem entradas, mas a próxima transação irá criar uma trustline para a conta, aumentando assim o valor de seu saldo mínimo.
 
 
 #### Transação 3: Criar Confiança
 **Conta**: conta distribuidora  
 **Operações**:
 - [Change Trust](../concepts/list-of-operations.md#change-trust): criar uma trustline com a conta emissora
-	 - asset: asset code format
-	 	- code: asset code
-	 	- issuer account: issuing account
-	 - limite da confiança: máximo de tokens  
+	 - asset: formato do código do ativo
+	 	- code: código do ativo
+	 	- issuer account: conta emissora
+	 - trust limit: máximo de tokens  
 
 **Signatários**: conta distribuidora
 
 
-Transaction 3 is submitted to the network by the token creator. It creates a trustline between the issuing account and the distribution account. There are currently two formats of asset code supported for tokens: Alphanumeric 4-character maximum (Alphanumeric 4) and Alphanumeric 12-character maximum (Alphanumeric 12). The alphanumeric character set is any characters from the set [a-z][A-Z][0-9]. In this step, you are introducing your token/asset to the Stellar network, but you are not creating any for trading. The trust limit parameter limits the number of tokens the distribution account will be able to hold at once.  It is recommended to either make this number larger than the total number of tokens expected to be available on the network or set it to be the maximum value (a total of max int64 stroops) that an account can hold.
+A Transação 3 é submetida à rede pelo criador do token. Ela cria uma trustline entre a conta emissora e a conta distribuidora. Atualmente existem dois formatos de códigos de ativo suportados para tokens: Alfanumérico com máximo de 4 caracteres (Alphanumeric 4) e Alfanumérico com máximo de 12 caracteres (Alphanumeric 12). O conjunto de caracteres alfanuméricos é quaisquer caracteres do conjunto [a-z][A-Z][0-9]. Neste passo, você está introduzindo o seu token/ativo na rede Stellar, mas não está criando nenhum para compra e venda. O parâmetro trust limit limita o número de tokens que a conta distribuidora será capaz de deter de uma só vez. Recomenda-se ora deixar esse número maior que o número total de tokens que se espera estarem disponíveis na rede, ora definí-lo como o valor máximo possível (um total de max int64 stroops) que uma conta pode deter.
 
 
-#### Transaction 4: Asset Creation
+#### Transação 4: Criação do Ativo
 **Conta**: conta emissora  
 **Operações**:
-- [Payment](../concepts/list-of-operations.md#payment): give the distribution account the tokens
-	 - destination: distribution account
-	 - asset: asset code format
-	 	- code: asset code
-	 	- issuer account: issuing account
-	 - trust limit: tokens to be created
+- [Payment](../concepts/list-of-operations.md#payment): dar os tokens à conta distribuidora
+	 - destination: conta distribuidora
+	 - asset: formato do código do ativo
+	 	- code: código do ativo
+	 	- issuer account: conta emissora
+	 - trust limit: tokens a serem criados
 
 **Signatários**: conta emissora
 
-Transaction 4 is created and submitted to the network by the issuing account. In this transaction, it pays the distribution account the tokens, creating them on the network. The total number of tokens paid to the distribution account is the total number of tokens created.
+A Transação 4 é criada e submetida à rede pela conta emissora. Nesta transação, são pagos os tokens à conta distribuidora, criando-os na rede. O número total de tokens pagos à conta distribuidora é o número total de tokens criados.
 
-#### Transaction 5: Asset Creation
+#### Transação 5: Criação do Ativo
 **Conta**: conta emissora  
 **Operações**:
-- [Set Option - Home Domain](../concepts/list-of-operations.md#set-options): set home domain of stellar.toml
-	 - home domain: domain location
+- [Set Option - Home Domain](../concepts/list-of-operations.md#set-options): definir o home domain do stellar.toml
+	 - home domain: endereço do domínio
 
 **Signatários**: conta emissora
 
 
-Transaction 5 is created and submitted to the network. The domain location should be set to the domain that is hosting your stellar.toml file (which contains metadata regarding your token).
+A Transação 5 é criada e submetida à rede. O endereço do domínio deve ser o domínio onde está hospedado o seu arquivo stellar.toml (que contém metadados relacionados ao seu token).
 
-At this step, a stellar.toml must be created and hosted on a domain of choice. The stellar.toml file should contain metadata relevant to the token being created. Maintaining a stellar.toml file is important, as it provides transparency for the asset and its usage.
-A standard stellar.toml declaration of an asset should contain the following for each asset issued (all values in curly brackets are variable, and should be filled in):
+Neste passo, um stellar.toml deve ser criado e hospedado em um domínio de sua escolha. O arquivo stellar.toml deve conter metadados relevantes ao token sendo criado. Manter um arquivo stellar.toml é importante, porque ele dá transparência ao ativo e seu uso.
+Uma declaração stellar.toml padrão de um ativo deve conter os dados a seguir para cada ativo emitido (todos os valores entre chaves são variáveis, e devem ser preenchidos):
 ```
 [[CURRENCIES]]
-code="{asset code}"
-issuer="{public key of issuing account}"
-display_decimals={integer}
+code="{código do ativo}"
+issuer="{chave pública da conta emissora}"
+display_decimals={número inteiro}
 ```
 
-The field display_decimals represents the maximum decimal place that should be displayed by clients (wallets, exchanges, etc) on their user interface.
+O campo display_decimals representa o máximo de casas decimais que devem ser exibidos a clientes (wallets, exchanges, etc) em sua interface de usuário.
 
-Other fields that can be included in the stellar.toml file include:
+Outros campos que podem ser incluídos no arquivo stellar.toml são:
 ```
-name="{name}"
-desc="{description of asset}"
-conditions="{conditions for usage and distributions of the asset}"
-image="{url of an image to associate with the asset}"
+name="{nome}"
+desc="{descrição do ativo}"
+conditions="{condições para uso e distribuição do ativo}"
+image="{url de uma imagem associada ao ativo}"
 ```
 
 
-#### (OPTIONAL) Transaction A: Limit Token Supply
+#### (OPCIONAL) Transação A: Limitar a Quantidade de Tokens
 **Conta**: conta emissora  
 **Operações**:
-- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remove all weights and thresholds
+- [Set Options - Limiares & Pesos](../concepts/list-of-operations.md#set-options): remover todos os pesos e limiares
 	 - master weight: 0
 	 - low threshold: 0
 	 - medium threshold: 0
@@ -103,40 +103,40 @@ image="{url of an image to associate with the asset}"
 **Signatários**: conta emissora
 
 
-Transaction A is created and submitted to the network by the issuing account. By setting the weights and thresholds all to zero, this creates a lockout scenario. All keys, including the master key of the account, will become invalid keys. Locking an account prevents any further transaction to be created using this account, consequently meaning that no more tokens can be created. The [XDR form](https://www.stellar.org/developers/horizon/reference/xdr.html) of this transaction can be published once submitted to show proof of the account being locked.
+A Transação A é criada e submetida à rede pela conta emissora. Definindo todos os pesos e limiares como zero, isso cria uma situação equivalente a jogar fora as chaves. Todas as chaves, incluindo a chave mestra da conta, se tornarão inválidas. Trancar uma conta desta maneira evita que qualquer outra transação seja criada por esta conta, o que significa que não poderão ser criados mais tokens. A [forma XDR](https://www.stellar.org/developers/horizon/reference/xdr.html) desta transação pode ser publicada após o envio para servir como prova de que a conta foi trancada.
 
 
 
-***WARNING: AFTER CARRYING OUT THIS STEP YOU CAN NO LONGER CREATE NEW OPERATIONS OR SUBMIT NEW TRANSACTIONS WITH THE ISSUING ACCOUNT. THIS STEP IS FINAL.***
+***AVISO: APÓS REALZER ESTE PASSO, NÃO SERÁ MAIS POSSÍVEL CRIAR NOVAS OPERAÇÕES OU SUBMETER NOVAS TRANSAÇÕES COM A CONTA EMISSORA. ESTE PASSO É DEFINITIVO.***
 
 
-#### Transaction 6: Token Distribution
+#### Transação 6: Distribuição do Token
 **Conta**: conta distribuidora  
 **Operações**:
-- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): create an offer to sell the created tokens
-	- selling: created asset code format
-		- code: asset code
-		- issuer account: issuer account
-	- buying: asset code format
-		- code: asset code
-		- issuer account: issuer account
-	- amount: amount to sell
-	- price: sale price in lumens
+- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): criar uma oferta para vender os tokens criados
+	- selling: formato do código do ativo criado
+		- code: código do ativo
+		- issuer account: conta emissora
+	- buying: formato do código do ativo
+		- code: código do ativo
+		- issuer account: conta emissora
+	- amount: quantidade a ser vendida
+	- price: preço da venda em lumens
 	- offer id: 0  
 
 **Signer**: conta distribuidora
 
-Transaction 6 is created and submitted to the network by the distribution account. In this step, the created asset is being sold for a different asset. The different asset could be another created asset, a fiat currency, a cryptocurrency, or lumens.  If the offer id is set to zero, a new offer is being created. The amount is the price of 1 unit of asset to be sold (selling) in terms of the asset that is being bought (buying).
+A Transação 6 é criada e submetida à rede pela conta distribuidora. Neste passo, o ativo criado está sendo vendido em troca de outro ativo. Esse ativo pode ser outro ativo criado, uma moeda fiat, uma criptomoeda, ou lumens. Se o offer id estiver definido como zero, uma nova oferta está sendo criada. O amount é o preço de 1 unidade do ativo a ser vendido (selling) em termos do ativo que está sendo comprado (buying).
 
-By submitting Transaction 6, the created token will be listed on the Stellar Network's decentralized exchange. In order to be listed on exchange clients like Stellar Term and Stellar Port, please refer to their websites for listing instructions. It’s encouraged to be listed on exchange clients to increase visibility.
+Submetendo a Transação 6, o token criado será listado na exchange descentralizada da Rede Stellar. Para ser listado em clientes exchange como Stellar Term e Stellar Port, favor consultar em seus sites as instruções para listagem. Incentivamos listar o ativo em exchanges para aumentar a visibilidade.
 
 
 
-## Additional Examples:
-Examples for some of the transactions and more about issuing assets can be found [here](../issuing-assets.md). In addition, [this article](../concepts/assets.md#anchors-issuing-assets) provides more in-depth explanations of key terms regarding asset creation. A preliminary guide that walks through explaining token creation using Stellar Laboratory is available [here](https://www.stellar.org/blog/tokens-on-stellar/).
+## Exemplos Adicionais:
+Exemplos de algumas das transações e mais sobre emissão de ativos pode ser visto [aqui](../issuing-assets.md). Além disso, [este artigo](../concepts/assets.md#âncoras-emitir-ativos) dá uma explicação mais aprofundada sobre termos importantes relacionados à criação de ativos. Um guia preliminar que dá uma explicação didática sobre criação de tokens usando o Laboratório Stellar está disponível [aqui](https://www.stellar.org/blog/tokens-on-stellar/).
 
-## Resources:
-- [Becoming an Anchor](../anchor/) - Stellar<span>.org
-- [Minimum Account Balance Calculation](../concepts/fees.md#minimum-account-balance) - Stellar<span>.org
-- [Concept: stellar.toml](../concepts/stellar-toml.md) - Stellar<span>.org
-- [Concept: Trustlines](../concepts/assets.md#trustlines) - Stellar<span>.org
+## Recursos:
+- [Tornar-se uma âncora](../anchor/) - Stellar<span>.org
+- [Cálculo do Saldo Mínimo da Conta](../concepts/fees.md#saldo-mínimo-da-conta) - Stellar<span>.org
+- [Conceito: stellar.toml](../concepts/stellar-toml.md) - Stellar<span>.org
+- [Conceito: Trustlines](../concepts/assets.md#trustlines) - Stellar<span>.org
