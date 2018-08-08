@@ -1,39 +1,39 @@
 ---
-title: How and Why to Complete Your Stellar.toml
+title: Como e por que Completar seu Stellar.toml
 ---
 
-How and Why to Complete Your Stellar.toml
+Como e por que Completar seu Stellar.toml
 =========================================
 
->*If you are interested in issuing a token on the Stellar network, but haven't yet, start by consulting the step-by-step instructions for custom asset creation *[*here*](./custom-assets.md)*.*
+>*Se tiver interesse em emitir um token na rede Stellar mas ainda não tiver feito isso, comece consultando as instruções passo a passo para criar um ativo personalizado *[*aqui*](./custom-assets.md)*.*
 
-Hello! We made this short guide to help you, a token issuer, put your token in the best possible place to succeed on Stellar.
+Olá! Criamos este guia curto para ajudar você, um emissor de tokens, a colocar seu token no melhor lugar possível para ter sucesso no Stellar.
 
-Mostly, we want to make sure you know how to **provide information to the network** about yourself and your token, so that potential buyers and apps, like exchanges and wallets, will trust your asset. You provide this necessary information by completing your **stellar.toml** file.
+Sobretudo, queremos garantir que você saiba como **fornecer informações à rede** sobre si mesmo e seu token, para que potenciais compradores e apps como exchanges e wallets confiem em seu ativo. O modo de providenciar essas informações é completando seu arquivo **stellar.toml**.
 
-The best tokens on Stellar already follow the guidelines below, and *apps and buyers will expect your token to do the same*.
+Os melhores tokens no Stellar já seguem as orientações abaixo, e *apps e compradores esperarão o mesmo do seu token*.
 
-Why you should complete your stellar.toml file
+Por que completar seu arquivo stellar.toml
 ----------------------------------------------
 
-The most successful token issuers give exchanges and potential buyers lots of information about themselves. On Stellar, they do this in the **stellar.toml** file. More information in your token's stellar.toml will mean:
+Os emissores de tokens mais bem-sucedidos dão a exchanges e potenciais compradores um monte de informações sobre si mesmos. No Stellar, isso é feito no arquivo **stellar.toml**. Mais informações no stellar.toml de seu token fará que:
 
-* your token is listed on *more* exchanges
+* seu token seja listado em *mais* exchanges
 
-* your token holders are *more* confident
+* os detentores de seu token tenham *mais* confiança
 
-* very likely, your project is *more* successful
+* muito provavelmente, seu projeto tenha *mais* sucesso
 
-For example, the Stellar app, [StellarX](http://stellarx.com/), uses the stellar.toml file to decide how your token is presented to traders in its markets view. If you don't provide enough information, your token may be hidden from many traders.  Other Stellar exchanges like stellarport.io and stellarterm.com make similar decisions.
+Por exemplo, a aplicação [StellarX](http://stellarx.com/) usa o arquivo stellar.toml para decidir como seu token é apresentado a traders em sua visão de mercados. Se você não fornecer informações o suficiente, seu token pode não aparecer para vários traders. Outras exchanges de Stellar como stellarport.io e stellarterm.com tomam decisões semelhantes.
 
-*Many won't list your token at all without a robust stellar.toml.*
+*Muitas nem chegarão a listar seu token sem um stellar.toml robusto.*
 
-The stellar.toml file is *so* important that the first Stellar Ecosystem Proposal is devoted to outlining what it should contain. You can find the complete SEP 0001 [here](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), but we'll summarize the important parts below.
+O arquivo stellar.toml é *tão* importante que a primeira Proposta do Ecossistema Stellar (Stellar Ecosystem Proposal) é devotada a descrever o que ele deveria conter. Você pode encontrar a SEP 0001 completa [aqui](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md), mas vamos resumir abaixo as partes importantes.
 
-What is your stellar.toml?
+O que é o seu stellar.toml?
 --------------------------
 
-Your stellar.toml is a file you write in [TOML](https://github.com/toml-lang/toml), which is a simple configuration file format, and publish at https://YOUR_DOMAIN/.well-known/stellar.toml.  Anyone can look it up, and it *proves* that the owner of the https domain hosting the stellar.toml claims *responsibility* for the accounts and tokens listed in it.  So it's your chance to legitimize your offering, and to announce vital information about your organization and your token.  **If you offer multiple tokens, you can list them all in one stellar.toml file.**
+Seu stellar.toml é um arquivo escrito em [TOML](https://github.com/toml-lang/toml), que é um formato simples para arquivos de configuração, e publicado em https://SEU_DOMINIO/.well-known/stellar.toml. Qualquer pessoa pode consultá-lo, e ele *prova* que o dono do domínio https que hospeda o stellar.toml se *responsabiliza* pelas contas e tokens listados no arquivo. Então é a sua chance de legitimizar sua oferta e anunciar informações vitais sobre sua organização e seu token. **Se você oferecer mais de um token, é possível listar todos eles em um único arquivo stellar.toml.**
 
 How to complete your stellar.toml
 ---------------------------------
@@ -48,9 +48,9 @@ How to complete your stellar.toml
 
 There is one field in the Account Information section required for *all* token issuers:
 
-* `ACCOUNTS`: A list of **public keys** for all the Stellar accounts associated with your token. 
+* `ACCOUNTS`: A list of **public keys** for all the Stellar accounts associated with your token.
 
-Listing your public keys lets users confirm that you, in fact, own them. For example, when https://google.com hosts a stellar.toml file, users can be sure that *only* the accounts listed on it belong to Google. If someone then says, "You need to pay your Google bill this month, send payment to address GIAMGOOGLEIPROMISE", but that key is not listed on Google's stellar.toml, then users know to not trust it. 
+Listing your public keys lets users confirm that you, in fact, own them. For example, when https://google.com hosts a stellar.toml file, users can be sure that *only* the accounts listed on it belong to Google. If someone then says, "You need to pay your Google bill this month, send payment to address GIAMGOOGLEIPROMISE", but that key is not listed on Google's stellar.toml, then users know to not trust it.
 
 Most of the other information specified in the Account Information section is only necessary for validators and financial institutions.
 
@@ -64,7 +64,7 @@ Here's an example of a completed `ACCOUNTS` field listing three public keys:
 
 ### ISSUER DOCUMENTATION
 
-Basic information about your organization goes into a TOML **table** called `[DOCUMENTATION]`.  Issuer Documentation is your chance to inform exchanges and buyers about your business, and to demonstrate that your business is legitimate and trustworthy. 
+Basic information about your organization goes into a TOML **table** called `[DOCUMENTATION]`.  Issuer Documentation is your chance to inform exchanges and buyers about your business, and to demonstrate that your business is legitimate and trustworthy.
 
 The more you fill out, the more likely people are to believe in your offering.  
 
@@ -78,7 +78,7 @@ The more you fill out, the more likely people are to believe in your offering.
 
 * The physical address of your organization (`org_physical_address`). We understand you might want to keep your work address private. At the very least, you should put the *city* and *country* in which you operate. A street address is ideal and provides a higher level of trust and transparency to your potential users.
 
-* Your organization's official phone number (`org_phone_number`). 
+* Your organization's official phone number (`org_phone_number`).
 
 * Your organization's official Twitter handle (`org_twitter`).
 
@@ -88,7 +88,7 @@ The more you fill out, the more likely people are to believe in your offering.
 
 * Your organization's official Github account (`org_github`).
 
-* Your organization's official Keybase account (`org_keybase`).  Your Keybase account should contain proof of ownership of any public online accounts you list here, including your organization's domain. 
+* Your organization's official Keybase account (`org_keybase`).  Your Keybase account should contain proof of ownership of any public online accounts you list here, including your organization's domain.
 
 * A description of your organization (`org_description`).  This is fairly open-ended, and you can write as much as you want.  It's a great place to distinguish yourself by describing what it is that you do.
 
@@ -106,7 +106,7 @@ Here's an example of completed Issuer Documentation:
     ORG_URL="https://www.domain.com"
     ORG_LOGO="https://www.domain.com/awesomelogo.jpg"
     ORG_DESCRIPTION="Description of issuer"
-    ORG_PHYSICAL_ADDRESS="123 Sesame St., New York, NY, 12345" 
+    ORG_PHYSICAL_ADDRESS="123 Sesame St., New York, NY, 12345"
     ORG_PHYSICAL_ADDRESS_ATTESTATION="https://www.domain.com/address_attestation.jpg"
     ORG_PHONE_NUMBER="1 (123)-456-7890"
     ORG_PHONE_NUMBER_ATTESTATION="https://www.domain.com/phone_attestation.jpg"
@@ -135,7 +135,7 @@ Information about the primary point of contact for your organization goes into a
 
 Again, the more information you provide, the better. Exchanges might desire additional verifiable information when deciding how to present your token to traders, and prioritize tokens that include it:
 
-* A SHA-256 hash of a photo of the point of contact's government-issued photo ID (`id_photo_hash`). 
+* A SHA-256 hash of a photo of the point of contact's government-issued photo ID (`id_photo_hash`).
 
 * A SHA-256 hash of a verification photo of the point of contact holding a signed, dated, handwritten message detailed in SEP 0001 (`verification_photo_hash`).
 
@@ -200,13 +200,13 @@ Here's what an example of completed Currency Documentation:
 
 ### ANCHORED OR ASSET-BACKED TOKEN REQUIREMENTS:
 
-Anchored tokens are specialized assets in the Stellar ecosystem because they can be redeemed outside of the network for other assets.  If you are issuing an anchored token, you need to provide additional information about those assets, and about how to redeem your token for them. 
+Anchored tokens are specialized assets in the Stellar ecosystem because they can be redeemed outside of the network for other assets.  If you are issuing an anchored token, you need to provide additional information about those assets, and about how to redeem your token for them.
 
 In addition to Currency Documentation listed above, the following fields are **required** for anchored tokens:
 
 * The type of asset your token represents (`anchor_asset_type`).  The possible categories are *fiat*, *crypto*, *stock*, *bond*, *commodity*, *realestate*, and *other*.
 
-* The name of the asset that serves as the anchor for your token (`anchor_asset`). 
+* The name of the asset that serves as the anchor for your token (`anchor_asset`).
 
 * Instructions to redeem your token for the underlying asset (`redemption_instructions`).
 
