@@ -35,26 +35,26 @@ O que é o seu stellar.toml?
 
 Seu stellar.toml é um arquivo escrito em [TOML](https://github.com/toml-lang/toml), que é um formato simples para arquivos de configuração, e publicado em https://SEU_DOMINIO/.well-known/stellar.toml. Qualquer pessoa pode consultá-lo, e ele *prova* que o dono do domínio https que hospeda o stellar.toml se *responsabiliza* pelas contas e tokens listados no arquivo. Então é a sua chance de legitimizar sua oferta e anunciar informações vitais sobre sua organização e seu token. **Se você oferecer mais de um token, é possível listar todos eles em um único arquivo stellar.toml.**
 
-How to complete your stellar.toml
+Como completar seu stellar.toml
 ---------------------------------
 
-[SEP](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md)[ 0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) specifies five sections you can add to your stellar.toml: Account Information, Issuer Documentation, Point of Contact Documentation, Currency Documentation, and Validator Information.  Within those sections, some fields only apply to specialized tokens, but many apply to *all* tokens, and these guidelines will outline which fields are:
+A [SEP 0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) especifica cinco seções que você pode adicionar ao seu stellar.toml: Account Information, Issuer Documentation, Point of Contact Documentation, Currency Documentation, e Validator Information. Dentro dessas seções, alguns campos só se aplicam a tokens especializados, mas muitos se aplicam a *todos* os tokens, e estas orientações irão indicar quais campos são:
 
-* **Required**: all token issuers *must* include this information in their stellar.toml if they want to be listed on exchanges.
+* **Required**: exigidos. Todos os emissores de tokens *devem* incluir essa informação em seu stellar.toml se quiserem ser listados em exchanges.
 
-* **Suggested**: any token issuer who wants their offering to stand out should complete these fields.
+* **Suggested**: sugeridos. Recomenda-se a emissores de tokens que quiserem que sua oferta ganhe destaque que completem esses campos.
 
 ### ACCOUNT INFORMATION
 
-There is one field in the Account Information section required for *all* token issuers:
+Informações da conta. Há um campo na seção Account Information que é exigido a *todos* os emissores de tokens:
 
-* `ACCOUNTS`: A list of **public keys** for all the Stellar accounts associated with your token.
+* `ACCOUNTS`: Uma lista de **chaves públicas** de todas as contas Stellar associadas ao seu token.
 
-Listing your public keys lets users confirm that you, in fact, own them. For example, when https://google.com hosts a stellar.toml file, users can be sure that *only* the accounts listed on it belong to Google. If someone then says, "You need to pay your Google bill this month, send payment to address GIAMGOOGLEIPROMISE", but that key is not listed on Google's stellar.toml, then users know to not trust it.
+Listar suas chaves públicas permite que usuários confirmem que você de fato as possui. Por exemplo, quando o https://google.com hospeda um arquivo stellar.toml, os usuários podem ter certeza de que *somente* as contas listadas lá pertencem ao Google. Assim, se vier alguém dizendo que "Você precisa pagar sua conta do Google deste mês! Envie seu pagamento ao endereço GEUSOUOGOOGLEDEVERDADEMESMO", mas aquela chave não estiver listada no stellar.toml do Google, os usuários sabem que não devem confiar nela.
 
-Most of the other information specified in the Account Information section is only necessary for validators and financial institutions.
+Em maior parte, as outras informações especificadas na seção Account Information é somente necessária para validadores e instituições financeiras.
 
-Here's an example of a completed `ACCOUNTS` field listing three public keys:
+Aqui está um exemplo de um campo `ACCOUNTS` completo que lista três chaves públicas:
 
 	ACCOUNTS=[
 	"GAOO3LWBC4XF6VWRP5ESJ6IBHAISVJMSBTALHOQM2EZG7Q477UWA6L7U",
@@ -64,88 +64,88 @@ Here's an example of a completed `ACCOUNTS` field listing three public keys:
 
 ### ISSUER DOCUMENTATION
 
-Basic information about your organization goes into a TOML **table** called `[DOCUMENTATION]`.  Issuer Documentation is your chance to inform exchanges and buyers about your business, and to demonstrate that your business is legitimate and trustworthy.
+Documentação sobre o emissor. Informações básicas sobre a sua organização entram em uma **tabela** TOML chamada `[DOCUMENTATION]`. A Issuer Documentation é a sua oportunidade para informar exchanges e compradores sobre o seu negócio e demonstrar que o seu negócio é legítimo e confiável.
 
-The more you fill out, the more likely people are to believe in your offering.  
+Quanto mais você preencher, será mais provável que pessoas acreditem na sua oferta.  
 
-**Required:** All issuers must include the following information:
+**Required:** Todos os emissores devem incluir as seguintes informações:
 
-* The legal name of your organization (`org_name`), and if your business has one, its official dba (`org_dba`).
+* O nome jurídico de sua organização (`org_name`) e, se seu negócio possuir um, seu DBA oficial (`org_dba`).
 
-* The URL of your organization's official website (`org_url`).  In order to prove the website is yours, *you must host your stellar.toml on the same domain you list here.*  That way, exchanges and buyers can view the SSL certificate on your website, and feel reasonably confident that you are who you say you are.
+* A URL do site oficial da sua organização (`org_url`). Para provar que o site é seu, *você deve hospedar seu stellar.toml no mesmo domínio listado aqui*. Assim, exchanges e compradores podem ver o certificado SSL no seu site, e se sentirem razoavelmente seguros que você quem está dizendo que é.
 
-* A URL to a company logo (`org_logo`), which will show up next to your organization on exchanges.  If you fail to provide a logo, the icon next to your organization will appear blank on many exchanges.
+* Uma URL a um logo da organização (`org_logo`), que irá ser exibido próximo ao nome da sua organização em exchanges. Se você deixar de fornecer um logo, o ícone próximo a sua organização irá aparecer em branco em muitas exchanges.
 
-* The physical address of your organization (`org_physical_address`). We understand you might want to keep your work address private. At the very least, you should put the *city* and *country* in which you operate. A street address is ideal and provides a higher level of trust and transparency to your potential users.
+* O endereço físico de sua organização (`org_physical_address`). Entendemos que você possa preferir manter privado o seu endereço de trabalho. Recomenda-se pelo menos inserir a *cidade* e *país* no qual você opera. Incluir também a rua seria ideal e daria um alto nível de confiança e transparência a seus potenciais usuários.
 
-* Your organization's official phone number (`org_phone_number`).
+* O número de telefone oficial da sua organização (`org_phone_number`).
 
-* Your organization's official Twitter handle (`org_twitter`).
+* O nome de usuário oficial da sua organização no Twitter (`org_twitter`).
 
-* The best contact email address for you organization (`org_official_email`). This should be hosted at the same domain as your official website.
+* O melhor endereço de e-mail para contato da sua organização (`org_official_email`). Ele deve ser hospedado no mesmo domínio que o seu site oficial.
 
-**Suggested:** Including this information will help your offering stand out:
+**Suggested:** Incluir essas informações irá ajudar sua oferta a se destacar:
 
-* Your organization's official Github account (`org_github`).
+* A conta oficial da sua organização no Github (`org_github`).
 
-* Your organization's official Keybase account (`org_keybase`).  Your Keybase account should contain proof of ownership of any public online accounts you list here, including your organization's domain.
+* A conta oficial da sua organização no Keybase (`org_keybase`). Sua conta no Keybase deve conter uma prova da posse de qualquer conta pública online listada aqui, incluindo o domínio de sua organização.
 
-* A description of your organization (`org_description`).  This is fairly open-ended, and you can write as much as you want.  It's a great place to distinguish yourself by describing what it is that you do.
+* Uma descrição da sua organização (`org_description`). Este conteúdo é bem aberto, e você pode escrever o quanto quiser. É um grande lugar para se distinguir descrevendo o que você faz.
 
-Exchanges might desire additional verifiable information when deciding how to present your token to traders, and prioritize tokens that include it:
+Exchanges podem desejar informações verificáveis adicionais ao decidir como apresentar seu token a traders, e priorizar tokens que as incluírem:
 
-* Attestation of the physical address listed above (`org_physical_address_attestation`).  This is a URL to an image on your organization's domain of an official third party document (such as a utility bill) that shows your organization's name and address.
+* Comprovante do endereço físico listado acima (`org_physical_address_attestation`). É uma URL de uma imagem, hospedada no domínio de sua organização, de um documento oficial feito por um terceiro (como uma conta de luz) que mostra o nome e endereço da sua organização.
 
-* Attestation of the phone number listed above (`org_phone_number_attestation`).  This is a URL to an image on your domain showing a phone bill listing both your phone number and your organization's name.
+* Comprovante do número de telefone listado acima (`org_phone_number_attestation`). É uma URL de uma imagem, hospedada no domínio de sua organização, mostrando uma conta de telefone que lista ambos o número de telefone e nome da sua organização.
 
-Here's an example of completed Issuer Documentation:
+Veja um exemplo de uma Issuer Documentation completa:
 
     [DOCUMENTATION]
-    ORG_NAME="Organization Name"
-    ORG_DBA="Organization DBA"
-    ORG_URL="https://www.domain.com"
-    ORG_LOGO="https://www.domain.com/awesomelogo.jpg"
-    ORG_DESCRIPTION="Description of issuer"
+    ORG_NAME="Nome da Organização"
+    ORG_DBA="DBA da Organização"
+    ORG_URL="https://www.dominio.com"
+    ORG_LOGO="https://www.dominio.com/logoincrivel.jpg"
+    ORG_DESCRIPTION="Descrição do emissor"
     ORG_PHYSICAL_ADDRESS="123 Sesame St., New York, NY, 12345"
-    ORG_PHYSICAL_ADDRESS_ATTESTATION="https://www.domain.com/address_attestation.jpg"
+    ORG_PHYSICAL_ADDRESS_ATTESTATION="https://www.dominio.com/address_attestation.jpg"
     ORG_PHONE_NUMBER="1 (123)-456-7890"
-    ORG_PHONE_NUMBER_ATTESTATION="https://www.domain.com/phone_attestation.jpg"
+    ORG_PHONE_NUMBER_ATTESTATION="https://www.dominio.com/phone_attestation.jpg"
     ORG_KEYBASE="accountname"
     ORG_TWITTER="orgtweet"
     ORG_GITHUB="orgcode"
-    ORG_OFFICIAL_EMAIL="support@domain.com"
+    ORG_OFFICIAL_EMAIL="support@dominio.com"
 
 ### POINT OF CONTACT DOCUMENTATION
 
-Information about the primary point of contact for your organization goes into a TOML **list** called `[[PRINCIPALS]]`.  You need to put contact information for *at least one person* at your organization.  If you don't, exchanges can't verify your offering, and it is unlikely that buyers will be interested.
+Documentação sobre o ponto de contato. Informações sobre o ponto de contato principal da sua organização entram numa **lista** TOML chamada `[[PRINCIPALS]]`. É preciso inserir informações de contato para *pelo menos uma pessoa* da sua organização. Senão, exchanges não podem verificar sua oferta, e não é provável que os compradores se interessem.
 
-**Required**: All token issuers should include the following information about their point of contact:
+**Required**: Todos os emissores de token devem incluir as seguintes informações sobre o seu ponto de contato:
 
-* The name of the primary contact (`name`).
+* O nome do contato principal (`name`).
 
-* The primary contact's official email address (`email`).  This should be hosted at the same domain as your organization's official website.
+* O endereço de e-mail oficial do contato principal (`email`). Deve estar hospedado no mesmo domínio que o site oficial da organização.
 
-* The personal Twitter handle of the point of contact (`twitter`).
+* O nome de usuário pessoal do contato no Twitter (`twitter`).
 
-**Suggested:** If the point of contact for your organization has them, we suggest you also include:
+**Suggested:** Se o ponto de contato da sua organização tem as contas abaixo, sugerimos também incluir:
 
-* The personal Github account of the point of contact (`github`).
+* A conta pessoal do contato no Github (`github`).
 
-* The personal Keybase account for the point of contact (`keybase`). This account should include proof of ownership of the email address listed above.
+* A conta pessoal do contato no Keybase (`keybase`). Esta conta deve incluir prova de posse do endereço de e-mail listado acima.
 
-Again, the more information you provide, the better. Exchanges might desire additional verifiable information when deciding how to present your token to traders, and prioritize tokens that include it:
+Igualmente, quanto mais informações fornecidas, melhor. Exchanges podem desejar informações verificáveis adicionais ao decidir apresentar seu token a traders, e priorizar tokens que as incluírem:
 
-* A SHA-256 hash of a photo of the point of contact's government-issued photo ID (`id_photo_hash`).
+* Um hash SHA-256 de uma foto de um documento de identidade oficial com foto do contato (`id_photo_hash`).
 
-* A SHA-256 hash of a verification photo of the point of contact holding a signed, dated, handwritten message detailed in SEP 0001 (`verification_photo_hash`).
+* Um hash SHA-256 de uma foto de verificação do ponto de contato segurando uma mensagem assinada, datada e escrita à mão, detalhada na SEP 0001 (`verification_photo_hash`).
 
-The photo hashes allow exchanges and wallets to confirm the identity of your point of contact.  Those services can contact you privately to request ID and verification photos, then check those photos against the hashes listed here to make sure they match.  If the hashes match, they will let their clients know that your contact information is verified.
+Os hashes das fotos permitem que exchanges e wallets confirmem a identidade do seu contato. Esses serviços podem entrar em contato de maneira privada para pedir fotos de ID e verificação, e bater essas fotos com os hashes listados aqui para confirmar sua veracidade. Se os hashes forem confirmados, eles vão divulgar a seus clientes que suas informações de contato foram verificadas.
 
-Here's an example of completed Point of Contact Documentation for one principal:
+Aqui está um exemplo de um Point of Contact Documentation completo para uma pessoa:
 
     [[PRINCIPALS]]
     name="Jane Jedidiah Johnson"
-    email="jane@domain.com"
+    email="jane@dominio.com"
     twitter="@crypto_jane"
     keybase="crypto_jane"
     github="crypto_jane"
@@ -155,68 +155,68 @@ Here's an example of completed Point of Contact Documentation for one principal:
 
 ### TOKEN DOCUMENTATION
 
-Information about your token goes into a TOML **list** called `[[CURRENCIES]]`.  If you are issuing multiple tokens, you can include them all in one stellar.toml.  Each token should have its own `[[CURRENCIES]]` list.
+Documentação sobre o Token. Informações sobre o seu token entram em uma **lista** TOML chamada `[[CURRENCIES]]`. Se você estiver emitindo mais de um token, você pode incluir todos eles em um só stellar.toml. Cada token deve ter sua própria lista `[[CURRENCIES]]`.
 
-**Required**: All issuers must provide the following information for each token they issue:
+**Required**: Todos os emissores devem fornecer as seguintes informações sobre cada token emitido:
 
-* The asset code (`code`).  This is one of two key pieces of information that identify your token.  Without it, your token cannot be listed anywhere.
+* O código do ativo (`code`). Esta é uma das duas informações que identificam o seu token. Sem ele, seu token não pode ser listado em nenhum lugar.
 
-* The Stellar public key of the issuing account (`issuer`).  This is the second key piece of information that identifies your token. Without it, your token cannot be listed anywhere.
+* A chave pública Stellar da conta emissora (`issuer`). Esta é a segunda informação chave que identifica o seu token. Sem ela, seu token não pode ser listado em nenhum lugar.
 
-* The status of your token (`status`): *live*, *dead*, or *test*.  Marking your token *live* means you are ready for exchanges to list it.  If your token is ready to trade, and you fail to list its status, it may not appear on exchanges.  
+* O status do seu token (`status`): *live*, *dead*, ou *test*. Marcar seu token como *live* significa que você está pronto para que exchanges o incluam em listagens. Se o seu token estiver pronto para comercialização e você deixar de listar seu status, ele pode não aparecer em exchanges.
 
-* A preference for number of decimals when client displays currency balance (`display_decimals`).
+* Uma preferência pelo número de casas decimais quando o cliente exibir o saldo da conta (`display_decimals`).
 
-* A short name for the token (`name`).  If you fail to name your token, exchanges may not be able to display it properly.
+* Um nome curto do token (`name`). Se você deixar de nomear o seu token, exchanges podem acabar não o exibindo adequamente.
 
-You also need to describe your **token issuance policy** by filling in exactly *one* of the following mutually exclusive fields:
+Você também precisa descrever sua **política de emissão do token**, preenchendo exatamente *um* dos seguintes campos mutuamente exclusivos:
 
-* `fixed_number`, which you should specify if you are issuing a set number of tokens, and that number will never increase.
+* `fixed_number`, que você deve especificar se estiver emitindo um número fixo de tokens que nunca irá aumentar.
 
-* `max_number`, which you should specify if there is an upper limit to the number of tokens you will issue.
+* `max_number`, que você deve especificar se estiver um limite máximo para o número de tokens a ser emitido.
 
-* `is_unlimited`, which you should specify if you reserve the right to create more tokens at your discretion.
+* `is_unlimited`, que você deve especificar se você se reserva o direito de criar mais tokens ao seu critério.
 
-**Suggested:** If you want your token to stand out, you should also include the following:
+**Suggested:** Se você quiser que seu token se destaque, recomenda-se incluir também o seguinte:
 
-* A description of your token and what it represents (`desc`).  This is a good place to clarify what your token does, and why someone might want to own it.
+* Uma descrição do seu token e o que ele representa (`desc`). Este é um bom lugar para esclarecer o que o seu token faz, e por que alguém poderia se interessar por comprá-lo.
 
-* Any conditions you place on the redemption of your token (`conditions`).
+* Quaisquer condições que você puser para o resgate de seu token (`conditions`).
 
-* A URL to an image representing token (`image`).  Without it, your token will appear blank on many exchanges
+* Uma URL de uma imagem que representa o token representing token (`image`).  Sem ela, seu token aparecerá em branco em muitas exchanges.
 
-Here's what an example of completed Currency Documentation:
+Veja um exemplo de uma Currency Documentation completa:
 
 	[[CURRENCIES]]
-    code="GOAT"
+    code="BODE"
     issuer="GD5T6IPRNCKFOHQWT264YPKOZAWUMMZOLZBJ6BNQMUGPWGRLBK3U7ZNP"
     status=”live”
     display_decimals=2
-    name="goat share"
-    desc="1 GOAT token entitles you to a share of revenue from Elkins Goat Farm."
-    conditions="There will only ever be 10,000 GOAT tokens in existence. We will distribute the revenue share annually on Jan. 15th"
+    name="títulos BODE"
+    desc="1 token BODE dá direito a uma porcentagem dos rendimentos da Fazenda de Bodes Elkins."
+    conditions="Só haverá 10,000 tokens BODE em existência. Distribuiremos a porcentagem dos rendimentos anualmente em 15 de Janeiro"
     image="https://pbs.twimg.com/profile_images/666921221410439168/iriHah4f.jpg"
     fixed_number=10000
 
 ### ANCHORED OR ASSET-BACKED TOKEN REQUIREMENTS:
 
-Anchored tokens are specialized assets in the Stellar ecosystem because they can be redeemed outside of the network for other assets.  If you are issuing an anchored token, you need to provide additional information about those assets, and about how to redeem your token for them.
+Requisitos para tokens ancorados ou garantidos por ativos. Tokens ancorados são ativos especializados no ecossistema Stellar porque podem ser resgatados fora da rede na forma de outros ativos. Se você está emitindo um token ancorado, você precisa fornecer informações adicionais sobre esses ativos, e sobre como resgatar seu token recebendo esses ativos em troca.
 
-In addition to Currency Documentation listed above, the following fields are **required** for anchored tokens:
+Além da Currency Documentation listada acima, são **exigidos** os campos a seguir para tokens ancorados:
 
-* The type of asset your token represents (`anchor_asset_type`).  The possible categories are *fiat*, *crypto*, *stock*, *bond*, *commodity*, *realestate*, and *other*.
+* O tipo do ativo que o seu token representa (`anchor_asset_type`). As categorias possíveis são *fiat*, *crypto*, *stock*, *bond*, *commodity*, *realestate*, e *other*.
 
-* The name of the asset that serves as the anchor for your token (`anchor_asset`).
+* O nome do ativo que serve como âncora para o seu token (`anchor_asset`).
 
-* Instructions to redeem your token for the underlying asset (`redemption_instructions`).
+* Instruções para resgatar seu token e receber o ativo subjacente (`redemption_instructions`).
 
-Because of the nature of assets anchored to crypto, exchanges are unlikely to list them without the following **verifiable** information:
+Por causa da natureza de ativos ancorados a crypto, exchanges podem não listá-los sem as seguintes informações **verificáveis**:
 
-* The public addresses that hold the crypto assets (`collateral_addresses`).
+* Os endereços públicos que detêm os ativos crypto (`collateral_addresses`).
 
-* Proof that you control those public addresses (`collateral_address_signatures`).  [SEP 0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) contains a template for these signatures, and instructions for tailoring them to your token.
+* Prova de que você controla esses endereços públicos (`collateral_address_signatures`). A [SEP 0001](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md) contém um modelo para essas assinaturas, e instruções para adaptá-las ao seu token.
 
-Exchanges use the collateral address signatures to verify that the accounts you list belong to you, and will look  at the reserve in those accounts.  If you cannot prove 100% reserve, it is unlikely they will list your token.
+Exchanges usam as assinaturas dos endereços colaterais para verificar que as contas listadas pertencem a você, e irão olhar a reserva nessas contas. Se você não puder provar 100% da reserva, é improvável que elas listem seu token.
 
 	[[CURRENCIES]]
 	code="BTC"
@@ -224,16 +224,16 @@ Exchanges use the collateral address signatures to verify that the accounts you 
 	status=”live”
 	display_decimals=7
 	name=”Bitcoin”
-	desc=”Organization promises to purchase each BTC token from any holder for the value of 1 Bitcoin”
-	conditions="Withdrawal fees apply"
+	desc=”A organização promete comprar cada token BTC de qualquer detentor por um valor de 1 Bitcoin”
+	conditions="Aplicam-se taxas de saque"
 	image="https://domain.com/img/Bitcoin-100x100.png"
 	anchor_asset_type="crypto"
 	anchor_asset="BTC"
-	redemption_instructions="Use SEP6 with our federation server"
+	redemption_instructions="Usar SEP6 com nosso servidor federation"
 	collateral_addresses=["2C1mCx3ukix1KfegAY5zgQJV7sanAciZpv"]
 	collateral_address_signatures=["304502206e21798a42fae0e854281abd38bacd1aeed3ee3738d9e1446618c4571d10"]
 
-How to publish your stellar.toml
+Como publicar  How to publish your stellar.toml
 --------------------------------
 After you've followed the steps above to complete your stellar.toml, post it at the following location:
 
@@ -250,5 +250,7 @@ Once you've done that, you're all set!  Now apps and buyers can access all the i
 If you want to see a stellar.toml done right, take a look at Stronghold’s [here](https://stronghold.co/.well-known/stellar.toml).  You can easily find out everything you need to know about the company, their Stellar accounts, their points of contact, and their tokens, and you can take steps to verify that information.    
 
 If your stellar.toml looks like Stronghold’s, exchanges and buyers will take notice.  
+
+Nota: para efeitos informativos, esta tradução optou em traduzir parte do conteúdo dos exemplos de preenchimento do stellar.toml, mas os documentos reais devem estar escritos em inglês para facilitar a compreensão por todo o ecossistema Stellar.
 
 *****
