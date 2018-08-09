@@ -176,6 +176,7 @@ VALIDATORS=[
 #           acct=<número da conta do recipiente no banco>
 # Quantia mínima para encaminhamento: $2 USD
 # Quantia máxima para encaminhamento: $10000 USD
-
+  ```
+Nota: para efeitos informativos, esta tradução optou em traduzir parte do conteúdo dos exemplos de preenchimento do stellar.toml, mas os documentos reais devem estar escritos em inglês para facilitar a compreensão por todo o ecossistema Stellar.
 
 ```
