@@ -2,7 +2,7 @@
 title: Tarifas
 ---
 
-A rede Stellar requer pequenas [tarifas por transação](#tarifa-de-transação) e [saldos mínimos nas contas](#minimum-account-balance) para prevenir que pessoas sobrecarreguem a rede e para ajudar com priorização.
+A rede Stellar requer pequenas [tarifas por transação](#tarifa-de-transação) e [saldos mínimos nas contas](#saldo-mínimo-da-conta) para prevenir que pessoas sobrecarreguem a rede e para ajudar com priorização.
 
 Há dois valores especiais usados para calcular tarifas:
 
