@@ -31,47 +31,47 @@ Limites de tempo ou time bounds são restrições ao período de tempo durante o
 Esta visão geral apresenta dois padrões de design comuns que podem ser usados para criar SSCs na Rede Stellar. As transações podem ser traduzidas em API requests ou podem ser executadas usando o [Laboratório Stellar](https://www.stellar.org/laboratory/).
 
 
-## 2-Party Multisignature Escrow Account with Time Lock & Recovery
-### Use Case Scenario
-Ben Bitdiddle sells 50 CODE tokens to Alyssa P. Hacker, under the condition that Alyssa won’t resell the tokens until one year has passed. Ben doesn’t completely trust Alyssa so he suggests that he holds the tokens for Alyssa for the year.
+## Conta Escrow Multisignature para Duas Partes com Bloqueio Temporal e Recuperação
+### Exemplo de Caso de Uso
+Ben Bitdiddle vende 50 tokens CODE para Alyssa P. Hacker, com a condição de que Alyssa não poderá revender os tokens até ter se passado um ano. Ben não confia completamente em Alyssa, então Ben sugere que ele detenha os tokens para Alyssa durante o ano.
 
-Alyssa protests. How will she know that Ben will still have the tokens after one year? How can she trust him to eventually deliver them?
+Alyssa protesta. Como ela irá saber se o Ben ainda terá os tokens depois de um ano? Como ela pode confiar que ele irá realmente entregá-los?
 
-Additionally, Alyssa is sometimes forgetful. There’s a chance she won’t remember to claim her tokens at the end of the year long waiting period. Ben would like to build in a recovery mechanism so that if Alyssa doesn’t claim the tokens, they can be recovered. This way, the tokens won’t be lost forever.
+Além disso, às vezes Alyssa é meio esquecida. Existe a possibilidade de que ela não irá lembrar de resgatar seus tokens depois de decorrido um ano. Ben gostaria de embutir um mecanismo de recuperação para, caso Alyssa não resgate seus tokens, eles podem ser recuperados. Assim, os tokens não serão perdidos para sempre.
 
-### Implementation
-An escrow agreement is created between two entities: the origin - the entity funding the agreement, and the target - the entity receiving the funds at the end of the contract.
+### Implementação
+Um acordo escrow é criado entre duas entidades: a origem – a entidade que financia o acordo, e o alvo – a entidade que recebe os fundos no final do contrato.
 
-Three accounts are required to execute a time-locked escrow contract between the two parties: a source account, a destination account, and an escrow account. The source account is the account of the origin that is initializing and funding the escrow agreement. The destination account is the account of the target that will eventually gain control of the escrowed funds. The escrow account is created by the origin and holds the escrowed funds during the lock up period.
+Três contas são necessárias para executar um contrato escrow entre duas partes: uma conta fonte, uma conta de destino e uma conta escrow. A conta fonte é a conta da origem que está iniciando e fundando o acordo escrow. A conta de destino é a conta do alvo que por fim irá ganhar controle dos fundos. A conta escrow é criada pela origem e detém os fundos durante o período de bloqueio.
 
-Two periods of time must be established and agreed upon for this escrow agreement: a lock-up period, during which neither party may manipulate (transfer, utilize) the assets, and a recovery period, after which the origin has the ability to recover the escrowed funds from the escrow account.
+Dois períodos de tempo devem ser estabelecidos e acordados para este acordo escrow: um período de trancamento, durante o qual nenhuma parte pode manipular (transferir, utilizar) os ativos, e um período de recuperação, depois do qual a origem consegue recuperar os fundos da conta escrow.
 
-Five transactions are used to create an escrow contract - they are explained below in the order of creation. The following variables will be used in the explanation:
--  **N**, **M** - sequence number of escrow account and source account, respectively; N+1 means the next sequential transaction number, and so on
-- **T** - the lock-up period
-- **D** - the date upon which the lock-up period starts
-- **R** - the recovery period
+Cinco transações são usadas para criar um contrato escrow, explicadas abaixo em ordem de criação. As variáveis a seguir serão usadas na explicação:
+-  **N**, **M** – número sequencial da conta escrow e da conta fonte, respectivamente; N+1 representa próximo número sequencial da transação, e de assim em diante
+- **T** – o período de trancamento
+- **D** – a data a partir da qual começar o período de trancamento
+- **R** – o período de recuperação
 
-For the design pattern described below, the asset being exchanged is the native asset. The order of submission of transactions to the Stellar network is different from the order of creation. The following shows the submission order, in respect to time:
+Para o padrão de design descrito abaio, o ativo sendo trocado é o ativo nativo. A ordem de envio das transações à rede Stellar é diferente da ordem de criação. A imagem a seguir mostra a ordem de envio, no que diz respeito ao tempo:
 
 ![Diagram Transaction Submission Order for Escrow Agreements](assets/ssc-escrow.png)
 
-#### Transaction 1: Creating the Escrow Account
-**Account**: source account  
-**Sequence Number**: M  
-**Operations**:
-- [Create Account](../concepts/list-of-operations.md#create-account): create escrow account in system
-	 - starting balance: [minimum balance](../concepts/fees.md#minimum-account-balance) + [transaction fee](../concepts/fees.md#transaction-fee)
+#### Transação 1: Criar uma Conta Escrow
+**Conta**: conta fonte  
+**Número Sequencial**: M  
+**Operações**:
+- [Create Account](../concepts/list-of-operations.md#create-account): criar conta escrow no sistema
+	 - saldo inicial: [saldo mínimo](../concepts/fees.md#saldo-mínimo-da-conta) + [tarifa de transação](../concepts/fees.md#tarifa-de-transação)
 
-**Signers**: source account
+**Signatários**: source account
 
-Transaction 1 is submitted to the network by the origin via the source account. This creates the escrow account, funds the account with the current minimum reserve, and gives the origin access to the public and private key of the escrow account. The escrow account is funded with the minimum balance so it is a valid account on the network. It is given additional money to handle the transfer fee of transferring the assets at the end of the escrow agreement. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance.
+A Transação 1 é submetida à rede pela origem por meio da conta fonte. Cria-se a conta escrow, financiada com a reserva mínima atual, e dá-se à origem             This creates the escrow account, funds the account with the current minimum reserve, and gives the origin access to the public and private key of the escrow account. The escrow account is funded with the minimum balance so it is a valid account on the network. It is given additional money to handle the transfer fee of transferring the assets at the end of the escrow agreement. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance.
 
 
-#### Transaction 2: Enabling Multi-sig
-**Account**: escrow account   
-**Sequence Number**: N  
-**Operations**:
+#### Transação 2: Enabling Multi-sig
+**Conta**: escrow account   
+**Número Sequencial**: N  
+**Operações**:
 - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add the destination account as a signer with weight on transactions for the escrow account
 	 - weight: 1
 - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require all signatures (2 of 2 signers)
@@ -80,16 +80,16 @@ Transaction 1 is submitted to the network by the origin via the source account. 
 	 - medium threshold: 2
 	 - high threshold: 2
 
-**Signers**: escrow account
+**Signatários**: escrow account
 
-Transaction 2 is created and submitted to the network. It is done by the origin using the escrow account, as origin has control of the escrow account at this time. The first operation adds the destination account as a second signer with a signing weight of 1 to the escrow account.
+Transação 2 is created and submitted to the network. It is done by the origin using the escrow account, as origin has control of the escrow account at this time. The first operation adds the destination account as a second signer with a signing weight of 1 to the escrow account.
 
 By default, the thresholds are uneven. The second operation sets the weight of the master key to 1, leveling out its weight with that of the destination account. In the same operation, the thresholds are set to 2. This makes is so that all and any type of transactions originating from the escrow account now require all signatures to have a total weight of 2. At this point, the weight of signing with both the escrow account and the destination account adds up to 2. This ensures that from this point on, both the escrow account and the destination account (the origin and the target) must sign all transactions that regard the escrow account. This gives partial control of the escrow account to the target.
 
-#### Transaction 3: Unlock  
-**Account**: escrow account  
-**Sequence Number**: N+1  
-**Operations**:
+#### Transação 3: Unlock  
+**Conta**: escrow account  
+**Número Sequencial**: N+1  
+**Operações**:
 - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
 	 - master weight: 0
 	 - low threshold: 1
@@ -104,10 +104,10 @@ By default, the thresholds are uneven. The second operation sets the weight of t
 **Eventual Signer**: destination account
 
 
-#### Transaction 4: Recovery
-**Account**: escrow account  
-**Sequence Number**: N+1  
-**Operations**:
+#### Transação 4: Recovery
+**Conta**: escrow account  
+**Número Sequencial**: N+1  
+**Operações**:
 - [Set Option - Signer](../concepts/list-of-operations.md#set-options): remove the destination account as a signer
 	 - weight: 0  
  - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
@@ -122,27 +122,27 @@ By default, the thresholds are uneven. The second operation sets the weight of t
 **Immediate Signer**: escrow account  
 **Eventual Signer**: destination account  
 
-Transaction 3 and Transaction 4 are created and signed by the escrow account by the origin. The origin then gives Transaction 3 and Transaction 4, in [XDR form](https://www.stellar.org/developers/horizon/reference/xdr.html), to the target to sign using the destination account. The target then publishes them for the origin to [review](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) and save in a safe location. Once signed by both parties, these transactions cannot be modified. Both the origin and target must retain a copy of these signed transactions in their XDR form, and the transactions can be stored in a publicly accessible location without concerns of tampering.
+Transação 3 and Transação 4 are created and signed by the escrow account by the origin. The origin then gives Transação 3 and Transação 4, in [XDR form](https://www.stellar.org/developers/horizon/reference/xdr.html), to the target to sign using the destination account. The target then publishes them for the origin to [review](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) and save in a safe location. Once signed by both parties, these transactions cannot be modified. Both the origin and target must retain a copy of these signed transactions in their XDR form, and the transactions can be stored in a publicly accessible location without concerns of tampering.
 
-Transaction 3 and Transaction 4 are created and signed before the escrow account is funded, and have the same transaction number. This is done to ensure that the two parties are in agreement. If circumstances were to change before one of these two transactions are submitted, both the origin and the target need to authorize transactions utilizing the escrow account. This is represented by the requirement of the signatures of both the destination account and the escrow account.
+Transação 3 and Transação 4 are created and signed before the escrow account is funded, and have the same transaction number. This is done to ensure that the two parties are in agreement. If circumstances were to change before one of these two transactions are submitted, both the origin and the target need to authorize transactions utilizing the escrow account. This is represented by the requirement of the signatures of both the destination account and the escrow account.
 
-Transaction 3 removes the escrow account as a signer for transactions generated from itself. This transaction transfers complete control of the escrow account to target. After the end of the lock-up time period, the only account that is needed to sign for transactions from the escrow account is the destination account. The unlock date (D+T) is the first date that the unlock transaction can be submitted. If Transaction 3 is submitted before the unlock date, the transaction will not be valid. The maximum time is set to 0, to denote that the transaction does not have an expiration date.
+Transação 3 removes the escrow account as a signer for transactions generated from itself. This transaction transfers complete control of the escrow account to target. After the end of the lock-up time period, the only account that is needed to sign for transactions from the escrow account is the destination account. The unlock date (D+T) is the first date that the unlock transaction can be submitted. If Transação 3 is submitted before the unlock date, the transaction will not be valid. The maximum time is set to 0, to denote that the transaction does not have an expiration date.
 
-Transaction 4 is for account recovery in the event that target does not submit the unlock transaction. It removes the destination account as a signer, and resets the weights for signing transactions to only require its own signature. This returns complete control of the escrow account to the origin. Transaction 4 can only be submitted after the recovery date (D+T+R), and has no expiration date.
+Transação 4 is for account recovery in the event that target does not submit the unlock transaction. It removes the destination account as a signer, and resets the weights for signing transactions to only require its own signature. This returns complete control of the escrow account to the origin. Transação 4 can only be submitted after the recovery date (D+T+R), and has no expiration date.
 
-Transaction 3 can be submitted at any time during the recovery period, R. If the target does not submit Transaction 3 to enable access to the funds in the escrow account, the origin can submit Transaction 4 after the recovery date. The origin can reclaim the locked up assets if desired as Transaction 4 makes it so the target is no longer required to sign transactions for escrow account. After the recovery date, both Transaction 3 and Transaction 4 are valid and able to be submitted to the network but only one transaction will be accepted by the network. This is ensured by the feature that both transactions have the same sequence number.
+Transação 3 can be submitted at any time during the recovery period, R. If the target does not submit Transação 3 to enable access to the funds in the escrow account, the origin can submit Transação 4 after the recovery date. The origin can reclaim the locked up assets if desired as Transação 4 makes it so the target is no longer required to sign transactions for escrow account. After the recovery date, both Transação 3 and Transação 4 are valid and able to be submitted to the network but only one transaction will be accepted by the network. This is ensured by the feature that both transactions have the same sequence number.
 
-To summarize: if Transaction 3 is not submitted by the target, then Transaction 4 is submitted by the origin after the recovery period.
+To summarize: if Transação 3 is not submitted by the target, then Transação 4 is submitted by the origin after the recovery period.
 
-#### Transaction 5: Funding  
-**Account**: source account  
-**Sequence Number**: M+1  
-**Operations**:
+#### Transação 5: Funding  
+**Conta**: source account  
+**Número Sequencial**: M+1  
+**Operações**:
 - [Payment](../concepts/list-of-operations.md#payment): Pay the escrow account the appropriate asset amount  
 
 **Signer**: source account
 
-Transaction 5 is the transaction that deposits the appropriate amount of assets into the escrow account from the source account. It should be submitted once Transaction 3 and Transaction 4 have been signed by the destination account and published back to the source account.
+Transação 5 is the transaction that deposits the appropriate amount of assets into the escrow account from the source account. It should be submitted once Transação 3 and Transação 4 have been signed by the destination account and published back to the source account.
 
 ## Joint-Entity Crowdfunding
 ### Use Case Scenario
@@ -163,19 +163,19 @@ The transactions that create this design pattern can be created and submitted by
 ![Diagram Transaction Submission Order for Crowdfunding Campaigns](assets/ssc-crowdfunding.png)
 
 
-#### Transaction 1: Create the Holding Account
-**Account**: party A  
-**Sequence Number**: M  
-**Operations**:
+#### Transação 1: Create the Holding Account
+**Conta**: party A  
+**Número Sequencial**: M  
+**Operações**:
 - [Create Account](../concepts/list-of-operations.md#create-account): create holding account in system
 	- [starting balance](../concepts/fees.md#minimum-account-balance): minimum balance
 
-**Signers**: party A
+**Signatários**: party A
 
-#### Transaction 2: Add signers
-**Account**: holding account  
-**Sequence Number**: N  
-**Operations**:
+#### Transação 2: Add signers
+**Conta**: holding account  
+**Número Sequencial**: N  
+**Operações**:
  - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party A as a signer with weight on transactions for the escrow account
 	- weight: 1
  - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party B as a signer with weight on transactions for the escrow account
@@ -186,27 +186,27 @@ The transactions that create this design pattern can be created and submitted by
 	- medium threshold: 2
 	- high threshold: 2
 
-**Signers**: holding account
+**Signatários**: holding account
 
 
-Transaction 1 and 2 are created and submitted by one of the two parties sponsoring the crowdfunding campaign. Transaction 1 creates the holding account. The holding account is funded with a starting balance in order to make it valid on the network. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance. Transaction 2 removes the holding account as a signer for its own transactions, and adds party A and party B as signers. From this point on, all parties involved must agree and sign all transactions coming from the holding account. This trust mechanism is in place to protect donors from one party carrying malicious actions.  
+Transação 1 and 2 are created and submitted by one of the two parties sponsoring the crowdfunding campaign. Transação 1 creates the holding account. The holding account is funded with a starting balance in order to make it valid on the network. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance. Transação 2 removes the holding account as a signer for its own transactions, and adds party A and party B as signers. From this point on, all parties involved must agree and sign all transactions coming from the holding account. This trust mechanism is in place to protect donors from one party carrying malicious actions.  
 
-After Transaction 2, the holding account should be funded with the tokens to be used for the crowdfunding campaign, as well as with enough lumens to cover the transaction fees for all of the following transactions.
+After Transação 2, the holding account should be funded with the tokens to be used for the crowdfunding campaign, as well as with enough lumens to cover the transaction fees for all of the following transactions.
 
-#### Transaction 3: Begin Crowdfunding
-**Account**: holding account  
-**Sequence Number**: N+1  
-**Operations**:
+#### Transação 3: Begin Crowdfunding
+**Conta**: holding account  
+**Número Sequencial**: N+1  
+**Operações**:
 - [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): sell participation tokens at a rate of X per token
 
 **Signer**: party A’s account, party B’s account
 
-Transaction 3 is created and submitted to the network to begin the crowdfunding campaign. It creates an offer on the network that sells the participation tokens at a rate of X per token. Given a limited amount of tokens are created for the crowdfunding campaign, the tokens are priced in a manner that enables a total of V to be raised through sales.
+Transação 3 is created and submitted to the network to begin the crowdfunding campaign. It creates an offer on the network that sells the participation tokens at a rate of X per token. Given a limited amount of tokens are created for the crowdfunding campaign, the tokens are priced in a manner that enables a total of V to be raised through sales.
 
-#### Transaction 4: Crowdfunding Succeeds  
-**Account**: holding account  
-**Sequence Number**: N+2    
-**Operations**:
+#### Transação 4: Crowdfunding Succeeds  
+**Conta**: holding account  
+**Número Sequencial**: N+2    
+**Operações**:
 - [Payment](../concepts/list-of-operations.md#payment): send V from the holding account to the goal account
 
 
@@ -214,12 +214,12 @@ Transaction 3 is created and submitted to the network to begin the crowdfunding 
 - minimum time: end of crowdfunding period
 - maximum time: 0
 
-**Signers**: party A’s account, party B’s account
+**Signatários**: party A’s account, party B’s account
 
-#### Transaction 5: Crowdfunding Fails
-**Account**: holding account    
-**Sequence Number**: N+3      
-**Operations**:
+#### Transação 5: Crowdfunding Fails
+**Conta**: holding account    
+**Número Sequencial**: N+3      
+**Operações**:
 - [Manage Offer - Cancel](../concepts/list-of-operations.md#manage-offer): cancel pre-existing offer to sell tokens
  - [Manage Offer - Buy](../concepts/list-of-operations.md#manage-offer): holding account buys participation tokens at a rate of X per token
 
@@ -227,15 +227,15 @@ Transaction 3 is created and submitted to the network to begin the crowdfunding 
 - minimum time: end of crowdfunding period
 - maximum time: 0
 
-**Signers**: party A’s account, party B’s account  
+**Signatários**: party A’s account, party B’s account  
 
-Transaction 4 and Transaction 5 are pre-signed, unsubmitted transactions that are published. Both transactions have a minimum time of the end of the crowdfunding period to prevent them from being submitted earlier than agreed upon by the sponsoring parties. They can be submitted by anyone upon the end of the crowdfunding. Transaction 4 transfers the raised amount to the goal account. Transaction 5 prevents all remaining tokens from being sold by canceling the offer and enables donors to create offers to sell back tokens to the holding account.
+Transação 4 and Transação 5 are pre-signed, unsubmitted transactions that are published. Both transactions have a minimum time of the end of the crowdfunding period to prevent them from being submitted earlier than agreed upon by the sponsoring parties. They can be submitted by anyone upon the end of the crowdfunding. Transação 4 transfers the raised amount to the goal account. Transação 5 prevents all remaining tokens from being sold by canceling the offer and enables donors to create offers to sell back tokens to the holding account.
 
-Security is provided through sequence numbers. As noted, the sequence number for Transaction 4 is *N+2* and the sequence number for Transaction 5 is *N+3*. These sequential sequence numbers demand that both Transaction 4 and Transaction 5 are submitted to the network in the appropriate order.  
+Security is provided through sequence numbers. As noted, the sequence number for Transação 4 is *N+2* and the sequence number for Transação 5 is *N+3*. These sequential sequence numbers demand that both Transação 4 and Transação 5 are submitted to the network in the appropriate order.  
 
-The crowdfunding was a failure when not enough funds were raised by the expected date. This is the equivalent to not selling all of the participation tokens. Transaction 4 is submitted to the network, but it will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. An error will occur, though, because there will not be enough funds in the account to cover the actual requested amount of the payment. Transaction 5 is then submitted to the network, enabling contributors to sell back their tokens. Additionally, Transaction 5 cancels the holding account’s ability to sell participation tokens, halting the status of the crowdfunding event.  
+The crowdfunding was a failure when not enough funds were raised by the expected date. This is the equivalent to not selling all of the participation tokens. Transação 4 is submitted to the network, but it will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. An error will occur, though, because there will not be enough funds in the account to cover the actual requested amount of the payment. Transação 5 is then submitted to the network, enabling contributors to sell back their tokens. Additionally, Transação 5 cancels the holding account’s ability to sell participation tokens, halting the status of the crowdfunding event.  
 
-The crowdfunding is a success if V was raised by the appropriate time. Raising enough funds is equivalent to having all participation tokens being purchased from the holding account. Transaction 4 is submitted to the network and will succeed because there are enough funds present in the account to fulfill the payment operation, as well as cover the transaction fee. Transaction 5 will then be submitted to the network, but will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. The transaction will succeed, but because the holding account will not have the funds to buy back the tokens, participants will not be able to make attempts to recover their funds.
+The crowdfunding is a success if V was raised by the appropriate time. Raising enough funds is equivalent to having all participation tokens being purchased from the holding account. Transação 4 is submitted to the network and will succeed because there are enough funds present in the account to fulfill the payment operation, as well as cover the transaction fee. Transação 5 will then be submitted to the network, but will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. The transaction will succeed, but because the holding account will not have the funds to buy back the tokens, participants will not be able to make attempts to recover their funds.
 
 #### Bonus: Crowdfunding Contributors
 The following steps are carried out in order to become a contributor to the crowdfunding:
