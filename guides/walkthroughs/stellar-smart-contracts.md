@@ -42,7 +42,7 @@ Além disso, às vezes Alyssa é meio esquecida. Existe a possibilidade de que e
 ### Implementação
 Um acordo escrow é criado entre duas entidades: a origem – a entidade que financia o acordo, e o alvo – a entidade que recebe os fundos no final do contrato.
 
-Três contas são necessárias para executar um contrato escrow entre duas partes: uma conta fonte, uma conta de destino e uma conta escrow. A conta fonte é a conta da origem que está iniciando e fundando o acordo escrow. A conta de destino é a conta do alvo que por fim irá ganhar controle dos fundos. A conta escrow é criada pela origem e detém os fundos durante o período de bloqueio.
+Três contas são necessárias para executar um contrato escrow entre duas partes: uma conta fonte, uma conta de destino e uma conta escrow. A conta fonte é a conta da origem que está iniciando e fundando o acordo escrow. A conta de destino é a conta do alvo que por fim irá ganhar controle dos fundos. A conta escrow é criada pela origem e detém os fundos durante o período de travamento.
 
 Dois períodos de tempo devem ser estabelecidos e acordados para este acordo escrow: um período de trancamento, durante o qual nenhuma parte pode manipular (transferir, utilizar) os ativos, e um período de recuperação, depois do qual a origem consegue recuperar os fundos da conta escrow.
 
@@ -65,74 +65,74 @@ Para o padrão de design descrito abaio, o ativo sendo trocado é o ativo nativo
 
 **Signatários**: source account
 
-A Transação 1 é submetida à rede pela origem por meio da conta fonte. Cria-se a conta escrow, financiada com a reserva mínima atual, e dá-se à origem             This creates the escrow account, funds the account with the current minimum reserve, and gives the origin access to the public and private key of the escrow account. The escrow account is funded with the minimum balance so it is a valid account on the network. It is given additional money to handle the transfer fee of transferring the assets at the end of the escrow agreement. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance.
+A Transação 1 é submetida à rede pela origem por meio da conta fonte. Cria-se a conta escrow, financiada com a reserva mínima atual, e dá-se à origem acesso às chaves pública e privada da conta escrow. A conta escrow é financiada com o saldo mínimo, sendo assim uma conta válida na rede. Ela recebe dinheiro adicional para custear a tarifa que incorre ao transferir os ativos no fim do acordo escrow. Ao criar novas contas, recomenda-se financiar a conta com um saldo maior que o saldo inicial calculado.
 
 
-#### Transação 2: Enabling Multi-sig
-**Conta**: escrow account   
+#### Transação 2: Habilitar Multi-sig
+**Conta**: conta escrow   
 **Número Sequencial**: N  
 **Operações**:
-- [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add the destination account as a signer with weight on transactions for the escrow account
+- [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a conta de destino como um signatário com peso em transações para a conta escrow
 	 - weight: 1
-- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require all signatures (2 of 2 signers)
+- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir o peso da chave mestra e alterar os limiares para exigirem todas as assinaturas (2 de 2 signers)
 	 - master weight: 1
 	 - low threshold: 2
 	 - medium threshold: 2
 	 - high threshold: 2
 
-**Signatários**: escrow account
+**Signatários**: conta escrow
 
-Transação 2 is created and submitted to the network. It is done by the origin using the escrow account, as origin has control of the escrow account at this time. The first operation adds the destination account as a second signer with a signing weight of 1 to the escrow account.
+A Transação 2 é criada e submetida à rede. É feita pela origem usando a conta escrow, já que a origin tem controle sobre a conta escrow nesse momento. A primeira operação adiciona à conta escrow a conta de destino como um segundo signatário com um peso igual a 1.
 
-By default, the thresholds are uneven. The second operation sets the weight of the master key to 1, leveling out its weight with that of the destination account. In the same operation, the thresholds are set to 2. This makes is so that all and any type of transactions originating from the escrow account now require all signatures to have a total weight of 2. At this point, the weight of signing with both the escrow account and the destination account adds up to 2. This ensures that from this point on, both the escrow account and the destination account (the origin and the target) must sign all transactions that regard the escrow account. This gives partial control of the escrow account to the target.
+Por padrão, as limiares são desiguais. A segunda operação define o peso da chave mestra como igual a 1, nivelando seu peso com o peso da conta de destino. Na mesma operação, os limiares são definidos como iguais a 2. Isso faz que qualquer tipo de transação que origine da conta escrow exija que todas as assinaturas tenham um peso total de 2. Nesse momento, o peso de assinar com tanto a conta escrow e a conta de destino são somados, resultando em um total igual a 2. Isso garante que, desse ponto em diante, ambas a conta escrow e a conta de destino (a origem e o alvo) precisem assinar todas as transações referentes à conta escrow. Isso dá controle parcial da conta escrow ao alvo.
 
-#### Transação 3: Unlock  
-**Conta**: escrow account  
+#### Transação 3: Destravar  
+**Conta**: conta escrow  
 **Número Sequencial**: N+1  
 **Operações**:
-- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
+- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir peso da chave mestra e alterar limiares para exigirem apenas 1 assinatura
 	 - master weight: 0
 	 - low threshold: 1
 	 - medium threshold: 1
 	 - high threshold: 1
 
-**Time Bounds**:
-- minimum time: unlock date
-- maximum time: 0  
+**Limites de Tempo**:
+- tempo mínimo: data do destravamento
+- tempo máximo: 0  
 
-**Immediate Signer**: escrow account  
-**Eventual Signer**: destination account
+**Signatário Imediato**: conta escrow  
+**Signatário Eventual**: conta de destino
 
 
-#### Transação 4: Recovery
-**Conta**: escrow account  
+#### Transação 4: Recuperação
+**Conta**: conta escrow  
 **Número Sequencial**: N+1  
 **Operações**:
-- [Set Option - Signer](../concepts/list-of-operations.md#set-options): remove the destination account as a signer
+- [Set Option - Signer](../concepts/list-of-operations.md#set-options): remover a conta de destino como signatário
 	 - weight: 0  
- - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
+ - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir o peso da chave mestra e alterar limiares para exigirem apenas 1 assinatura
 	 - low threshold: 1
 	 - medium threshold: 1
 	 - high threshold: 1  
 
-**Time Bounds**:
-- minimum time: recovery date
-- maximum time: 0
+**Limites de Tempo**:
+- tempo mínimo: data da recuperação
+- tempo máximo: 0
 
-**Immediate Signer**: escrow account  
-**Eventual Signer**: destination account  
+**Signatário Imediato**: conta escrow  
+**Signatário Eventual**: conta de destino  
 
-Transação 3 and Transação 4 are created and signed by the escrow account by the origin. The origin then gives Transação 3 and Transação 4, in [XDR form](https://www.stellar.org/developers/horizon/reference/xdr.html), to the target to sign using the destination account. The target then publishes them for the origin to [review](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) and save in a safe location. Once signed by both parties, these transactions cannot be modified. Both the origin and target must retain a copy of these signed transactions in their XDR form, and the transactions can be stored in a publicly accessible location without concerns of tampering.
+A Transação 3 e a Transação 4 são criadas e assinadas pela conta escrow pela origem. A origem então dá as transações 3 e 4, em [forma XDR](https://www.stellar.org/developers/horizon/reference/xdr.html), ao alvo para que ele assine usando a conta de destino. O alvo então as publica para a origem [verificá-las](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) e salvá-las em um lugar seguro. Uma vez assinadas por ambas as partes, essas transações não podem ser modificadas. Tanto a origem como o alvo devem reter uma cópia dessas transações assinadas em sua forma XDR, e as transações podem ser armazenadas em um lugar publicamente acessível sem receio de alterações maliciosas.
 
-Transação 3 and Transação 4 are created and signed before the escrow account is funded, and have the same transaction number. This is done to ensure that the two parties are in agreement. If circumstances were to change before one of these two transactions are submitted, both the origin and the target need to authorize transactions utilizing the escrow account. This is represented by the requirement of the signatures of both the destination account and the escrow account.
+A Transação 3 e a Transação 4 são criadas e assinadas antes da conta escrow ser financiada, e possuem o mesmo número de transação. Isso é feito para garantir que ambas as partes estejam de acordo. Se as circunstâncias mudarem antes antes de uma dessas duas transações forem submetidas, ambos a origem e o alvo devem autorizar transações utilizando a conta escrow. Isso é representado pela exigência por assinaturas de tanto a conta de destino como a conta escrow.
 
-Transação 3 removes the escrow account as a signer for transactions generated from itself. This transaction transfers complete control of the escrow account to target. After the end of the lock-up time period, the only account that is needed to sign for transactions from the escrow account is the destination account. The unlock date (D+T) is the first date that the unlock transaction can be submitted. If Transação 3 is submitted before the unlock date, the transaction will not be valid. The maximum time is set to 0, to denote that the transaction does not have an expiration date.
+A Transação 3 remove a conta escrow como um signatário para transações geradas a partir de si mesma. Esta transação transfere o controle total da conta escrow ao alvo. Depois do fim do período de trancamento, a única conta que é necessária para assinar transações a partir da conta escrow é a conta de destino. A data de destravamento (D+T) é a primeira data em que a transação de destravamento pode ser submetida. Se a Transação 3 for submetida antes dessa data, a transação não será válida. O tempo máximo é definido como igual a 0, para denotar que a transação não possui uma data de expiração.
 
-Transação 4 is for account recovery in the event that target does not submit the unlock transaction. It removes the destination account as a signer, and resets the weights for signing transactions to only require its own signature. This returns complete control of the escrow account to the origin. Transação 4 can only be submitted after the recovery date (D+T+R), and has no expiration date.
+A Transação 4 existe para a recuperação da conta, caso o alvo não submeta a transação de destravamento. Ela remove a conta de destino como signatário, e reestabelece os pesos para apenas exigir sua própria assinatura. Isso retorna o controle total da conta escrow à origem. A Transação 4 pode apenas ser submetida após a data de recuperação (D+T+R), e não possui data de expiração.
 
-Transação 3 can be submitted at any time during the recovery period, R. If the target does not submit Transação 3 to enable access to the funds in the escrow account, the origin can submit Transação 4 after the recovery date. The origin can reclaim the locked up assets if desired as Transação 4 makes it so the target is no longer required to sign transactions for escrow account. After the recovery date, both Transação 3 and Transação 4 are valid and able to be submitted to the network but only one transaction will be accepted by the network. This is ensured by the feature that both transactions have the same sequence number.
+A Transação 3 pode ser submetida a qualquer momento durante o período de recuperação (R). Se o alvo não submeter a Transação 3 para permitir acesso aos fundos na conta escrow, a origem pode submeter a Transação 4 após a data de recuperação. A origem pode retomar os ativos trancados caso deseje, já que a Transação 4 faz que o alvo não seja mais necessário para assinar transações da conta escrow. Após a data de recuperação, ambas Transações 3 e 4 são válidas e possíveis de serem enviadas à rede, mas apenas uma transação será aceita pela rede. Isso é garantido pelo recurso de que ambas as transações têm o mesmo número sequencial.
 
-To summarize: if Transação 3 is not submitted by the target, then Transação 4 is submitted by the origin after the recovery period.
+Para resumir: se a Transação 3 não for submetida pelo alvo, a Transação 4 será submetida pela origem depois do período de recuperação.
 
 #### Transação 5: Funding  
 **Conta**: source account  
