@@ -134,129 +134,128 @@ A Transação 3 pode ser submetida a qualquer momento durante o período de recu
 
 Para resumir: se a Transação 3 não for submetida pelo alvo, a Transação 4 será submetida pela origem depois do período de recuperação.
 
-#### Transação 5: Funding  
-**Conta**: source account  
+#### Transação 5: Financiamento  
+**Conta**: conta fonte  
 **Número Sequencial**: M+1  
 **Operações**:
-- [Payment](../concepts/list-of-operations.md#payment): Pay the escrow account the appropriate asset amount  
+- [Payment](../concepts/list-of-operations.md#payment): Pagar à conta escrow a quantidade adequada de ativos  
 
-**Signer**: source account
+**Signer**: conta fonte
 
-Transação 5 is the transaction that deposits the appropriate amount of assets into the escrow account from the source account. It should be submitted once Transação 3 and Transação 4 have been signed by the destination account and published back to the source account.
+A Transação 5 é a transação que deposita a quantidade adequada de ativos na conta escrow a partir da conta fonte. Deve ser submetida após a Transação 3 e a Transação 4 forem assinadas pela conta de destino e publicadas de volta à conta fonte.
 
-## Joint-Entity Crowdfunding
-### Use Case Scenario
-Alyssa P. Hacker needs to raise money to pay for a service from a company, Coding Tutorials For Dogs, but she wants to source the funding from the public via crowdfunding. If enough people donate, she will be able to pay for the service directly to the company. If not, she will have a mechanism to return the donations. To guarantee her trustworthiness and reliability to the donors, she decides to asks Ben Bitdiddle if he’s willing to help her with getting people to commit to the crowdfunding. He will also vouch for Alyssa’s trustworthiness to his friends as a way to get them to donate to the crowdfunding efforts.
+## Crowdfunding Conjunto
+### Exemplo de Caso de Uso
+Alyssa P. Hacker precisa juntar dinheiro para pagar por um serviço de uma empresa, Tutoriais de Código para Cães, mas ela quer captar os fundos do público por meio de crowdfunding. Se pessoas suficientes doarem, ela conseguirá pagar o serviço diretamente à empresa. Caso contrário, ela terá um mecanismo para retornar as doações. Para garantir sua confiabilidade aos doadores, ela decide perguntar a Ben Bitdiddle se ele estaria disposto a ajudá-la a arranjar pessoas que gostariam de participar do crowdfunding. Ele também irá dar sua palavra a seus amigos de que Alyssa é confiável, como maneira de convencê-los a doar para o projeto.
 
-### Pattern Implementation
-In the simplest example, a crowdfunding smart contract requires at least three parties: two of which (from here out called party A and party B) agree to sponsor the crowdfunding, and a third to which the final funds will be given (called the target). A token must be created as the mechanism to execute the crowdfunding. The participation token utilized, as well as a holding account, must be created by one of two parties. A holding account issues participation tokens that can be priced at any value per token. The holding account collects the funding, and, after the end of the crowdfunding period, will return contributors funds if the value goal isn't met.
+### Implementação de Padrão
+No exemplo mais simples, um smart contract para crowdfunding requer pelo menos três partes: duas das quais (daqui em diante chamadas de parte A e parte B) concordam em patrocinar o crowdfunding, e uma terceira para a qual os fundos finais serão entregues (chamada de alvo). Um token deve ser criado como o mecanismo para executar o crowdfunding. O token de participação utilizado, assim como uma conta de armazenamento, devem ser criados por uma ou mais partes. Uma conta de armazenamento emite tokens de participação cujo preço pode ser igual a qualquer valor por token. A conta de armazenamento coleta os fundos e, após o fim do período de crowdfunding, irá retornar os fundos aos contribuidores caso a meta não seja atingida.
 
-Five transactions are used to create a crowdfunding contract. The following variables are used in explaining the formulation of the contract:
-- **N**, **M** - sequence number of party A's account and the holding account, respectively; N+1 means the next sequential transaction number, and so on
-- **V** - total value the crowdfunding campaign is looking to raise
-- **X** - value at which the tokens will be sold
+Cinco transações são usadas para criar um contrato de crowdfunding. As seguintes variáveis são usadas para explicar a formulação do contrato:
+- **N**, **M** - número sequencial da conta da parte A e a conta de armazenamento, respectivamente; N+1 representa o próximo número sequencial da transação, e de assim em diante
+- **V** - valor total que a campanha de crowdfunding quer levantar
+- **X** - valor pelo qual os tokens serão vendidos
 
-There are four accounts used for creating a basic crowdfunding schema. First is the holding account, which is the account that deals with collecting and interacting with the donors. It requires the signature of both party A and party B in order to carry out any transactions. The second is the goal account, the account owned by the target to which the crowdfunded value is delivered to on success. The two remaining accounts are respectively owned by party A and party B, who are running the crowdfunding.
+Há quatro contas usadas para criar um esquema básico de crowdfunding. A primeira é a conta de armazenamento, que é a conta encarregada de coletar e interagir com os doadores. Ela requer a assinatura de ambas partes A e B para realizar qualquer transação. A segunda é a conta objetivo, possuída pelo alvo, que receberá os fundos levantados caso o objetivo do crowdfunding seja atingido com sucesso. As duas contas restantes são posse da parte A e da parte B respectivamente, que estão organizando o crowdfunding.
 
-The transactions that create this design pattern can be created and submitted by any party sponsoring the crowdfunding campaign. The transactions are presented in order of creation. The order of submission to the Stellar Network is conditional, and depends on the success of the crowdfunding campaign.
+As transações que criam este padrão de design podem ser criadas e submetidas por qualquer parte que patrocinar a campanha. As transações são apresentadas em ordem de criação. A ordem do envio à Rede Stellar é condicional, e depende do sucesso da campanha de crowdfunding.
 
 ![Diagram Transaction Submission Order for Crowdfunding Campaigns](assets/ssc-crowdfunding.png)
 
 
-#### Transação 1: Create the Holding Account
-**Conta**: party A  
+#### Transação 1: Criar a Conta de Armazenamento
+**Conta**: parte A  
 **Número Sequencial**: M  
 **Operações**:
-- [Create Account](../concepts/list-of-operations.md#create-account): create holding account in system
-	- [starting balance](../concepts/fees.md#minimum-account-balance): minimum balance
+- [Create Account](../concepts/list-of-operations.md#create-account): criar a conta de armazenamento no sistema
+	- [starting balance](../concepts/fees.md#saldo-mínimo-da-conta): saldo mínimo
 
-**Signatários**: party A
+**Signatários**: parte A
 
-#### Transação 2: Add signers
-**Conta**: holding account  
+#### Transação 2: Adicionar signatários
+**Conta**: conta de armazenamento  
 **Número Sequencial**: N  
 **Operações**:
- - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party A as a signer with weight on transactions for the escrow account
+ - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a parte A como um signatário com peso em transações para a conta escrow
 	- weight: 1
- - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party B as a signer with weight on transactions for the escrow account
+ - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a parte B como um signatário com peso em transações para a conta escrow
 	- weight: 1
- - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remove master keys and change thresholds weights to require all other signatures (2 of 2 signers)
+ - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remover chave mestra e alterar limiares para exigirem todas as outras assinaturas (2 de 2 signatários)
 	- master weight: 0
 	- low threshold: 2
 	- medium threshold: 2
 	- high threshold: 2
 
-**Signatários**: holding account
+**Signatários**: conta de armazenamento
 
 
-Transação 1 and 2 are created and submitted by one of the two parties sponsoring the crowdfunding campaign. Transação 1 creates the holding account. The holding account is funded with a starting balance in order to make it valid on the network. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance. Transação 2 removes the holding account as a signer for its own transactions, and adds party A and party B as signers. From this point on, all parties involved must agree and sign all transactions coming from the holding account. This trust mechanism is in place to protect donors from one party carrying malicious actions.  
+As Transações 1 and 2 são criadas e submetidas por uma das duas partes que patrocinam a campanha de crowdfunding. A Transação 1 cria a conta de armazenamento. A conta de armazenamento é financiada com um saldo inicial para torná-la válida na rede. Ao criar novas contas, recomenda-se financiá-las com um saldo maior do que o saldo inicial calculado. A Transação 2 remove a conta de armazenamento como signatário de suas próprias transações, e adiciona a parte A e a parte B como signatários. Desse ponto em diante, todas as partes envolvidas devem acordar e assinar todas as transações provenientes da conta de armazenamento. Este mecanismo de confiança existe para proteger doadores contra uma das partes tomar ações maliciosas.
 
-After Transação 2, the holding account should be funded with the tokens to be used for the crowdfunding campaign, as well as with enough lumens to cover the transaction fees for all of the following transactions.
+Depois da Transação 2, a conta de armazenamento deve ser financiada com os tokens a serem usados para a campanha de crowdfunding, assim como lumens suficientes para cobrir as tarifas de transações de todas as transações a seguir.
 
-#### Transação 3: Begin Crowdfunding
-**Conta**: holding account  
+#### Transação 3: Começar o Crowdfunding
+**Conta**: conta de armazenamento  
 **Número Sequencial**: N+1  
 **Operações**:
-- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): sell participation tokens at a rate of X per token
+- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): vender tokens de participação a um preço de X por token
 
-**Signer**: party A’s account, party B’s account
+**Signer**: conta da parte A, conta da parte B
 
-Transação 3 is created and submitted to the network to begin the crowdfunding campaign. It creates an offer on the network that sells the participation tokens at a rate of X per token. Given a limited amount of tokens are created for the crowdfunding campaign, the tokens are priced in a manner that enables a total of V to be raised through sales.
+A Transação 3 é criada e submetida à rede para começar a campanha de crowdfunding. Ela cria uma oferta na rede que vende os tokens de participação a um preço de X por token. Dado que uma quantidade limitada de tokens é criada para a campanha, o preço dos tokens deve ser tal que um total de V possa ser levantado por meio das vendas.
 
-#### Transação 4: Crowdfunding Succeeds  
-**Conta**: holding account  
+#### Transação 4: Sucesso do Crowdfunding  
+**Conta**: conta de armazenamento  
 **Número Sequencial**: N+2    
 **Operações**:
-- [Payment](../concepts/list-of-operations.md#payment): send V from the holding account to the goal account
+- [Payment](../concepts/list-of-operations.md#payment): enviar V da conta de armazenamento à conta objetivo
 
 
 **Time Bounds**:
-- minimum time: end of crowdfunding period
-- maximum time: 0
+- tempo mínimo: fim do período de crowdfunding
+- tempo máximo: 0
 
-**Signatários**: party A’s account, party B’s account
+**Signatários**: conta da parte A, conta da parte B
 
-#### Transação 5: Crowdfunding Fails
-**Conta**: holding account    
+#### Transação 5: Falha do Crowdfunding
+**Conta**: conta de armazenamento    
 **Número Sequencial**: N+3      
 **Operações**:
-- [Manage Offer - Cancel](../concepts/list-of-operations.md#manage-offer): cancel pre-existing offer to sell tokens
- - [Manage Offer - Buy](../concepts/list-of-operations.md#manage-offer): holding account buys participation tokens at a rate of X per token
+- [Manage Offer - Cancel](../concepts/list-of-operations.md#manage-offer): cancelar oferta preexistente de venda de tokens
+ - [Manage Offer - Buy](../concepts/list-of-operations.md#manage-offer): conta de armazenamento compra tokens de participação a um preço de X por token
 
 **Time Bounds**:
-- minimum time: end of crowdfunding period
-- maximum time: 0
+- tempo mínimo: fim do período de crowdfunding
+- tempo máximo: 0
 
-**Signatários**: party A’s account, party B’s account  
+**Signatários**: conta da parte A, conta da parte B  
 
-Transação 4 and Transação 5 are pre-signed, unsubmitted transactions that are published. Both transactions have a minimum time of the end of the crowdfunding period to prevent them from being submitted earlier than agreed upon by the sponsoring parties. They can be submitted by anyone upon the end of the crowdfunding. Transação 4 transfers the raised amount to the goal account. Transação 5 prevents all remaining tokens from being sold by canceling the offer and enables donors to create offers to sell back tokens to the holding account.
+A Transação 4 e a Transação 5 são transações pré-assinadas e não submetidas que são publicadas. Ambas as transações têm um tempo mínimo igual ao fim do período de crowdfunding que previne que sejam submetidas antes do tempo acordado pelas partes patrocinadoras. Elas podem ser submetidas por qualquer pessoa no fim do crowdfunding. A Transação 4 transfere a quantia levantada à conta objetivo. A Transação 5 impede a venda de todos os tokens restantes cancelando a oferta e permitindo aos doadores criarem ofertas para vender tokens de volta à conta de armazenamento.
 
-Security is provided through sequence numbers. As noted, the sequence number for Transação 4 is *N+2* and the sequence number for Transação 5 is *N+3*. These sequential sequence numbers demand that both Transação 4 and Transação 5 are submitted to the network in the appropriate order.  
+A segurança é providenciada por meio de números sequenciais. Como mencionado, o número sequencial da Transação 4 é *N+2* e o número sequencial da Transação 5 é *N+3*. Estes números sequenciais requerem que ambas a Transação 4 e a Transação 5 sejam submetidas à rede na ordem adequada.
 
-The crowdfunding was a failure when not enough funds were raised by the expected date. This is the equivalent to not selling all of the participation tokens. Transação 4 is submitted to the network, but it will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. An error will occur, though, because there will not be enough funds in the account to cover the actual requested amount of the payment. Transação 5 is then submitted to the network, enabling contributors to sell back their tokens. Additionally, Transação 5 cancels the holding account’s ability to sell participation tokens, halting the status of the crowdfunding event.  
+O crowdfunding falha quando não foram levantados fundos suficientes até a data esperada. Isso equivale a não vender todos os tokens de participação. A Transação 4 é submetida à rede, mas irá falhar. A conta de armazenamento terá lumens suficientes para pagar a tarifa de transação, então a transação será considerada em consenso e um número sequencial será consumido. Ocorrerá um erro, no entanto, porque não haverá fundos suficientes na conta para cobrir a quantia especificada no pagamento. A Transação 5 é então submetida à rede, permitindo que contribuidores vendam de volta seus tokens. Além disso, a Transação 5 cancela a habilidade da conta de armazenamento de vender tokens de participação, interrompendo o status do evento de crowdfunding.
 
-The crowdfunding is a success if V was raised by the appropriate time. Raising enough funds is equivalent to having all participation tokens being purchased from the holding account. Transação 4 is submitted to the network and will succeed because there are enough funds present in the account to fulfill the payment operation, as well as cover the transaction fee. Transação 5 will then be submitted to the network, but will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. The transaction will succeed, but because the holding account will not have the funds to buy back the tokens, participants will not be able to make attempts to recover their funds.
+O crowdfunding obtém sucesso se V foi levantado até a data esperada. Levantar fundos suficientes equivale a todos os tokens de participação da conta de armazenamento terem sido comprados. A Transação 4 é submetida à rede e terá sucesso porque há fundos suficientes presentes na conta para concretizar a operação de pagamento, assim como cobrir a taxa de transação. A Transação 5 será então submetida à rede, mas irá falhar. A conta de armazenamento terá lumens suficientes para pagar a tarifa de transação, então a transação será considerada em consenso e um número sequencial será consumido. A transaction obterá sucesso, mas como a conta de armazenamento não terá fundos para comprar de volta os tokens, os participantes não poderão tentar recuperar seus fundos.
 
-#### Bonus: Crowdfunding Contributors
-The following steps are carried out in order to become a contributor to the crowdfunding:
-1. [Create a trustline](../concepts/list-of-operations.md#change-trust) to the holding account for participation tokens
-	- The trustline creates trust between the contributor and the holding accounts, enabling transactions involving participation tokens to be valid
-2. [Create an offer](../concepts/list-of-operations.md#manage-offer) to buy participation tokens
-	- The contributor account will receive participation tokens and the holding account will receive the value
-3. If the crowdfunding:
-	- succeeds - do nothing
-	- fails - create an offer to sell participation tokens, enabling the contributor to get back their value invested
+#### Bonus: Contribuidores de Crowdfunding
+Os passos a seguir são realizados para se tornar um contribuidor do crowdfunding:
+1. [Criar uma trustline](../concepts/list-of-operations.md#change-trust) com a conta de armazenamento para tokens de participação
+	- A trustline cria confiança entre o contribuidor e a conta de armazenamento, tornando válidas as transações que envolverem tokens de participação
+2. [Criar uma oferta](../concepts/list-of-operations.md#manage-offer) para comprar tokens de participação
+	- A conta do contribuidor receberá tokens de participação e a conta de armazenamento receberá o valor
+3. Se o crowdfunding:
+	- tiver sucesso - não fazer nada
+	- falhar - criar uma oferta para vender tokens de participação, permitindo que o contribuidor recupere o valor investido
 
-## SSC Best Practices
-When it comes to designing a smart contract, parties must come together and clearly outline the purpose of the contract, the cooperation between parties, and the desired outcomes. In this outline, clear conditions and their outcomes should be agreed upon. After establishing the conditions and their outcomes, the contract can then be translated to a series of operations and transactions. As a reminder, smart contracts are created using code. Code can contain bugs or may not perform as intended. Be sure to analyze and agree upon all possible edge cases when coming up with the conditions and outcomes of the smart contract.
+## Boas Práticas para SSC
+Quando se trata do design de um smart contract, as partes devem se reunir e combinar claramente o propósito do contrato, a cooperação entre as partes, e os resultados desejados. Neste combinado, deve-se acordar sobre condições claras e suas consequências. Após estabelecer as condições e suas consequências, o contrato pode então ser traduzido em uma série de operações e transações. Lembramos que smart contracts são criados usando código. Código de programação pode conter bugs ou pode não se comportar como planejado. Certifique-se de analisar e concordar com todos os edge cases possíveis quando formular as condições e consequências do smart contract.
 
-
-## Resources
+## Recursos
 
 - [Jurimetrics - The Next Steps Forward](http://heinonline.org/HOL/LandingPage?handle=hein.journals/mnlr33&div=28&id=&page) - Lee Loevinger
 - [Formalizing and Securing Relationships on Public Networks](http://firstmonday.org/article/view/548/469) - Nick Szabo
 - [Smart Contracts: 12 Use Cases for Business and Beyond](https://bloq.com/assets/smart-contracts-white-paper.pdf) - Chamber of Digital Commerce
-- [Concept: Transactions](https://www.stellar.org/developers/guides/concepts/transactions.html) - Stellar<span>.org
-- [Concept: Multisignature](https://www.stellar.org/developers/guides/concepts/multi-sig.html) - Stellar<span>.org
-- [Concept: Time Bounds](https://www.stellar.org/developers/guides/concepts/transactions.html#time-bounds) - Stellar<span>.org
-- [Concept: Trustlines](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) - Stellar<span>.org
+- [Conceito: Transações](https://www.stellar.org/developers/guides/concepts/transactions.html) - Stellar<span>.org
+- [Conceito: Multisignature](https://www.stellar.org/developers/guides/concepts/multi-sig.html) - Stellar<span>.org
+- [Conceito: Time Bounds](https://www.stellar.org/developers/guides/concepts/transactions.html#time-bounds) - Stellar<span>.org
+- [Conceito: Trustlines](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) - Stellar<span>.org
