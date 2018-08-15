@@ -1,69 +1,69 @@
 ---
-title: Architecture
+title: Arquitetura
 sequence:
   next: 2-bridge-server.md
 ---
 
-Anchors are entities that people trust to hold their deposits and [issue credits](../issuing-assets.md) into the Stellar network for those deposits. All money transactions in the Stellar network (except lumens) occur in the form of credit issued by anchors, so anchors act as a bridge between existing currencies and the Stellar network. Most anchors are organizations like banks, savings institutions, farmers’ co-ops, central banks, and remittance companies.
+Âncoras são entidades em que pessoas confiam para manter seus depósitos e [emitir crédito](../issuing-assets.md) na rede Stellar por esses depósitos. Todas as transações monetárias na rede Stellar (exceto lumens) ocorrem na forma de crédito emitido por âncoras, tal que as âncoras agem como uma ponte entre moedas preexistentes e a rede Stellar. A maioria das âncoras são organizações como bancos, instituições de poupança, cooperativas de fazendas, bancos centrais e empresas de remessas.
 
-Before continuing, you should be familiar with:
+Antes de continuar, recomendamos que você se familizarize com:
 
-- [Issuing assets](../issuing-assets.md), the most basic activity of an anchor.
-- [Federation](../concepts/federation.md), which allows a single Stellar account to represent multiple people.
-- [Compliance](../compliance-protocol.md), if you are subject to any financial regulation.
+- [Emissão de ativos](../issuing-assets.md), a atividade mais básica de uma âncora.
+- [Federation](../concepts/federation.md), que permite que uma única conta Stellar represente várias pessoas.
+- [Compliance](../compliance-protocol.md), se você estiver sujeito a qualquer tipo de regulamentação financeira.
 
 
-## Account Structure
+## Estrutura das Contas
 
-As an anchor, you should maintain at least two accounts:
+Como uma âncora, você deve manter pelo menos duas contas:
 
-- An **issuing account** used only for issuing and destroying assets.
-- A **base account** used to transact with other Stellar accounts. It holds a balance of assets issued by the *issuing account*.
+- Uma **conta emissora** ou issuing account, usada apenas para emitir e destruir ativos.
+- Uma **conta base** ou base account, usada para transacionar com outras contas Stellar. Ela detém um saldo dos ativos emitidos pela *conta emissora*.
 
-Create them on the test network using the [laboratory](https://stellar.org/laboratory/) or the steps from the [“get started” guide](../get-started/create-account.md).
+Crie-as na rede de testes usando o [laboratório](https://stellar.org/laboratory/) ou os passos do [guia “para começar”](../get-started/create-account.md).
 
-For this guide, we’ll use the following keys:
+Neste guia usaremos as seguintes chaves:
 
 <dl>
-  <dt>Issuing Account ID</dt>
+  <dt>ID da Conta Emissora</dt>
   <dd><code>GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ</code></dd>
-  <dt>Issuing Seed</dt>
+  <dt>Seed da Emissora</dt>
   <dd><code>SBILUHQVXKTLPYXHHBL4IQ7ISJ3AKDTI2ZC56VQ6C2BDMNF463EON65U</code></dd>
-  <dt>Base Account ID</dt>
+  <dt>ID da Conta Base</dt>
   <dd><code>GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU</code></dd>
-  <dt>Base Seed</dt>
+  <dt>Seed da Base</dt>
   <dd><code>SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ</code></dd>
 </dl>
 
 
 
-### Customer Accounts
+### Contas de Clientes
 
-There are two simple ways to account for your customers’ funds:
+Há duas maneiras simples de contabilizar os fundos dos seus clientes:
 
-1. Maintain a Stellar account for each customer. When a customer deposits money with your institution, you should pay an equivalent amount of your custom asset into the customer’s Stellar account from your *base account*. When a customer needs to obtain physical currency from you, deduct the equivalent amount of your custom asset from their Stellar account.
+1. Manter uma conta Stellar para cada cliente. Quando um cliente depositar dinheiro com a sua instituição, você deve pagar uma quantia equivalente de seu ativo na conta Stellar do cliente a partir da sua *conta base*. Quando um cliente precisar obter moeda física de você, deduza a quantia equivalente de seu ativo da conta Stellar do cliente.
 
-    This approach simplifies bookkeeping by utilizing the Stellar network instead of your own internal systems. It can also allow your customers a little bit more control over how their account works in Stellar.
+    Este método simplifica a contabilidade usando a rede Stellar em vez de seus próprios sistemas internos. Assim, também é possível permitir a seus clientes um pouco mais de controle sobre como as contas funcionam no Stellar.
 
-2. Use [federation](../concepts/federation.md) and the [`memo`](../concepts/transactions.md#memo) field in transactions to send and receive payments on behalf of your customers. In this approach, transactions intended for your customers are all made using your *base account*. The `memo` field of the transaction is used to identify the actual customer a payment is intended for.
+2. Usar [federation](../concepts/federation.md) e o campo [`memo`](../concepts/transactions.md#memo) em transações para enviar e receber pagamentos em nome de seus clientes. Neste método, transações feitas para seus clientes são todas realizadas usando sua *conta base*. O campo `memo` da transação é usado para identificar o cliente a que se destina o pagamento.
 
-    Using a single account requires you to do additional bookkeeping, but means you have fewer keys to manage and more control over accounts. If you already have existing banking systems, this is the simplest way to integrate Stellar with them.
+    Usando apenas uma conta requer que você faça um esforço de contabilidade adicional, mas significa que você tem menos chaves para gerenciar e mais controle sobre as contas. Se você já possuir sistemas bancários, esta é a forma mais simples de integrar ao Stellar com eles.
 
-You can also create your own variations on the above approaches. **For this guide, we’ll follow approach #2—using a single Stellar account to transact on behalf of your customers.**
+Você pode também criar suas próprias variações dos métodos acima. **Para este guia, seguiremos o método 2 — usar uma única conta Stellar para transacionar em nome de seus clientes..**
 
 
-## Data Flow
+## Fluxo de Dados
 
-In order to act as an anchor, your infrastructure will need to:
+Para agir como uma âncora, sua infraestrutura terá que:
 
-- Make payments.
-- Monitor a Stellar account and update customer accounts when payments are received.
-- Look up and respond to requests for federated addresses.
-- Comply with Anti-Money Laundering (AML) regulations.
+- Fazer pagamentos.
+- Monitorar uma conta Stellar e atualizar as contas de clientes ao receber pagamentos.
+- Consultar e responder a requests por endereços federados.
+- Cumprir regulações Anti-Money Laundering (AML).
 
-Stellar provides a prebuilt [federation server](https://github.com/stellar/go/tree/master/services/federation) and [regulatory compliance server](https://github.com/stellar/bridge-server/blob/master/readme_compliance.md) designed for you to install and integrate with your existing infrastructure. The [bridge server](https://github.com/stellar/bridge-server/blob/master/readme_bridge.md) coordinates them and simplifies interacting with the Stellar network. This guide demonstrates how to integrate them with your infrastructure, but you can also write your own customized versions.
+Stellar oferece um [servidor federation](https://github.com/stellar/go/tree/master/services/federation) e um [servidor compliance regulatório](https://github.com/stellar/bridge-server/blob/master/readme_compliance.md) pré-construídos, desenhados para você instalar e integrar com sua infraestrutura já existente. O [servidor bridge](https://github.com/stellar/bridge-server/blob/master/readme_bridge.md) os coordena e simplifica a interação com a rede Stellar. Este guia demonstra como integrá-los com sua infraestrutura, mas você também pode escrever suas próprias versões personalizadas.
 
-### Making Payments
+### Fazer Pagamentos
 
 When using the above services, a complex payment using federation and compliance works as follows:
 
