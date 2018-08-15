@@ -65,39 +65,39 @@ Stellar oferece um [servidor federation](https://github.com/stellar/go/tree/mast
 
 ### Fazer Pagamentos
 
-When using the above services, a complex payment using federation and compliance works as follows:
+Ao usar os serviços acima, um pagamento complexo usando federation e compliance funciona como se segue:
 
 ![Diagram of sending a payment](assets/anchor-send-payment-compliance.png)
 
-1. A customer using your organization’s app or web site sends a payment using your services.
-2. Your internal services send a payment using the bridge server.
-3. The bridge server determines whether compliance checks are needed and forwards transaction information to the compliance server.
-4. The compliance server determines the receiving account ID by looking up the federation address.
-5. The compliance server contacts your internal services to get information about the customer sending the payment in order to provide it to the receiving organization’s compliance systems.
-6. If the result is successful, the bridge server creates a transaction, signs it, and sends it to the Stellar network.
-7. Once the transaction is confirmed on the network, the bridge server returns the result to your services, which should update your customer’s account.
+1. Usando o app ou site da sua organização, um cliente envia um pagamento usando os seus serviços.
+2. Seus serviços internos enviam um pagamento usando o servidor bridge.
+3. O servidor bridge determina se verificações de compliance são necessárias e repassa as informações da transação ao servidor compliance.
+4. O servidor compliance determina o ID da conta recipiente consultando o endereço federation.
+5. O servidor compliance contata seus serviços internos e pega informações sobre o cliente que está enviando o pagamento para fornecê-lo aos sistemas de compliance da organização recipiente.
+6. Se o resultado for bem-sucedido, o servidor bridge cria a transação, a assina, e a envia à rede Stellar.
+7. Após a transação ser confirmada na rede, o servidor bridge retorna o resultado aos seus serviços, que devem atualizar a conta do seu cliente.
 
 
-### Receiving Payments:
+### Receber Pagamentos:
 
-When someone is sending a transaction to you, the flow is slightly different:
+Quando alguém estiver enviando uma transação a você, o fluxo é ligeiramente diferente:
 
 ![Diagram of receiving a payment](assets/anchor-receive-payment-compliance.png)
 
-1. The sender looks up the Stellar account ID to send the payment to based on your customer’s federated address from your federation server.
-2. The sender contacts your compliance server with information about the person sending the payment.
-3. Your compliance server contacts three services you implement:
-    1. A sanctions callback to determine whether the sender is permitted to pay your customer.
-    2. If the sender wants to check your customer’s information, a callback is used to determine whether you are willing to share your customer’s information.
-    3. The same callback used when sending a payment (above) is used to actually get your customer’s information.
-4. The sender submits the transaction to the Stellar network.
-5. The bridge server monitors the Stellar network for the transaction and sends it to your compliance server to verify that it was the same transaction you approved in step 3.1.
-6. The bridge server contacts a service you implement to notify you about the transaction. You can use this step to update your customer’s account balances.
+1. O remetente consulta o ID da conta Stellar para o qual enviar o pagamento baseado no endereço federado do seu cliente a partir do seu servidor federation.
+2. O remetente contata seu servidor compliance com informações sobre a pessoa que está enviando o pagamento.
+3. Seu servidor compliance contata três serviços implementados por você:
+    1. Um callback de sanções (sanctions sallback) para determinar se o remetente tem permissão para pagar seu cliente.
+    2. Caso o remetente queira verificar as informações do seu cliente, um callback é usado para determinar se você está disposto a compartilhar as informações de seu cliente.
+    3. O mesmo callback usado ao enviar um pagamento (acima) é usado para de fato pegar as informações do seu cliente.
+4. O remetente submete a transação à rede Stellar.
+5. O servidor bridge monitora a rede Stellar procurando pela transação e a envia a seu servidor compliance para verificar que era a mesma transação aprovada no passo 3.1.
+6. O servidor bridge contata um serviço que você implementou para notificá-lo sobre a transação. Você pode usar este passo para atualizar os saldos das contas de seus clientes.
 
-**While these steps can seem complicated, Stellar’s bridge, federation, and compliance services do most of the work.** You only need to implement four callbacks and create a [stellar.toml](../concepts/stellar-toml.html) file where others can find the URL of your services.
+**Por mais que estes passos pareçam complicados, os serviços bridge, federation e compliance do Stellar fazem a maior parte do trabalho.** Você só precisa implementar quatro callbacks e criar um arquivo [stellar.toml](../concepts/stellar-toml.html) onde outros podem encontrar a URL de seus serviços.
 
-In the rest of this guide, we’ll walk through setting up each part of this infrastructure step by step.
+No resto deste guia, veremos passo a passo como configurar cada parte dessa infraestrutura.
 
 <nav class="sequence-navigation">
-  <a rel="next" href="2-bridge-server.md">Next: Bridge Server</a>
+  <a rel="next" href="2-bridge-server.md">Próximo: Servidor Bridge</a>
 </nav>
