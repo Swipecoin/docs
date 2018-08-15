@@ -1,17 +1,17 @@
 ---
-title: Federation Server
+title: Servidor Federation
 sequence:
   previous: 2-bridge-server.md
   next: 4-compliance-server.md
 ---
 
-When testing the bridge server, we added a `memo` to the transaction in order to identify what customer account to credit. However, other people and organizations using Stellar might not know they need to do that. How do they find out?
+Ao testar o servidor bridge, adicionamos um `memo` à transação para identificar que conta de cliente deve ser creditada. Porém, outras pessoas e organizações que usem Stellar podem não saber que precisam fazer isso. Como elas podem descobrir?
 
-The [Stellar federation protocol](../concepts/federation.md) allows you to convert a human-readable address like `amy*your_org.com`[^friendly_names] to an account ID. It also includes information about what should be in a transaction’s `memo`. When sending a payment, you contact a federation server first to determine what Stellar account ID to pay. Luckily, the bridge server does this for you.
+O [protocolo Stellar federation](../concepts/federation.md) permite converter um endereço legível por humanos como `amy*sua_org.com`[^friendly_names] a um ID de conta. Ele também inclui informações sobre o que deve estar no `memo` da transação. Ao enviar um pagamento, contata-se um servidor federation primeiro para determinar a qual ID de conta Stellar pagar. Por sorte, o servidor bridge faz isso por você.
 
 ![Payment flow diagram](assets/anchor-send-payment-federation.png)
 
-Stellar.org provides a [prebuilt federation server](https://github.com/stellar/go/tree/master/services/federation) that can hook into an existing user database, but you can also write your own.
+Stellar.org fornece um [servidor federation pré-construído](https://github.com/stellar/go/tree/master/services/federation) que pode se conectar a uma base de dados de usuário, mas você também pode escrever o seu próprio.
 
 
 ## Create a Database
@@ -164,7 +164,7 @@ You should get a response like:
 </nav>
 
 
-[^friendly_names]: Federated addresses use an `*` to separate the username and domain so that your usernames can be e-mail addresses, like `amy@gmail.com*your_org.com`.
+[^friendly_names]: Endereços federados usam um `*` para separar o nome de usuário e o domínio para que os nomes de usuário possam ser endereços de e-mail, como `amy@gmail.com*sua_org.com`.
 
 [^federation_tables]: If you want your federation server to cover multiple domains, you’ll need a column to store the domains as well.
 
