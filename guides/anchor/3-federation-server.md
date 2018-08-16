@@ -92,11 +92,11 @@ FEDERATION_SERVER = "https://www.sua_org.com:8002/federation"
 A URL real do seu servidor federation pode ser qualquer uma que quiser — pode estar no seu subdomínio `www` mas em um caminho diferente, pode estar em outro port, ou pode até estar em um domínio totalmente distinto. **Porém, ele deve estar disponível via HTTPS com um certificado SSL válido.**[^ssl]
 
 
-## Send a Federation request
+## Enviar uma request Federation
 
-Test out your federation server by sending an HTTP request:
+Teste seu servidor federation enviando uma request HTTP:
 
-<code-example name="Request a Federation Info">
+<code-example name="Requisitar Informações Federation">
 
 ```bash
 curl "https://www.sua_org.com:8002/federation?q=tunde_adebayo*sua_org.com&type=name"
@@ -147,7 +147,7 @@ class FederationRequest {
 
 </code-example>
 
-You should get a response like:
+Você deve receber uma resposta do tipo:
 
 ```json
 {
@@ -159,8 +159,8 @@ You should get a response like:
 ```
 
 <nav class="sequence-navigation">
-  <a rel="prev" href="2-bridge-server.md">Back: Bridge Server</a>
-  <a rel="next" href="4-compliance-server.md">Next: Compliance Server</a>
+  <a rel="prev" href="2-bridge-server.md">Anterior: Servidor Bridge</a>
+  <a rel="next" href="4-compliance-server.md">Próximo: Servidor Compliance</a>
 </nav>
 
 
