@@ -14,11 +14,11 @@ O [protocolo Stellar federation](../concepts/federation.md) permite converter um
 Stellar.org fornece um [servidor federation pré-construído](https://github.com/stellar/go/tree/master/services/federation) que pode se conectar a uma base de dados de usuário, mas você também pode escrever o seu próprio.
 
 
-## Create a Database
+## Criar uma Base de Dados
 
-The Stellar federation server is designed to connect to any existing SQL database you might have with a list of account names. It essentially translates a federation request into a SQL query. The server supports MySQL, PostgreSQL, and SQLite3.
+O servidor federation Stellar é feito para conectar com qualquer base de dados SQL que você tiver que contenha uma lista de nomes de contas. Em essência, o servidor traduz uma request federation para um query SQL. O servidor dá suporte a MySQL, PostgreSQL, e SQLite3.
 
-At a minimum, your database should have a table with a column identifying the name to use for each account record.[^federation_tables] In your existing system, you might have a table named `accounts` that looks something like:
+Sua base de dados deve ter, no mínimo, uma tabela com uma coluna que identifica o nome a ser usado para cada registro de conta.[^federation_tables] Em seu sistema, você pode ter uma tabela de nome `accounts` com mais ou menos essa cara:
 
 | id | first_name | last_name | friendly_id         |
 |----|------------|-----------|---------------------|
@@ -28,12 +28,12 @@ At a minimum, your database should have a table with a column identifying the na
 | 4  | Steintór   | Jákupsson | steintor_jakupsson  |
 | 5  | Sneha      | Kapoor    | sneha_kapoor        |
 
-Where Tunde’s Stellar address would be `tunde_adebayo*your_org.com`.
+Onde o endereço Stellar de Tunde seria `tunde_adebayo*sua_org.com`.
 
 
-## Download and Configure Federation Server
+## Baixar e Configurar o Servidor Federation
 
-Next, [download the latest federation server](https://github.com/stellar/go/releases) for your platform. Install the executable anywhere you like. In the same directory, create a file named `federation.cfg`. This will store the configuration for the server. It should look something like:
+Em seguida, [faça download do servidor federation mais recente](https://github.com/stellar/go/releases) para sua plataforma. Instale o executável onde quiser. No mesmo diretório, crie um arquivo chamado `federation.cfg`. Ele irá armazenar as configurações do servidor. Deverá ter mais ou menos essa cara:
 
 <code-example name="federation.cfg">
 
@@ -41,16 +41,16 @@ Next, [download the latest federation server](https://github.com/stellar/go/rele
 port = 8002
 
 [database]
-type = "mysql" # Or "postgres" or "sqlite3"
-dsn = "dbuser:dbpassword@/internal_accounts"
+type = "mysql" # Ou "postgres" ou "sqlite3"
+dsn = "dbusuario:dbsenha@/internal_accounts"
 
 [queries]
-federation = "SELECT 'GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU' as id, friendly_id as memo, 'text' as memo_type FROM accounts WHERE friendly_id = ? AND ? = 'your_org.com'"
+federation = "SELECT 'GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU' as id, friendly_id as memo, 'text' as memo_type FROM accounts WHERE friendly_id = ? AND ? = 'sua_org.com'"
 reverse-federation = "SELECT friendly_id, '' as domain FROM accounts WHERE ? = ''"
 
-# The federation server must be available via HTTPS. Specify your SSL
-# certificate and key here. If the server is behind a proxy or load balancer
-# that implements HTTPS, you can omit this section.
+# O servidor federation deve estar disponível via HTTPS. Especifique seu
+# certificado e chave SSL aqui. Se o servidor estiver detrás de um proxy ou load balancer
+# que implementa HTTPS, você pode omitir esta seção.
 [tls]
 certificate-file = "server.crt"
 private-key-file = "server.key"
@@ -58,38 +58,38 @@ private-key-file = "server.key"
 
 </code-example>
 
-Make sure to update the database connection information with the proper credentials and name for your database. Also update the value of `domain` in the `federation` query to match your actual domain instead of `your_org.com`.
+Certifique-se de atualizar as informações de conexão à base de dados com os credenciais e nome adequados para sua base de dados. Também atualize o valor de `domain` no query `federation` para ser igual ao seu domínio atual em vez de `sua_org.com`.
 
-The `federation` query is a SQL query that should return the columns `id`, `memo`, and `memo_type` when supplied with the two parts of a Stellar address, e.g. `tunde_adeboyo` and `your_org.com` for the address `tunde_adebayo*your_org.com`.
+O query `federation` é um query SQL que deve retornar as colunas `id`, `memo` e `memo_type` ao ser fornecido duas partes de um endereço Stellar como `tunde_adeboyo` e `sua_org.com` para o endereço `tunde_adebayo*sua_org.com`.
 
-Since we are mapping all addresses to our base account, we always return the base account ID for `id`. As in the first section, we want the account’s `friendly_id` as a text memo.
+Como estamos mapeando todos os endereços a nossa conta base, sempre retornamos o ID da conta base para `id`. Assim como na primeira seção, queremos o `friendly_id` da conta como um memo de texto.
 
-The `reverse-federation` query is required, but because all customer accounts map to a single Stellar account in our design, we need to make sure this query always returns no rows.
+A query `reverse-federation` é obrigatória, mas como todas as contas de clientes são mapeadas a uma única conta Stellar em nosso design, precisamos ter certeza de que este query sempre retorna nenhuma linha.
 
-Now run the server! (Unlike the bridge server, there’s there no custom database to migrate.)
+Agora rode o servidor! (Diferentemente do servidor bridge, não há nenhuma base de dados personalizada para migrar.)
 
 ```bash
 ./federation
 ```
 
 
-## Update Stellar.toml
+## Atualizar o Stellar.toml
 
-Finally, others have to know the URL of your federation server. The [`stellar.toml` file](../concepts/stellar-toml.md) is publicly available file where others can find information about your Stellar integration. It should always be stored at:
+Por fim, outros precisam saber o URL do seu servidor federation. O [arquivo `stellar.toml`](../concepts/stellar-toml.md) é um arquivo disponível ao público onde outros podem encontrar informações sobre sua integração Stellar. Ele deve sempre estar armazenado em:
 
-`https://[YOUR DOMAIN]/.well-known/stellar.toml`
+`https://[SEU DOMÍNIO]/.well-known/stellar.toml`
 
-It can list all sorts of properties, but the one we care about now is the URL for your federation server. Your `stellar.toml` file should look something like:
+Ele pode listar vários tipos de propriedades, mas o que nos importa agora é a URL do seu servidor federation. Seu arquivo `stellar.toml` deve ter mais ou menos essa cara:
 
 <code-example name="stellar.toml">
 
 ```toml
-FEDERATION_SERVER = "https://www.your_org.com:8002/federation"
+FEDERATION_SERVER = "https://www.sua_org.com:8002/federation"
 ```
 
 </code-example>
 
-The actual URL for your federation server can be anything you like—it can be at your `www` subdomain but on a different path, it can be at a different port, or it can be on a different domain entirely. **However, it must be available via HTTPS with a valid SSL certificate.**[^ssl]
+A URL real do seu servidor federation pode ser qualquer uma que quiser — pode estar no seu subdomínio `www` mas em um caminho diferente, pode estar em outro port, ou pode até estar em um domínio totalmente distinto. **Porém, ele deve estar disponível via HTTPS com um certificado SSL válido.**[^ssl]
 
 
 ## Send a Federation request
@@ -99,16 +99,16 @@ Test out your federation server by sending an HTTP request:
 <code-example name="Request a Federation Info">
 
 ```bash
-curl "https://www.your_org.com:8002/federation?q=tunde_adebayo*your_org.com&type=name"
+curl "https://www.sua_org.com:8002/federation?q=tunde_adebayo*sua_org.com&type=name"
 ```
 
 ```js
 var request = require('request');
 
 request.get({
-  url: 'https://www.your_org.com:8002/federation',
+  url: 'https://www.sua_org.com:8002/federation',
   qs: {
-    q: 'tunde_adebayo*your_org.com',
+    q: 'tunde_adebayo*sua_org.com',
     type: 'name'
   }
 }, function(error, response, body) {
@@ -128,8 +128,8 @@ import java.net.URI;
 
 class FederationRequest {
   public static void main(String [] args) throws Exception {
-    URI federationUri = new URIBuilder("https://www.your_org.com:8002/federation")
-      .addParameter("q", "tunde_adebayo*your_org.com")
+    URI federationUri = new URIBuilder("https://www.sua_org.com:8002/federation")
+      .addParameter("q", "tunde_adebayo*sua_org.com")
       .addParameter("type", "name")
       .build();
 
@@ -151,7 +151,7 @@ You should get a response like:
 
 ```json
 {
-  "stellar_address": "tunde_adebayo*your_org.com",
+  "stellar_address": "tunde_adebayo*sua_org.com",
   "account_id": "GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU",
   "memo_type": "text",
   "memo": "tunde_adebayo"
@@ -166,6 +166,6 @@ You should get a response like:
 
 [^friendly_names]: Endereços federados usam um `*` para separar o nome de usuário e o domínio para que os nomes de usuário possam ser endereços de e-mail, como `amy@gmail.com*sua_org.com`.
 
-[^federation_tables]: If you want your federation server to cover multiple domains, you’ll need a column to store the domains as well.
+[^federation_tables]: Se você quiser que seu servidor federation cubra mais de um domínio, será preciso também uma coluna para armazenar os domínios.
 
-[^ssl]: Requiring that public services are available via SSL helps keep things secure. While testing, you can get free certificates from http://letsencrypt.org. You can also generate your own self-signed certificates, but you must add them to all the computers in your tests.
+[^ssl]: Exigir que serviços públicos estejam disponíveis via SSL ajuda a manter a segurança. Para testes, é possível pegar certificados gratuitos em http://letsencrypt.org. Você também pode gerar seus próprios certificados autoassinados, mas você precisa adicioná-los a todos os computadores em seus testes.
