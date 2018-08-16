@@ -1,50 +1,50 @@
 ---
-title: Compliance Server
+title: Servidor Compliance
 sequence:
   previous: 3-federation-server.md
   next: 5-conclusion.md
 ---
 
-The task of an anchor is handling regulatory compliance, like Anti-Money Laundering (<abbr title="Anti-Money Laundering">AML</abbr>). To accomplish that, you should use the [Stellar compliance protocol](../compliance-protocol.md), a standard way to exchange compliance information and pre-approve a transaction with another financial institution.
+A tarefa de uma âncora é cuidar de compliance regulatório, como Anti-Money Laundering (<abbr title="Anti-Money Laundering">AML</abbr>). Para conseguir fazê-lo, você deve usar o [protocolo compliance Stellar](../compliance-protocol.md), uma maneira padrão de trocar informações de compliance e pré-aprovar uma transação com outra instituição financeira.
 
-You can write your own server that matches the compliance protocol, but Stellar.org also provides a [compliance server](https://github.com/stellar/bridge-server/blob/master/readme_compliance.md) that takes care of most of the work for you.
+Você pode escrever seu próprio servidor que atende ao protocolo compliance, mas o Stellar.org também fornece um [servidor compliance](https://github.com/stellar/bridge-server/blob/master/readme_compliance.md) que cuida da maior parte do trabalho por você.
 
-Your bridge server contacts your compliance server in order to authorize a transaction before sending it. Your compliance server uses the compliance protocol to clear the transaction with the recipient’s compliance server, then lets the bridge server know the transaction is ok to send.
+Seu servidor bridge contata seu servidor compliance para autorizar uma transação antes de enviá-la. Seu servidor compliance usa o protocolo compliance para liberar a transação com o servidor compliance do recipiente, para depois informar ao servidor bridge que a transação está pronta para ser enviada.
 
 ![](assets/anchor-send-payment-compliance.png)
 
-When another compliance server contacts yours to clear a transaction, a series of callbacks are used to check the information with you. Later, when your bridge server receives a transaction, it contacts your compliance server to verify that it was cleared.
+Quando outro servidor compliance contata o seu para liberar uma transação, uma série de callbacks são usados para verificar as informações com você. Depois, quando seu servidor bridge recebe uma transação, ele contata seu servidor compliance para verificar que ela foi liberada.
 
 ![](assets/anchor-receive-payment-compliance.png)
 
 
-## Create a Database
+## Criar uma Base de Dados
 
-The compliance server requires a MySQL or PostgreSQL database in order to save transaction and compliance information. Create a new database named `stellar_compliance` and a user to manage it. You don’t need to add any tables; the server includes [a command to configure and update your database](#start-the-server).
+O servidor compliance requer uma base de dados MySQL ou PostgreSQL para salvar informações de transações e compliance. Crie uma nova base de dados chamada `stellar_compliance` e um usário para administrá-la. Não é preciso adicionar nenhuma tabela; o servidor inclui [um comando para configurar e atualizar sua base de dados](#iniciar-o-servidor).
 
 
-## Download and Configure Compliance Server
+## Baixar e Configurar o Servidor Compliance
 
-Start by [downloading the latest compliance server](https://github.com/stellar/bridge-server/releases) for your platform and install the executable anywhere you like. In the same directory, create a file named `config_compliance.toml`. This will store the configuration for the compliance server. It should look something like:
+Comece [baixando o servidor compliance mais recente](https://github.com/stellar/bridge-server/releases) para sua plataforma e instale o executável onde quiser. No mesmo diretório, crie um arquivo chamado `config_compliance.toml`. Ele irá armazenar as configurações do servidor compliance. Ele deverá ter mais ou menos essa cara:
 
 <code-example name="config_compliance.toml">
 
 ```toml
 external_port = 8003
 internal_port = 8004
-# Set this to `true` if you need to check the information of a person receiving
-# a payment you are sending (if false, only the sender will be checked). For
-# more information, see the callbacks section below.
+# Defina isto como `true` se você precisa verificar as informações da pessoa que está recebendo
+# um pagamento sendo enviado por você (se `false`, apenas ocorrerá verificação no lado do remetente).
+# Para mais informações, veja a seção de callbacks abaixo.
 needs_auth = false
 network_passphrase = "Test SDF Network ; September 2015"
 
 [database]
-type = "mysql" # Or "postgres" if you created a PostgreSQL database
-url = "dbuser:dbpassword@/stellar_compliance"
+type = "mysql" # Ou "postgres" se você criou uma base de dados PostgreSQL
+url = "dbusuario:dbsenha@/stellar_compliance"
 
 [keys]
-# This should be the secret seed for your base account (or another account that
-# can authorize transactions from your base account).
+# Esta deve ser a seed secreta da sua conta base (ou outra conta que
+# pode autorizar transações a partir da sua conta base).
 signing_seed = "SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ"
 encryption_key = "SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ"
 
@@ -53,9 +53,9 @@ sanctions = "http://localhost:8005/compliance/sanctions"
 ask_user = "http://localhost:8005/compliance/ask_user"
 fetch_info = "http://localhost:8005/compliance/fetch_info"
 
-# The compliance server must be available via HTTPS. Specify your SSL
-# certificate and key here. If the server is behind a proxy or load  balancer
-# that implements HTTPS, you can omit this section.
+# O servidor compliance deve estar disponível via HTTPS. Especifique seu
+# certificado e chave SSL aqui. Se o servidor estiver detrás de um proxy ou load balancer
+# que implementa HTTPS, você pode omitir esta seção.
 [tls]
 certificate_file = "server.crt"
 private_key_file = "server.key"
@@ -63,11 +63,11 @@ private_key_file = "server.key"
 
 </code-example>
 
-The configuration file lists both an `external_port` and an `internal_port`. The external port must be publicly accessible. This is the port that other organizations will contact in order to determine whether you will accept a payment.
+O arquivo de configuração lista ambos um `external_port` e um `internal_port`. O `external port` deve estar publicamente acessível. Este é o port que outras organizações irão contatar para determinar se você vai ou não aceitar um pagamento.
 
-The internal port should *not* be publicly accessible. It is the port through which you initiate compliance operations and transmit private information. It’s up to you to keep this port secure through a firewall, a proxy, or some other means.
+O `internal port` *não* deve estar publicamente acessível. Este é o port pelo qual se inicia operações de compliance e se transmite informações privadas. Fica por sua conta manter este port seguro por meio de um firewall, um proxy, ou outros meios.
 
-You’ll also need to tell your bridge server that you now have a compliance server it can use. Update [`config_bridge.toml`](2-bridge-server.md#download-and-configure-bridge-server) with the address of your compliance server’s *internal* port:
+Também será precisa informar ao seu servidor bridge que agora você tem um servidor compliance que pode ser usado por ele. Atualize o [`config_bridge.toml`](2-bridge-server.md#baixar-e-configurar-o-seu-servidor-bridge) com o endereço do port *interno* do seu servidor compliance:
 
 <code-example name="config_bridge.toml">
 
@@ -77,7 +77,7 @@ horizon = "https://horizon-testnet.stellar.org"
 network_passphrase = "Test SDF Network ; September 2015"
 compliance = "https://your_org.com:8004"
 
-# ...the rest of your configuration...
+# ...o resto das suas configurações...
 ```
 
 </code-example>
