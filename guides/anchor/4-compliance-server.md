@@ -75,7 +75,7 @@ Também será precisa informar ao seu servidor bridge que agora você tem um ser
 port = 8001
 horizon = "https://horizon-testnet.stellar.org"
 network_passphrase = "Test SDF Network ; September 2015"
-compliance = "https://your_org.com:8004"
+compliance = "https://sua_org.com:8004"
 
 # ...o resto das suas configurações...
 ```
@@ -83,27 +83,27 @@ compliance = "https://your_org.com:8004"
 </code-example>
 
 
-## Implement Compliance Callbacks
+## Implementar Callbacks de Compliance
 
-In the server configuration file, there are three callback URLs, much like those for the bridge server. They are HTTP POST URLs that will be sent form-encoded data:
+No arquivo de configuração do servidor, há três URLs de callback, muito semelhantes às do servidor bridge. Elas são URLs POST HTTP que enviarão dados form-encoded:
 
-- `fetch_info` is sent a federation address (like `tunde_adebayo*your_org.com`) and should return all the information necessary for another organization to perform compliance checks. It can be any data you deem reasonable and must be formatted as JSON.
+- `fetch_info` recebe um endereço federation (como `tunde_adebayo*sua_org.com`) e deve retornar todas as informações necessárias para que outra organização realize verificações de compliance. Pode ser qualquer dado que você julgue apropriado e deve estar formatado como JSON.
 
-    When you are sending a payment, it will be called to get information on the customer who is sending the payment in order to send it to the receiving organization. When receiving a payment, it will be called if the sending organization has requested information on the receiver to do its own compliance checks (based on the [`needs_auth` configuration](#download-and-configure-compliance-server)).
+    Ao enviar um pagamento, `fetch_info` será chamado para pegar informações sobre o cliente que está enviando o pagamento para enviá-las à organização recebedora. Ao receber um pagamento, será chamado se a organização remetente requisitou informações sobre o recipiente para suas próprias verificações de compliance (baseado na [configuração `needs_auth`](#baixar-e-configurar-o-servidor-compliance)).
 
-    <code-example name="Implementing the fetch_info callback">
+    <code-example name="Implementar o callback fetch_info">
 
     ```js
     app.post('/compliance/fetch_info', function (request, response) {
       var addressParts = response.body.address.split('*');
       var friendlyId = addressParts[0];
 
-      // You need to create `accountDatabase.findByFriendlyId()`. It should look
-      // up a customer by their Stellar account and return account information.
+      // Você precisa criar `accountDatabase.findByFriendlyId()`. Deve consultar
+      // dados de um cliente por meio de sua conta Stellar e retornar informações da conta.
       accountDatabase.findByFriendlyId(friendlyId)
         .then(function(account) {
-          // This can be any data you determine is useful and is not limited to
-          // these three fields.
+          // Isto pode ser qualquer dado que você julga ser útil e não é limitado a
+          // estes três.
           response.json({
             name: account.fullName,
             address: account.address,
@@ -128,13 +128,13 @@ In the server configuration file, there are three callback URLs, much like those
 
       String friendlyId = address.split("\\*", 2)[0];
 
-      // You need to create `accountDatabase.findByFriendlyId()`. It should
-      // find customers by their Stellar account and return account information.
+      // Isso pode ser qualquer dado que você julga ser útil e não é limitado a
+      // estes três.
       try {
         Account account = accountDatabase.findByFriendlyId(friendlyId);
         return Response.ok(
-          // This can be any data you determine is useful and is not limited to
-          // these three fields.
+        // Isto pode ser qualquer dado que você julga ser útil e não é limitado a
+        // estes três.
           Json.createObjectBuilder()
             .add("name", account.fullName)
             .add("address", account.address)
@@ -144,7 +144,7 @@ In the server configuration file, there are three callback URLs, much like those
         )
       } catch (Exception error) {
         System.out.println(
-          String.format("Could not find account: %s", address));
+          String.format("Não foi possível encontrar a conta: %s", address));
         return Response.status(500).entity(error.getMessage()).build();
       }
     }
@@ -152,32 +152,32 @@ In the server configuration file, there are three callback URLs, much like those
 
     </code-example>
 
-- `sanctions` is given information about the person who is sending a payment to you or one of your customers. This is the same data the sending server would have received from its own `fetch_info` callback. The HTTP response code it produces indicates whether the payment will be accepted (status `200`), denied (status `403`), or if you need additional time for processing (status `202`).
+- `sanctions` recebe informações sobre a pesosa que envia pagamento a você ou a um de seus clientes. São os mesmos dados que o servidor remetente teria receberia pelo seu próprio callback `fetch_info`. O código de resposta HTTP que ele produz indica se o pagamento será aceito (status `200`), rejeitado (status `403`), ou se você precisa de tempo adicional para processar (status `202`).
 
-    <code-example name="Implementing the sanctions callback">
+    <code-example name="Implementar o callback sanctions">
 
     ```js
     app.post('/compliance/sanctions', function (request, response) {
       var sender = JSON.parse(request.body.sender);
 
-      // You need to create a function to check whether there are any sanctions
-      // against someone.
+      // Você precisa criar uma função para verificar se há alguma sanção
+      // contra alguém.
       sanctionsDatabase.isAllowed(sender)
         .then(function() {
           response.status(200).end();
         })
         .catch(function(error) {
-          // In this example, we're assuming `isAllowed` returns an error with a
-          // `type` property that indicates the kind of error. Your systems may
-          // work differently; just return the same HTTP status codes.
+          // Neste exemplo, supõe-se que `isAllowed` retorna um erro com uma
+          // propriedade `type` que indica o tipo do erro. Seus sistemas podem
+          // funcionar de maneira distinta; apenas retorne os mesmos códigos de status HTTP.
           if (error.type === 'DENIED') {
             response.status(403).end();
           }
           else if (error.type === 'UNKNOWN') {
-            // If you need to wait and perform manual checks, you'll have to
-            // create a way to do that as well
+            // Se você precisa esperar e realizar verificações manuais, será preciso
+            // criar uma maneira de fazer isso também
             notifyHumanForManualSanctionsCheck(sender);
-            // The value for `pending` is a time to check back again in seconds
+            // O valor de `pending` é um tempo em segundos para verificar novamente
             response.status(202).json({pending: 3600}).end();
           }
           else {
@@ -202,16 +202,16 @@ In the server configuration file, there are three callback URLs, much like those
       JsonObject senderData = jsonReader.readObject();
       jsonReader.close();
 
-      // You need to create a function to check whether there are any sanctions
-      // against someone.
+      // Você precisa criar uma função para verificar se há alguma sanção
+      // contra alguém.
       Permission permission = sanctionsDatabase.isAllowed(
         senderData.getString("name"),
         senderData.getString("address"),
         senderData.getString("date_of_birth"));
 
-      // In this example, we're assuming `isAllowed` returns a Permissions enum
-      // that indicates whether someone is Allowed, Denied, or Unknown. Your
-      // systems may work differently; just return the same HTTP status codes.
+      // Neste exemplo, supõe-se que `isAllowed` returna um enum Permissions
+      // que indica se alguém está Allowed (permitido), Denied (rejeitado), ou Unknown (desconhecido).
+      // Seus sistemas podem funcionar de maneira distinta; apenas retorne os mesmos códigos de status HTTP.
       if (permission.equals(Permission.Allowed)) {
         return Response.ok().build();
       }
@@ -219,10 +219,10 @@ In the server configuration file, there are three callback URLs, much like those
         return Response.status(403).build();
       }
       else {
-        // If you need to wait and perform manual checks, you'll have to implent
-        // a way to do that as well.
+        // Se você precisa esperar e realizar verificações manuais, será preciso
+        // criar uma maneira de fazer isso também.
         notifyHumanForManualSanctionsCheck(senderData);
-        // The value for `pending` is a time to check back again in seconds.
+        // O valor de `pending` é um tempo em segundos para verificar novamente.
         return Response.accepted(
           Json.createObjectBuilder()
             .add("pending", 3600)
@@ -234,26 +234,26 @@ In the server configuration file, there are three callback URLs, much like those
 
     </code-example>
 
-- `ask_user` is called when receiving a payment if the sender has requested information about the receiver. Its return code indicates whether you will send that information (`fetch_info` is then called to actually *get* the info). It is sent information on both the payment and the sender.
+- `ask_user` é chamado ao receber um pagamento se o remetente requisitou informações sobre o recebedor. Seu código retornado indica se você enviará essas informações (`fetch_info` é então chamado para realmente pegar as informações). `ask_user` recebe informações tanto sobre o pagamento como sobre o remetente.
 
-    <code-example name="Implementing the ask_user callback">
+    <code-example name="Implementar o callback ask_user">
 
     ```js
     app.post('/compliance/ask_user', function (request, response) {
       var sender = JSON.parse(request.body.sender);
 
-      // You can do any checks that make sense here. For example, you may not
-      // want to share information with someone who has sanctions as above:
+      // Você pode fazer qualquer verificação que faça sentido aqui. Por exemplo, você pode não
+      // querer compartilhar informações com alguém que tem sanções como acima:
       sanctionsDatabase.isAllowed(sender)
         .then(function() {
           response.status(200).end();
         })
         .catch(function(error) {
           if (error.type === 'UNKNOWN') {
-            // If you need to wait and perform manual checks, you'll have to
-            // create a way to do that as well.
+            // Se você precisa esperar e realizar verificações manuais, precisará
+            // criar uma maneira de fazer isso também.
             notifyHumanForManualInformationSharing(sender);
-            // The value for `pending` is a time to check back again in seconds
+            // O valor de `pending` é um tempo em segundos para verificar novamente.
             response.status(202).json({pending: 3600}).end();
           }
           else {
@@ -273,8 +273,8 @@ In the server configuration file, there are three callback URLs, much like those
       JsonObject senderData = jsonReader.readObject();
       jsonReader.close();
 
-      // You can do any checks that make sense here. For example, you may not
-      // want to share information with someone who has sanctions as above:
+      // Você pode fazer qualquer verificação que faça sentido aqui. Por exemplo, você pode não
+      // querer compartilhar informações com alguém que tem sanções como acima:
       Permission permission = sanctionsDatabase.isAllowed(
         senderData.getString("name"),
         senderData.getString("address"),
@@ -287,10 +287,10 @@ In the server configuration file, there are three callback URLs, much like those
         return Response.status(403).build();
       }
       else {
-        // If you need to wait and perform manual checks, you'll have to create
-        // a way to do that as well.
+        // Se você precisa esperar e realizar verificações manuais, precisará
+        // criar uma maneira de fazer isso também.
         notifyHumanForManualInformationSharing(senderData);
-        // The value for `pending` is a time to check back again in seconds.
+            // O valor de `pending` é um tempo em segundos para verificar novamente.
         return Response.accepted(
           Json.createObjectBuilder()
             .add("pending", 3600)
@@ -302,66 +302,66 @@ In the server configuration file, there are three callback URLs, much like those
 
     </code-example>
 
-To keep things simple, we’ll add all three callbacks to the same server we are using for the bridge server callbacks. However, you can implement them on any service that makes sense in your infrastructure. Just make sure they’re reachable at the URLs in your config file.
+Para simplificar as coisas, vamos adicionar todos os três callbacks ao mesmo servidor que estamos usando para os callbacks do servidor bridge. Porém, você pode implementá-los em qualquer serviço que faça sentido em sua infraestrutura. Só tome cuidado para que seja possível acessá-los por meio das URLs em seu arquivo de configuração.
 
 
-## Update Stellar.toml
+## Atualizar o Stellar.toml
 
-When other organizations need to contact your compliance server to authorize a payment to one of your customers, they consult your domain’s `stellar.toml` file for the address, just as when finding your federation server.
+Quando outras organizações precisam contatar seu servidor compliance para autorizar um pagamento a um dos seus clientes, eles consultam o arquivo `stellar.toml` do seu domínio pelo endereço, assim como quando querem encontrar seu servidor federation.
 
-For compliance operations, you’ll need to list two new properties in your `stellar.toml`:
+Para operações de compliance, será preciso listar duas novas propriedades em seu `stellar.toml`:
 
 <code-example name="stellar.toml">
 
 ```toml
-FEDERATION_SERVER = "https://www.your_org.com:8002/federation"
-AUTH_SERVER = "https://www.your_org.com:8003"
+FEDERATION_SERVER = "https://www.sua_org.com:8002/federation"
+AUTH_SERVER = "https://www.sua_org.com:8003"
 SIGNING_KEY = "GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU"
 ```
 
 </code-example>
 
-`AUTH_SERVER` is the address for the *external* port of your compliance server. Like your federation server, this can be any URL you like, but **it must support HTTPS and use a valid SSL certificate.**[^ssl]
+`AUTH_SERVER` é o endereço do port *externo* de seu servidor compliance. Assim como seu servidor federation, pode ser qualquer URL que quiser, mas **deve suportar HTTPS e usar um certificado SSL válido.**[^ssl]
 
-`SIGNING_KEY` is the public key that matches the secret seed specified for `signing_seed` in your compliance server’s configuration. Other organizations will use it to verify that messages were actually sent by you.
+`SIGNING_KEY` é a chave pública que bate com a seed secreta especificada em `signing_seed` nas configurações de seu servidor compliance. Outras organizações a usarão para verificar que mensagens foram realmente enviadas por você.
 
 
-## Start the Server
+## Iniciar o Servidor
 
-Before starting the server the first time, the tables in your database need to be created. Running compliance server with the `--migrate-db` argument will make sure everything is set to go:
+Antes de iniciar o servidor pela primeira vez, as tabelas em sua base de dados precisão ser criadas. Rodar o servidor compliance com o argumento `--migrate-db` irá deixar tudo pronto para começar:
 
 ```bash
 ./compliance --migrate-db
 ```
 
-Each time you update the compliance server to a new version, you should run this command again. It will upgrade your database in case anything needs to be changed.
+A cada vez que você atualizar o servidor compliance a uma nova versão, você deve rodar este comando novamente. Ele irá atualizar sua base de dados caso algo precise ser alterado.
 
-Now that your database is fully set up, you can start the compliance server by running:
+Agora que sua base de dados está completamente preparada, você pode iniciar o servidor compliance rodando:
 
 ```bash
 ./compliance
 ```
 
 
-## Try It Out
+## Experimente
 
-Now that you’ve got your compliance server set up and ready to verify transactions, you’ll want to test it by sending a payment to someone who is running their own compliance and federation servers.
+Agora que seu servidor compiance está configurado e pronto para verificar transações, você pode testá-lo enviando um pagamento a alguém que está rodando seus próprios servidors compliance e federation.
 
-The easiest way to do this is to simply test a payment from one of your own customers to another. Your compliance, federation, and bridge servers will perform both the sending and receiving sides of the transaction.
+O jeito mais fácil de fazer isso é simplesmente testar um pagamento de um de seus clientes a outro. Seus servidors compliance, federation e bridge irão realizar ambos os lados remetente e recipiente da transação.
 
-Send a payment through your bridge server, but this time, use federated addresses for the sender and receiver and an `extra_memo`[^compliance_memos] to trigger compliance checks:
+Envie um pagamento por meio de seu servidor bridge, mas desta vez, use endereços federados para o remetente e o destinatário e um `extra_memo`[^compliance_memos] para acionar verificações de compliance:
 
-<code-example name="Send a Payment">
+<code-example name="Enviar um Pagamento">
 
 ```bash
-# NOTE: `extra_memo` is required for compliance (use it instead of `memo`)
+# NOTE: `extra_memo` é necessário para compliance (use-o em vez de `memo`)
 curl -X POST -d \
 "amount=1&\
 asset_code=USD&\
 asset_issuer=GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ&\
-destination=amy*your_org.com&\
+destination=amy*sua_org.com&\
 source=SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ&\
-sender=tunde_adebayo*your_org.com&\
+sender=tunde_adebayo*sua_org.com&\
 extra_memo=Test%20transaction" \
 http://localhost:8001/payment
 ```
@@ -375,18 +375,18 @@ request.post({
     amount: '1',
     asset_code: 'USD',
     asset_issuer: 'GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ',
-    destination: 'amy*your_org.com',
+    destination: 'amy*sua_org.com',
     source: 'SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ',
-    sender: 'tunde_adebayo*your_org.com',
-    // `extra_memo` is required for compliance (use it instead of `memo`)
-    extra_memo: 'Test transaction',
+    sender: 'tunde_adebayo*sua_org.com',
+    // `extra_memo` é necessário para compliance (use-o em vez de `memo`)
+    extra_memo: 'Transação de teste',
   }
 }, function(error, response, body) {
   if (error || response.statusCode !== 200) {
-    console.error('ERROR!', error || body);
+    console.error('ERRO!', error || body);
   }
   else {
-    console.log('SUCCESS!', body);
+    console.log('SUCCESSO!', body);
   }
 });
 ```
@@ -412,11 +412,11 @@ public class PaymentRequest() {
     params.add(new BasicNameValuePair("amount", "1"));
     params.add(new BasicNameValuePair("asset_code", "USD"));
     params.add(new BasicNameValuePair("asset_issuer", "GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ"));
-    params.add(new BasicNameValuePair("destination", "amy*your_org.com"));
+    params.add(new BasicNameValuePair("destination", "amy*sua_org.com"));
     params.add(new BasicNameValuePair("source", "SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ"));
-    params.add(new BasicNameValuePair("sender", "tunde_adebayo*your_org.com"));
-    // `extra_memo` is required for compliance (use it instead of `memo`)
-    params.add(new BasicNameValuePair("extra_memo", "Test transaction"));
+    params.add(new BasicNameValuePair("sender", "tunde_adebayo*sua_org.com"));
+    // `extra_memo` é necessário para compliance (use-o em vez de `memo`)
+    params.add(new BasicNameValuePair("extra_memo", "Transação de teste"));
 
     HttpResponse response = httpClient.execute(paymentRequest);
     HttpEntity entity = response.getEntity();
@@ -430,14 +430,14 @@ public class PaymentRequest() {
 
 </code-example>
 
-For a more realistic test, set up a duplicate copy of your bridge, federation, and compliance servers at a different domain and send a payment to them!
+Para um teste mais realista, prepare uma cópia duplicada de seus servidores bridge, federation, e compliance em outro domínio e envie um pagamento a eles!
 
 <nav class="sequence-navigation">
-  <a rel="prev" href="3-federation-server.md">Back: Federation Server</a>
-  <a rel="next" href="5-conclusion.md">Next: Next Steps</a>
+  <a rel="prev" href="3-federation-server.md">Anterior: Servidor Federation</a>
+  <a rel="next" href="5-conclusion.md">Próximo: Próximos Passos</a>
 </nav>
 
 
-[^compliance_memos]: Compliance transactions with the bridge server don’t support the `memo` field. The actual transaction’s `memo` will store a hash used to verify that the transaction submitted to the Stellar network matches the one agreed upon during initial compliance checks. Your `extra_memo` data will be transmitted instead during the compliance checks. For details, see [the compliance protocol](../compliance-protocol.md).
+[^compliance_memos]: Transações compliance com o servidor bridge não dão suporte ao campo `memo`. O `memo` da transação de fato irá armazenar um has usado para verificar que a transação submetida à rede Stellar bate com aquela acordada durante as verificações de compliance iniciais. Seu `extra_memo` será transmitido em vez disso durante as verificações de compliance. Para detalhes, veja [o protocolo compliance](../compliance-protocol.md).
 
-[^ssl]: Requiring that public services are available via SSL helps keep things secure. While testing, you can get free certificates from http://letsencrypt.org. You can also generate your own self-signed certificates, but you must add them to all the computers in your tests.
+[^ssl]: Exigir que serviços públicos estejam disponíveis via SSL ajuda a manter a segurança. Para testes, é possível pegar certificados gratuitos em http://letsencrypt.org. Você também pode gerar seus próprios certificados autoassinados, mas você precisa adicioná-los a todos os computadores em seus testes.
