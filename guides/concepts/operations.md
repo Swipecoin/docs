@@ -24,7 +24,7 @@ transação, a não ser que haja algo definido na operação que ignore isso.
 
 ## Thresholds
 
-Cada operação pertence a uma categoria de threshold (limiar) específica: baixa, média ou alta.
+Cada operação pertence a uma categoria de threshold (limiar) específica: low, medium ou high (baixa, média ou alta).
 Thresholds definem o nível de privilégio que uma operação precisa para obter sucesso.
 
 * Low Security (baixa segurança):
@@ -42,12 +42,12 @@ Thresholds definem o nível de privilégio que uma operação precisa para obter
 
 ## Validade de uma operação
 
-Há dois lugares no [ciclo de vida de uma transação](./transactions.md#life-cycle) onde operações podem falhar. O primeiro é quando uma transação é submetida à rede. O nó para onde a transação é enviada verifica a validade da operação: no **validity check** (verificação de validade), o nó realiza algumas verificações superficiais para conferir que a transação está formada adequadamente antes de incluí-la em seu set de transações e enviá-la ao resto da rede.
+Há dois lugares no [ciclo de vida de uma transação](./transactions.md#ciclo-de-vida) onde operações podem falhar. O primeiro é quando uma transação é submetida à rede. O nó para onde a transação é enviada verifica a validade da operação: no **validity check** (verificação de validade), o nó realiza algumas verificações superficiais para conferir que a transação está formada adequadamente antes de incluí-la em seu set de transações e enviá-la ao resto da rede.
 
 A verificação de validade somente olha para o estado da conta fonte, assegurando que:
 
 1) A transação saindo tem assinaturas suficientes para a conta fonte da operação atingir o threshold daquela operação.
-2) Sejam aprovadas as verificações de validade específicas a operações. Essas verificações são aquelas que permaneceriam verdadeiras indepentendemente do estado do ledger — por exemplo, os parâmetros estão dentro dos limites esperados? Verificações que dependem do estado do ledger não acontecem até o momento da aplicação — por exemplo, uma operação de envio não irá verificar se há saldo suficiente para enviar até o momento da aplicação.
+2) Sejam aprovadas as verificações de validade específicas a operações. Essas verificações são aquelas que permaneceriam verdadeiras independentemente do estado do ledger — por exemplo, os parâmetros estão dentro dos limites esperados? Verificações que dependem do estado do ledger não acontecem até o momento da aplicação — por exemplo, uma operação de envio não irá verificar se há saldo suficiente para enviar até o momento da aplicação.
 
 Depois de uma transação passar essa primeira validação, ela é propagada à rede e incluída em um set de transações em algum momento. Fazendo parte de um set de transações, a transação é aplicada ao ledger. Nesse momento uma tarifa é retirada da conta fonte independentemente de sucesso/falha. Depois, a transação é processada: número sequencial e assinaturas são verificados antes da tentativa de efetuar as operações na ordem que elas ocorrem na transação. Se alguma operação falhar, toda a transação falha e os efeitos das operações anteriores são anulados.
 

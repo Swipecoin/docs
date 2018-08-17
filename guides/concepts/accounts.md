@@ -26,7 +26,7 @@ Contas possuem os seguintes campos:
 > Número sequencial atual da conta. Este número começa igual ao número do ledger no qual a conta foi criada.
 >
 > #### Number of subentries
-> Número de outras [entradas](./ledger.md#ledger-entries) detidas pela conta. Este número é usado para calcular o [saldo mínimo](./fees.md#minimum-account-balance) da conta.
+> Número de outras [entradas](./ledger.md#ledger-entries) detidas pela conta. Este número é usado para calcular o [saldo mínimo](./fees.md#saldo-minimo-da-conta) da conta.
 >
 > #### Inflation destination
 > (opcional) Conta designada a receber inflação. Toda conta pode votar para enviar [inflação](./inflation.md) a uma conta de destino.

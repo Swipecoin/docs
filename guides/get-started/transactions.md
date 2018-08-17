@@ -514,7 +514,7 @@ Experimente: Rode este programa, e então, em outra janela, crie e submeta um pa
 ```js
 payments.stream({
   onmessage: function(payment) {
-    // cuidar de um pagamento
+    // tratar um pagamento
   }
 });
 ```
@@ -537,7 +537,7 @@ Também é possível solicitar pagamentos em grupos, ou páginas. Quando tiver p
 ```js
 payments.call().then(function handlePage(paymentsPage) {
   paymentsPage.records.forEach(function(payment) {
-    // cuidar de um pagamento
+    // tratar um pagamento
   });
   return paymentsPage.next().then(handlePage);
 });
@@ -547,7 +547,7 @@ payments.call().then(function handlePage(paymentsPage) {
 Page<OperationResponse> page = payments.execute();
 
 for (OperationResponse operation : page.getRecords()) {
-	// cuidar de um pagamento
+	// tratar um pagamento
 }
 
 page = page.getNextPage();

@@ -94,7 +94,7 @@ image="{url de uma imagem associada ao ativo}"
 #### (OPCIONAL) Transação A: Limitar a Quantidade de Tokens
 **Conta**: conta emissora  
 **Operações**:
-- [Set Options - Limiares & Pesos](../concepts/list-of-operations.md#set-options): remover todos os pesos e limiares
+- [Set Options - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remover todos os pesos e limiares
 	 - master weight: 0
 	 - low threshold: 0
 	 - medium threshold: 0

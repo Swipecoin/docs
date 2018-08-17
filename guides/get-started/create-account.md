@@ -196,6 +196,6 @@ Agora que você tem uma conta, pode [começar a enviar e receber pagamentos](tra
 
 [^1]: Uma chave privada ainda é usada para encriptar dados e assinar transações. Ao criar um objeto `KeyPair` usando uma seed, a chave privada é gerada imediatamente e armazenada internamente.
 
-[^2]: Outros recursos do Stellar, como [trust lines](../concepts/assets.md#trustlines), requerem saldos mínimos maiores. Para mais sobre saldos mínimos, veja [tarifas](../concepts/fees.md#minimum-account-balance)
+[^2]: Outros recursos do Stellar, como [trust lines](../concepts/assets.md#trustlines), requerem saldos mínimos maiores. Para mais sobre saldos mínimos, veja [tarifas](../concepts/fees.md#saldo-mínimo-da-conta)
 
 [^3]: CoinMarketCap tem uma lista de corretoras que vendem lumens em http://coinmarketcap.com/currencies/stellar/#markets

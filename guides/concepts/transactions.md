@@ -12,7 +12,7 @@ Cada transação tem os seguintes atributos:
 > Esta é a conta (source account) que gera a transação. A transação precisa ser assinada por esta conta, e a tarifa de transação deve ser paga por esta conta. O número sequencial da transação é baseado nesta conta.
 >
 > #### Tarifa
-> Cada transação seta uma [tarifa](./fees.md#transaction-fee) (fee) que é paga pela conta fonte. Se esta tarifa for menor que o mínimo da rede, a transação irá falhar. Quanto mais operações na transação, maior a tarifa exigida.
+> Cada transação seta uma [tarifa](./fees.md#tarifa-de-transação) (fee) que é paga pela conta fonte. Se esta tarifa for menor que o mínimo da rede, a transação irá falhar. Quanto mais operações na transação, maior a tarifa exigida.
 >
 > #### Número sequencial
 > Cada transação tem um número sequencial. Transações seguem uma regra de ordenação rígida quanto a processar transações por conta. Para a transação ser válida, o número sequencial deve ser 1 a mais que o número sequencial armazenado na [entrada da conta](./accounts.md) fonte quando a transação for aplicada. No momento da aplicação da transação, o número sequencial armazenado na conta fonte é incrementado por 1 antes de aplicar as operações. Se o número sequencial na conta for 4, então a transação deverá ter um número sequencial igual a 5. Depois da transação ser aplicada, o número sequencial na conta é movido para 5.

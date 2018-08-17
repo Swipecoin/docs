@@ -217,7 +217,7 @@ Parâmetros:
 
 |Parâmetros| Tipo| Descrição|
 | --- | --- | --- |
-|inflation Destination| account ID| Conta definida como destinatária da inflação. Saiba mais no [documento sobre inflação](/inflation.md).|
+|inflation Destination| account ID| Conta definida como destinatária da inflação. Saiba mais no [documento sobre inflação](./inflation.md).|
 |Clear flags| integer| Indica quais flags limpar. Para detalhes sobre as flags, favor consultar o [documento sobre contas](./accounts.md). A máscara de bits (um integer, ou número inteiro) subtrai das flags existentes na conta. Isso permite setar bits específicos sem conhecimento das flags existentes.|
 |Set flags| integer| Indica quais flags setar. Para detalhes sobre as flags, favor consultar o [documento sobre contas](./accounts.md). A máscara de bits (um integer, ou número inteiro) adiciona às flags existentes na conta. Isso permite setar bits específicos sem conhecimento das flags existentes.|
 |Master weight| integer| Peso da chave mestra. Esta conta pode também adicionar outras chaves a serem usadas para assinar transações usando `signer` abaixo.|

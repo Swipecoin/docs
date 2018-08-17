@@ -12,10 +12,10 @@ Considera-se que uma transação com uma assinatura anexa tenha autorização da
 
 Em dois casos, uma transação pode precisar de mais de uma assinatura. Se a transação tiver operações que afetam mais de uma conta,
 será necessária a autorização de todas as contas em questão. Uma transação também precisará de assinaturas adicionais se
-a conta associada com a transação tiver mais de uma chave pública. Para ver exemplos, veja o [guia de operações](./operations.md#examples).
+a conta associada com a transação tiver mais de uma chave pública. Para ver exemplos, veja o [guia de operações](./operations.md#exemplos).
 
-## Limiares
-[Operações](./operations.md) caem em uma das seguintes categorias de limiares: baixo, médio, ou alto.
+## Thresholds
+[Operações](./operations.md) caem em uma das seguintes categorias de thresholds (limiares): low, medium ou high (baixo, médio, ou alto).
 Cada nível de limiar pode ser definido por um número na faixa 0-255. Esse limiar é o peso da assinatura necessário para autorizar uma operação naquele nível.
 
 Digamos que Diyang defina o limiar médio de uma de suas contas para 4. Se aquela conta submeter uma transação que inclua uma operação payment (segurança média), o limiar da transação é 4 – os pesos das assinaturas devem ser maior ou igual a 4 para rodar. Se a chave mestra de Diyang – a chave correspondente à chave pública que identifica a conta que Diyang possui – tiver um peso menor que 4, ela não pode autorizar a transação sem outros signatários.
@@ -89,11 +89,11 @@ No entanto, como `Payment` é uma operação de limiar médio,  esta chave não 
 
 Configuração da sua conta:
 ```
-  peso da chave mestra: 2
+  master weight: 2
   peso da chave signatária adicional: 1
-  limiar baixo: 0
-  limiar médio: 2
-  limiar alto: 2
+  low threshold: 0
+  medium threshold: 2
+  high threshold: 2
 ```
 
 ### Exemplo 2: Contas Conjuntas
@@ -101,10 +101,10 @@ Configuração da sua conta:
 
 Configuração de uma conta conjunta:
 ```
-  peso da chave mestra: 1
-  limiar baixo: 0
-  limiar médio: 0
-  limiar alto: 3
+  master weight: 1
+  low threshold: 0
+  medium threshold: 0
+  high threshold: 3
   peso da chave de Kalil: 1
   peso da chave de Bruna: 1
 ```
@@ -114,10 +114,10 @@ Configuração de uma conta conjunta:
 
 Configuração de uma conta corporativa:
 ```
-  peso da chave mestra: 0 (Desligada para esta conta não poder fazer nada sem um funcionário)
-  limiar baixo: 3
-  limiar médio: 3
-  limiar alto: 3
+  master weight: 0 (Desligada para esta conta não poder fazer nada sem um funcionário)
+  low threshold: 3
+  medium threshold: 3
+  high threshold: 3
   peso da chave do Funcionário 1: 1
   peso da chave do Funcionário 2: 1
   peso da chave do Funcionário 3: 1
@@ -133,10 +133,10 @@ você pode remover suas chaves, uma operação de limiar alto.
 
 Configuração de uma conta para despesas:
 ```
-  peso da chave mestra: 3
-  limiar baixo: 0
-  limiar médio: 0
-  limiar alto: 3
+  master weight: 3
+  low threshold: 0
+  medium threshold: 0
+  high threshold: 3
   peso da chave de Diyuan: 1
   peso da chave de Emil: 1
 ```
@@ -148,9 +148,9 @@ a quantidade máxima da moeda a uma conta detentora. Então, você define o peso
 
 Configuração da conta fonte:
 ```
-  peso da chave mestra: 0
-  limiar baixo: 0
-  limiar médio: 0
-  limiar alto: 0
+  master weight: 0
+  low threshold: 0
+  medium threshold: 0
+  high threshold: 0
 ```
 Note que, embora os limiares sejam 0 aqui, chave mestra não pode assinar uma transação com sucesso porque seu próprio peso é 0, o que a torna uma chave inválida.
