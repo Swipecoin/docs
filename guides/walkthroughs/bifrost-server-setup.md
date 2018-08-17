@@ -55,12 +55,12 @@ Por exemplo, digamos que a taxa de câmbio seja de 1 `TOKE` por 0.2 `ETH`. Você
 
 Os passos acima irão criar uma ordem de venda para seu ativo na exchange distribuída.
 
-## Setting up Bifrost
+## Configurar o Bifrost
 
-- Download [the latest version](https://github.com/stellar/go/releases/tag/bifrost-v0.0.2) and extract its component into a folder.
-- Rename downloaded file to `bifrost-server` (optional)
-- Generate your ethereum master public keys according to [BIP-0032](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki).  You can download [this implementation](https://iancoleman.io/bip39/) from GitHub and generate the keys on an offline machine. You can also extract master public key from the Ledger device.
-- Create a config file: `bifrost.cfg`, similar to the one below:
+- Baixe [a versão mais recente](https://github.com/stellar/go/releases/tag/bifrost-v0.0.2) e extraia seu componente em uma pasta.
+- Renomeie o arquivo baixado para `bifrost-server` (opcional)
+- Gere suas chaves públicas mestras de Ethereum de acordo com a [BIP-0032](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki). Você pode baixar [esta implementação](https://iancoleman.io/bip39/) do GitHub e gerar as chaves em uma máquina offline. Você pode também extrair a chave pública mestra do dispositivo Ledger.
+- Crie um arquivo config: `bifrost.cfg`, parecido com o seguinte:
 
 <code-example name="bifrost.cfg">
 
@@ -69,7 +69,7 @@ port = 8002
 using_proxy = false
 access_control_allow_origin_header = "*"
 
-#uncomment bitcoin parameters if you will be accepting BTC
+#descomentar parâmetros do bitcoin se você for aceitar BTC
 #[bitcoin]
 #master_public_key = "xpub6DxSCdWu6jKqr4isjo7bsPeDD6s3J4YVQV1JSHZg12Eagdqnf7XX4fxqyW2sLhUoFWutL7tAELU2LiGZrEXtjVbvYptvTX5Eoa4Mamdjm9u"
 #rpc_server = "localhost:18332"
@@ -104,14 +104,14 @@ dsn="postgres://stellar:pass1234@localhost/bifrost?sslmode=disable"
 </code-example>
 
 
-- Complete the config file with the values as described [here](https://github.com/stellar/go/tree/master/services/bifrost#config)
-- Check that you have the correct master public keys by running:
+- Complete o arquivo config com os valores descritos [aqui](https://github.com/stellar/go/tree/master/services/bifrost#config)
+- Verifique que você tem as chaves públicas mestras rodando:
 
 ```bash
 ./bifrost-server check-keys
 ```
 
-Output should be similar to:
+O output deve ser parecido com:
 
 ```bash
 MAKE SURE YOU HAVE PRIVATE KEYS TO CORRESPONDING ADDRESSES:
@@ -130,16 +130,16 @@ Ethereum:
 9 0xC5CD4b9E6c5D9c0cd1AAe5A52f6DCA3d20CF08BC
 ```
 
-## Start the Bifrost server
+## Inicie o Servidor Bifrost
 
-Once you are done setting up the config file, you can start the server by running:
+Após ter terminado o setup de seu arquivo config, você pode iniciar o servidor rodando:
 
 ```bash
 ./bifrost-server server
 ```
-The Bifrost server will be responsible for generating ethereum addresses, listening for payments on these addresses and transferring the token purchased to the user.
+O servidor Bifrost será responsável por gerar endereços de ethereum, escutar pagamentos nesses endereços e transferir o token comprado ao usuário.
 
-## Using Bifrost JS SDK.
+## Usar o SDK do Bifrost para JS
 
-The Bifrost JS SDK provides a way for a client to communicate with the Bifrost server.
-Download the [latest version](https://github.com/stellar/bifrost-js-sdk/releases) of the SDK, and include it in your frontend application. See the [example html file](https://github.com/stellar/bifrost-js-sdk/blob/master/example.html) in the [bifrost-js-sdk repo](https://github.com/stellar/bifrost-js-sdk) for an example on how this can be implemented.
+O SDK do Bifrost para JS fornece uma maneira para um cliente se comunicar com o servidor Bifrost.
+Baixe a [versão mais recente](https://github.com/stellar/bifrost-js-sdk/releases) do SDK, e o inclua em sua aplicação frontend. Veja o [exemplo de arquivo html](https://github.com/stellar/bifrost-js-sdk/blob/master/example.html) no [repositório bifrost-js-sdk](https://github.com/stellar/bifrost-js-sdk) para ter um exemplo de como isso pode ser implementado.
