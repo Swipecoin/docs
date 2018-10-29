@@ -1,24 +1,24 @@
 ---
-title: Enviar e Receber Dinheiro
+title: Send and Receive Money
 ---
 
-Agora que você tem uma conta, você pode enviar e receber fundos por meio da rede Stellar. Se não tiver criado uma conta ainda, leia o [passo 2 do guia Para Começar](./create-account.md).
+Now that you have an account, you can send and receive funds through the Stellar network. If you haven’t created an account yet, read [step 2 of the Get Started guide](./create-account.md).
 
-Na maioria das vezes, você estará enviando dinheiro para outra pessoa que tem sua própria conta. Porém, para este guia interativo, é melhor você fazer uma segunda conta com a qual transacionar, pelo mesmo método que usou para fazer sua primeira conta.
+Most of the time, you’ll be sending money to someone else who has their own account. For this interactive guide, however, you should make a second account to transact with using the same method you used to make your first account.
 
-## Enviar Pagamentos
+## Send Payments
 
-Ações que alteram coisas no Stellar, como enviar pagamentos, mudar sua conta, ou fazer ofertas de troca entre vários tipos de moedas, são chamadas **operações**, ou operations.[^1] Para realizar de fato uma operação, cria-se uma **transação** (transaction), que é apenas um grupo de operações acompanhado de algumas informações adicionais, como que conta está fazendo a transação e uma assinatura criptográfica para verificar que a transação é autêntica.[^2]
+Actions that change things in Stellar, like sending payments, changing your account, or making offers to trade various kinds of currencies, are called **operations.**[^1] In order to actually perform an operation, you create a **transaction**, which is just a group of operations accompanied by some extra information, like what account is making the transaction and a cryptographic signature to verify that the transaction is authentic.[^2]
 
-Se qualquer operação na transação falhar, todas falham. Por exemplo, digamos que você tem 100 lumens e faz duas operações de pagamento de 60 lumens cada. Se fizer duas transações (cada uma com uma operação), a primeira terá sucesso e a segunda irá falhar, pois você não terá lumens suficientes. Restarão 40 lumens. No entanto, se agrupar os dois pagamentos em apenas uma transação, ambos irão falhar e todos os 100 lumens permanecerão na sua conta.
+If any operation in the transaction fails, they all fail. For example, let’s say you have 100 lumens and you make two payment operations of 60 lumens each. If you make two transactions (each with one operation), the first will succeed and the second will fail because you don’t have enough lumens. You’ll be left with 40 lumens. However, if you group the two payments into a single transaction, they will both fail and you’ll be left with the full 100 lumens still in your account.
 
-Por último, toda transação custa uma pequena tarifa. Assim como o saldo mínimo nas contas, a tarifa ajuda a impedir que pessoas sobrecarreguem o sistema com um monte de transações. Conhecida como **tarifa base** (base fee), é uma tarifa bem pequena — 100 stroops por operação (igual a 0.00001 XLM; é mais fácil falar em stroops do que em frações de lumen tão minúsculas). Uma transação com duas operações custaria 200 stroops.[^3]
+Finally, every transaction costs a small fee. Like the minimum balance on accounts, this fee helps stop people from overloading the system with lots of transactions. Known as the **base fee**, it is very small—100 stroops per operation (that’s 0.00001 XLM; stroops are easier to talk about than such tiny fractions of a lumen). A transaction with two operations would cost 200 stroops.[^3]
 
-### Construir uma Transação
+### Building a Transaction
 
-Stellar armazena e comunica os dados das transações em um formato binário chamado XDR.[^4] Por sorte, os SDKs de Stellar dão ferramentas que cuidam de tudo isso. Aqui está como você poderia enviar 10 lumens para outra conta:
+Stellar stores and communicates transaction data in a binary format called XDR.[^4] Luckily, the Stellar SDKs provide tools that take care of all that. Here’s how you might send 10 lumens to another account:
 
-<code-example name="Submeter uma Transação">
+<code-example name="Submitting a Transaction">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -27,47 +27,47 @@ var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 var sourceKeys = StellarSdk.Keypair
   .fromSecret('SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4');
 var destinationId = 'GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5';
-// A variável transaction irá guardar uma transação pré-construída caso o resultado seja desconhecido.
+// Transaction will hold a built transaction we can resubmit if the result is unknown.
 var transaction;
 
-// Primeiro, checar para ter certeza de que a conta de destino existe.
-// Você pode pular isso, mas se a conta não existir, será cobrada
-// a tarifa de transação quando a transação falhar.
+// First, check to make sure that the destination account exists.
+// You could skip this, but if the account does not exist, you will be charged
+// the transaction fee when the transaction fails.
 server.loadAccount(destinationId)
-  // Se a conta não for encontrada, subir uma mensagem de erro mais agradável.
+  // If the account is not found, surface a nicer error message for logging.
   .catch(StellarSdk.NotFoundError, function (error) {
-    throw new Error('A conta de destino não existe!');
+    throw new Error('The destination account does not exist!');
   })
-  // Se não houver erro, carregar informações atualizadas sobre a sua conta.
+  // If there was no error, load up-to-date information on your account.
   .then(function() {
     return server.loadAccount(sourceKeys.publicKey());
   })
   .then(function(sourceAccount) {
-    // Começar a construir a transação.
+    // Start building the transaction.
     transaction = new StellarSdk.TransactionBuilder(sourceAccount)
       .addOperation(StellarSdk.Operation.payment({
         destination: destinationId,
-        // Como o Stellar permite transações em várias moedas, é preciso
-        // especificar o tipo do ativo (asset). O ativo especial "native" representa Lumens.
+        // Because Stellar allows transaction in many currencies, you must
+        // specify the asset type. The special "native" asset represents Lumens.
         asset: StellarSdk.Asset.native(),
         amount: "10"
       }))
-      // Um memo permite adicionar seus próprios metadados a uma transação.
-      // É opcional e não afeta como o Stellar trata a transação.
-      .addMemo(StellarSdk.Memo.text('Transação teste'))
+      // A memo allows you to add your own metadata to a transaction. It's
+      // optional and does not affect how Stellar treats the transaction.
+      .addMemo(StellarSdk.Memo.text('Test Transaction'))
       .build();
-    // Assinar a transação para provar que você é realmente a pessoa que está enviando.
+    // Sign the transaction to prove you are actually the person sending it.
     transaction.sign(sourceKeys);
-    // E, finalmente, enviar para o Stellar!
+    // And finally, send it off to Stellar!
     return server.submitTransaction(transaction);
   })
   .then(function(result) {
-    console.log('Successo! Resultados:', result);
+    console.log('Success! Results:', result);
   })
   .catch(function(error) {
-    console.error('Algo deu errado!', error);
-    // Se o resultado for desconhecido (sem body da resposta, tempo esgotado, etc.),
-    // simplesmente reenviamos a transação já construída:
+    console.error('Something went wrong!', error);
+    // If the result is unknown (no response body, timeout etc.) we simply resubmit
+    // already built transaction:
     // server.submitTransaction(transaction);
   });
 ```
@@ -79,35 +79,35 @@ Server server = new Server("https://horizon-testnet.stellar.org");
 KeyPair source = KeyPair.fromSecretSeed("SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4");
 KeyPair destination = KeyPair.fromAccountId("GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5");
 
-// Primeiro, checar para ter certeza de que a conta de destino existe.
-// Você pode pular isso, mas se a conta não existir, será cobrada
-// a tarifa de transação quando a transação falhar.
-// Será lançada uma HttpResponseException se a conta não existir ou se tiver tido outro erro.
+// First, check to make sure that the destination account exists.
+// You could skip this, but if the account does not exist, you will be charged
+// the transaction fee when the transaction fails.
+// It will throw HttpResponseException if account does not exist or there was another error.
 server.accounts().account(destination);
 
-// Se não houver erro, carregar informações atualizadas sobre a sua conta.
+// If there was no error, load up-to-date information on your account.
 AccountResponse sourceAccount = server.accounts().account(source);
 
-// Começar a construir a transação.
+// Start building the transaction.
 Transaction transaction = new Transaction.Builder(sourceAccount)
         .addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), "10").build())
-        // Um memo permite adicionar seus próprios metadados a uma transação.
-        // É opcional e não afeta como o Stellar trata a transação.
-        .addMemo(Memo.text("Transação Teste"))
+        // A memo allows you to add your own metadata to a transaction. It's
+        // optional and does not affect how Stellar treats the transaction.
+        .addMemo(Memo.text("Test Transaction"))
         .build();
-// Assinar a transação para provar que você é realmente a pessoa que está enviando.
+// Sign the transaction to prove you are actually the person sending it.
 transaction.sign(source);
 
-// E, finalmente, enviar para o Stellar!
+// And finally, send it off to Stellar!
 try {
   SubmitTransactionResponse response = server.submitTransaction(transaction);
-  System.out.println("Successo!");
+  System.out.println("Success!");
   System.out.println(response);
 } catch (Exception e) {
-  System.out.println("Algo deu errado!");
+  System.out.println("Something went wrong!");
   System.out.println(e.getMessage());
-  // Se o resultado for desconhecido (sem body da resposta, tempo esgotado, etc.),
-  // simplesmente reenviamos a transação já construída:
+  // If the result is unknown (no response body, timeout etc.) we simply resubmit
+  // already built transaction:
   // SubmitTransactionResponse response = server.submitTransaction(transaction);
 }
 ```
@@ -125,7 +125,7 @@ func main () {
 	source := "SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4"
 	destination := "GA2C5RFPE6GCKMY3US5PAB6UZLKIGSPIUKSLRB6Q723BM2OARMDUYEJ5"
 
-	// Verificar que a conta de destino existe
+	// Make sure destination account exists
 	if _, err := horizon.DefaultTestNetClient.LoadAccount(destination); err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func main () {
 		panic(err)
 	}
 
-	// Assinar a transação para provar que você é realmente a pessoa que está enviando.
+	// Sign the transaction to prove you are actually the person sending it.
 	txe, err := tx.Sign(source)
 	if err != nil {
 		panic(err)
@@ -157,13 +157,13 @@ func main () {
 		panic(err)
 	}
 
-	// E, finalmente, enviar para o Stellar!
+	// And finally, send it off to Stellar!
 	resp, err := horizon.DefaultTestNetClient.SubmitTransaction(txeB64)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Transação bem-sucedida:")
+	fmt.Println("Successful Transaction:")
 	fmt.Println("Ledger:", resp.Ledger)
 	fmt.Println("Hash:", resp.Hash)
 }
@@ -171,15 +171,15 @@ func main () {
 
 </code-example>
 
-O que exatamente aconteceu aí? Vamos ver por partes.
+What exactly happened there? Let’s break it down.
 
-1. Confirmar que o ID da conta para a qual está enviando realmente existe, carregando a partir da rede Stellar os dados associados à conta. Nada vai dar errado se pular essa parte, mas fazer isso dá uma oportunidade de evitar fazer uma transação que você sabe que irá falhar. Você também pode usar esta chamada para realizar qualquer outra verificação que possa querer fazer na conta de destino. Se estiver escrevendo um software bancário, por exemplo, esse é um bom lugar para inserir checagens regulatórias de compliance e verificações <abbr title="Know Your Customer">KYC</abbr>.
+1. Confirm that the account ID you are sending to actually exists by loading the associated account data from the Stellar network. Everything will actually be OK if you skip this step, but doing it gives you an opportunity to avoid making a transaction you know will fail. You can also use this call to perform any other verification you might want to do on a destination account. If you are writing banking software, for example, this is a good place to insert regulatory compliance checks and <abbr title="Know Your Customer">KYC</abbr> verification.
 
-    <code-example name="Carregar uma conta">
+    <code-example name="Load an Account">
 
     ```js
     server.loadAccount(destinationId)
-      .then(function(account) { /* validar a conta */ })
+      .then(function(account) { /* validate the account */ })
     ```
 
     ```java
@@ -194,9 +194,9 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-2. Carregar dados da conta a partir da qual você está enviando. Uma conta pode realizar apenas uma transação por vez[^5] e possui algo chamado [**número sequencial**,](../concepts/accounts.md#sequence-number) (sequence number) que ajuda o Stellar a verificar a ordem das transações. O número sequencial de uma transação precisa bater com o número sequencial da conta, sendo assim necessário puxar da rede o número sequencial da conta.
+2. Load data for the account you are sending from. An account can only perform one transaction at a time[^5] and has something called a [**sequence number**,](../concepts/accounts.md#sequence-number) which helps Stellar verify the order of transactions. A transaction’s sequence number needs to match the account’s sequence number, so you need to get the account’s current sequence number from the network.
 
-    <code-example name="Carregar a Conta Fonte">
+    <code-example name="Load Source Account">
 
     ```js
     .then(function() {
@@ -210,11 +210,11 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-    O SDK vai automaticamente incrementar o número sequencial da conta quando você construir uma transação, então não será preciso puxar essa informação novamente caso queira realizar uma segunda transação.
+    The SDK will automatically increment the account’s sequence number when you build a transaction, so you won’t need to retrieve this information again if you want to perform a second transaction.
 
-3. Começar a construir a transação. Isso requer um objeto account (conta), não só um ID de conta, porque ele irá incrementar o número sequencial da conta.
+3. Start building a transaction. This requires an account object, not just an account ID, because it will increment the account’s sequence number.
 
-    <code-example name="Construir uma Transação">
+    <code-example name="Build a Transaction">
 
     ```js
     var transaction = new StellarSdk.TransactionBuilder(sourceAccount)
@@ -232,9 +232,9 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-4. Adicionar a operação de pagamento (payment) à conta. Note que é preciso especificar o tipo de ativo que está sendo enviado — a moeda "native" do Stellar é o lumen, mas você pode enviar qualquer tipo de ativo ou moeda que quiser, de dólares a bitcoin ou qualquer outro tipo de ativo que confiar que o emissor pode resgatar [(mais detalhes abaixo)](#transacionar-em-outras-moedas). Por enquanto, vamos ficar só com lumens, que são chamados de ativos "native" pelo SDK:
+4. Add the payment operation to the account. Note that you need to specify the type of asset you are sending—Stellar’s “native” currency is the lumen, but you can send any type of asset or currency you like, from dollars to bitcoin to any sort of asset you trust the issuer to redeem [(more details below)](#transacting-in-other-currencies). For now, though, we’ll stick to lumens, which are called “native” assets in the SDK:
 
-    <code-example name="Adicionar uma Operação">
+    <code-example name="Add an Operation">
 
     ```js
     .addOperation(StellarSdk.Operation.payment({
@@ -253,7 +253,7 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 		build.Network{passphrase},
 		build.SourceAccount{from},
 		build.AutoSequence{horizon.DefaultTestNetClient},
-		build.MemoText{"Transação Teste"},
+		build.MemoText{"Test Transaction"},
 		build.Payment(
 			build.Destination{to},
 			build.NativeAmount{"10"},
@@ -263,29 +263,29 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-    Note também que o valor é uma string em vez de um número. Quando se trabalha com frações extremamente pequenas ou valores altos, [cálculos baseados em ponto flutuante podem introduzir pequenas imprecisões](https://pt.wikipedia.org/wiki/V%C3%ADrgula_flutuante#Problemas_com_o_uso_de_ponto_flutuante). Já que nem todos os sistemas têm uma maneira nativa de representar com precisão decimais extremamente pequenos ou grandes, Stellar usa strings como uma maneira confiável de representar o valor exato em qualquer sistema.
+    You should also note that the amount is a string rather than a number. When working with extremely small fractions or large values, [floating point math can introduce small inaccuracies](https://en.wikipedia.org/wiki/Floating_point#Accuracy_problems). Since not all systems have a native way to accurately represent extremely small or large decimals, Stellar uses strings as a reliable way to represent the exact amount across any system.
 
-5. Opcionalmente, você pode adicionar seus próprios metadados, chamados [**memo,**](../concepts/transactions.md#memo) a uma transação. O Stellar não faz nada com esses dados, mas você pode usá-los para qualquer fim que quiser. Se você é um banco que está recebendo ou enviando pagamentos em nome de outras pessoas, por exemplo, você poderia incluir aqui informações sobre a pessoa à qual se destina o pagamento.
+5. Optionally, you can add your own metadata, called a [**memo,**](../concepts/transactions.md#memo) to a transaction. Stellar doesn’t do anything with this data, but you can use it for any purpose you’d like. If you are a bank that is receiving or sending payments on behalf of other people, for example, you might include the actual person the payment is meant for here.
 
-    <code-example name="Adicionar um Memo">
+    <code-example name="Add a Memo">
 
     ```js
-    .addMemo(StellarSdk.Memo.text('Transação Teste'))
+    .addMemo(StellarSdk.Memo.text('Test Transaction'))
     ```
 
     ```java
-    .addMemo(Memo.text("Transação Teste"));
+    .addMemo(Memo.text("Test Transaction"));
     ```
 
     ```go
-    build.MemoText{"Transação Teste"},
+    build.MemoText{"Test Transaction"},
     ```
 
     </code-example>
 
-6. Agora que a transação tem todos os dados que precisa, você tem que assiná-la criptograficamente usando sua seed secreta. Isso prova que os dados realmente vieram de você e não de alguém fingindo ser você.
+6. Now that the transaction has all the data it needs, you have to cryptographically sign it using your secret seed. This proves that the data actually came from you and not someone impersonating you.
 
-    <code-example name="Assinar a Transação">
+    <code-example name="Sign the Transaction">
 
     ```js
     transaction.sign(sourceKeys);
@@ -301,9 +301,9 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-7. E finalmente, enviá-la à rede Stellar!
+7. And finally, send it to the Stellar network!
 
-    <code-example name="Submeter a Transação">
+    <code-example name="Submit the Transaction">
 
     ```js
     server.submitTransaction(transaction);
@@ -319,17 +319,17 @@ O que exatamente aconteceu aí? Vamos ver por partes.
 
     </code-example>
 
-**IMPORTANTE** É possível que você não receba uma resposta do servidor Horizon devido a um bug, condições de conexão, etc. Nessas situações é impossível determinar o status da sua transação. É por isso que se recomenda sempre salvar uma transação construída (ou uma transação codificada em formato XDR) em uma variável ou base de dados e reenviá-la caso não souber seu status. Se a transação já tiver sido aplicada ao ledger com sucesso, o Horizon irá simplesmente retornar o resultado salvo e não irá tentar submeter a transação novamente. Somente em casos em que o status de uma transação é desconhecido (e assim terá uma chance de ser incluída em um ledger) é que ocorrerá um reenvio à rede.
+**IMPORTANT** It's possible that you will not receive a response from Horizon server due to a bug, network conditions, etc. In such situation it's impossible to determine the status of your transaction. That's why you should always save a built transaction (or transaction encoded in XDR format) in a variable or a database and resubmit it if you don't know it's status. If the transaction has already been successfully applied to the ledger, Horizon will simply return the saved result and not attempt to submit the transaction again. Only in cases where a transaction’s status is unknown (and thus will have a chance of being included into a ledger) will a resubmission to the network occur.
 
-## Receber Pagamentos
+## Receive Payments
 
-Não é realmente necessário fazer nada para receber pagamentos em uma conta Stellar — se um pagante fizer uma transação bem-sucedida enviando ativos a você, esses ativos serão automaticamente adicionados a sua conta.
+You don’t actually need to do anything to receive payments into a Stellar account—if a payer makes a successful transaction to send assets to you, those assets will automatically be added to your account.
 
-No entanto, você vai querer saber que alguém pagou de fato a você. Se você for um banco que aceita pagamentos em nome de outros, precisa descobrir o que foi enviado a você para poder repassar os fundos ao recipiente final. Se estiver operando um negócio de varejo, você precisa saber que seu cliente fez um pagamento para então entregar a ele a mercadoria. E se você for um carro para locação automatizada com uma conta Stellar, provavelmente vai querer verificar que o cliente sentado ao volante tenha pago antes de poder ligar o motor.
+However, you’ll want to know that someone has actually paid you. If you are a bank accepting payments on behalf of others, you need to find out what was sent to you so you can disburse funds to the intended recipient. If you are operating a retail business, you need to know that your customer actually paid you before you hand them their merchandise. And if you are an automated rental car with a Stellar account, you’ll probably want to verify that the customer in your front seat actually paid before that person can turn on your engine.
 
-Um programa simples que escuta payments na rede e dá print a partir de cada um pode ser assim:
+A simple program that watches the network for payments and prints each one might look like:
 
-<code-example name="Receber Pagamentos">
+<code-example name="Receive Payments">
 
 ```js
 var StellarSdk = require('stellar-sdk');
@@ -337,31 +337,31 @@ var StellarSdk = require('stellar-sdk');
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 var accountId = 'GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF';
 
-// Criar uma chamada de API para consultar (query) pagamentos envolvendo a conta.
+// Create an API call to query payments involving the account.
 var payments = server.payments().forAccount(accountId);
 
-// Se já houver pagamentos que foram abordados, iniciar os resultados a partir
-// do último pagamento visto. (Veja abaixo em `handlePayment` onde ele é salvo.)
+// If some payments have already been handled, start the results from the
+// last seen payment. (See below in `handlePayment` where it gets saved.)
 var lastToken = loadLastPagingToken();
 if (lastToken) {
   payments.cursor(lastToken);
 }
 
-// `stream` vai enviar cada pagamento gravado, um por um, para depois manter
-// a conexão aberta e continuar a enviar novos pagamentos enquanto eles ocorrem.
+// `stream` will send each recorded payment, one by one, then keep the
+// connection open and continue to send you new payments as they occur.
 payments.stream({
   onmessage: function(payment) {
-    // Gravar o token de paginação para podermos começar daqui da próxima vez.
+    // Record the paging token so we can start from here next time.
     savePagingToken(payment.paging_token);
 
-    // O stream de pagamentos inclui tanto pagamentos enviados como recebidos.
-    // Aqui, queremos processar apenas pagamentos recebidos.
+    // The payments stream includes both sent and received payments. We only
+    // want to process received payments here.
     if (payment.to !== accountId) {
       return;
     }
 
-    // Na API do Stellar, refere-se aos Lumens como sendo do tipo "native".
-    // Outros tipos de ativo têm informações mais detalhadas.
+    // In Stellar’s API, Lumens are referred to as the “native” type. Other
+    // asset types have more detailed information.
     var asset;
     if (payment.asset_type === 'native') {
       asset = 'lumens';
@@ -374,17 +374,17 @@ payments.stream({
   },
 
   onerror: function(error) {
-    console.error('Erro no stream de pagamentos');
+    console.error('Error in payment stream');
   }
 });
 
 function savePagingToken(token) {
-  // Na maioria das vezes, recomenda-se salvar isto em um arquivo ou base de dados local
-  // para poder carregá-lo da próxima vez que fizer stream com novos pagamentos.
+  // In most cases, you should save this to a local database or file so that
+  // you can load it next time you stream new payments.
 }
 
 function loadLastPagingToken() {
-  // Pegar o último token de paginação a partir de um arquivo ou base de dados local
+  // Get the last paging token from a local database or file
 }
 ```
 
@@ -392,26 +392,26 @@ function loadLastPagingToken() {
 Server server = new Server("https://horizon-testnet.stellar.org");
 KeyPair account = KeyPair.fromAccountId("GC2BKLYOOYPDEFJKLKY6FNNRQMGFLVHJKQRGNSSRRGSMPGF32LHCQVGF");
 
-// Criar uma chamada de API para consultar (query) pagamentos envolvendo a conta.
+// Create an API call to query payments involving the account.
 PaymentsRequestBuilder paymentsRequest = server.payments().forAccount(account);
 
-// Se já houver pagamentos que foram abordados, iniciar os resultados a partir
-// do último pagamento visto. (Veja abaixo em `handlePayment` onde ele é salvo.)
+// If some payments have already been handled, start the results from the
+// last seen payment. (See below in `handlePayment` where it gets saved.)
 String lastToken = loadLastPagingToken();
 if (lastToken != null) {
   paymentsRequest.cursor(lastToken);
 }
 
-// `stream` vai enviar cada pagamento gravado, um por um, para depois manter
-// a conexão aberta e continuar a enviar novos pagamentos enquanto eles ocorrem.
+// `stream` will send each recorded payment, one by one, then keep the
+// connection open and continue to send you new payments as they occur.
 paymentsRequest.stream(new EventListener<OperationResponse>() {
   @Override
   public void onEvent(OperationResponse payment) {
-    // Gravar o token de paginação para podermos começar daqui da próxima vez.
+    // Record the paging token so we can start from here next time.
     savePagingToken(payment.getPagingToken());
 
-    // O stream de pagamentos inclui tanto pagamentos enviados como recebidos.
-    // Aqui, queremos processar apenas pagamentos recebidos.
+    // The payments stream includes both sent and received payments. We only
+    // want to process received payments here.
     if (payment instanceof PaymentOperationResponse) {
       if (((PaymentOperationResponse) payment).getTo().equals(account)) {
         return;
@@ -459,19 +459,19 @@ func main() {
 
 	cursor := horizon.Cursor("now")
 
-	fmt.Println("Aguardando pagamento...")
+	fmt.Println("Waiting for a payment...")
 
 	err := horizon.DefaultTestNetClient.StreamPayments(ctx, address, &cursor, func(payment horizon.Payment) {
-		fmt.Println("Tipo de Pagamento", payment.Type)
-		fmt.Println("Token de Paginação", payment.PagingToken)
-		fmt.Println("Pagamento de", payment.From)
-		fmt.Println("Pagamento para", payment.To)
-		fmt.Println("Tipo de Ativo", payment.AssetType)
-		fmt.Println("Código do Ativo", payment.AssetCode)
-		fmt.Println("Emissor do Ativo", payment.AssetIssuer)
-		fmt.Println("Valor", payment.Amount)
-		fmt.Println("Tipo do Memo", payment.Memo.Type)
-		fmt.Println("Memo", payment.Memo.Value)
+		fmt.Println("Payment type", payment.Type)
+		fmt.Println("Payment Paging Token", payment.PagingToken)
+		fmt.Println("Payment From", payment.From)
+		fmt.Println("Payment To", payment.To)
+		fmt.Println("Payment Asset Type", payment.AssetType)
+		fmt.Println("Payment Asset Code", payment.AssetCode)
+		fmt.Println("Payment Asset Issuer", payment.AssetIssuer)
+		fmt.Println("Payment Amount", payment.Amount)
+		fmt.Println("Payment Memo Type", payment.Memo.Type)
+		fmt.Println("Payment Memo", payment.Memo.Value)
 	})
 
 	if err != nil {
@@ -483,9 +483,9 @@ func main() {
 
 </code-example>
 
-Há duas partes principais neste programa. Primeiro, cria-se uma query para pagamentos que envolvam uma conta específica. Como a maioria dos queries no Stellar, isso poderia retornar um número enorme de itens, então a API retorna tokens de paginação, que você pode usar depois para começar sua query do mesmo ponto onde parou. No exemplo acima, as funções para salvar e carregar tokens de paginação são deixadas em branco, mas em um aplicativo real é recomendado salvar os tokens de paginação em um arquivo ou base de dados para poder continuar de onde parou caso o programa dê crash ou seja fechado pelo usuário.
+There are two main parts to this program. First, you create a query for payments involving a given account. Like most queries in Stellar, this could return a huge number of items, so the API returns paging tokens, which you can use later to start your query from the same point where you previously left off. In the example above, the functions to save and load paging tokens are left blank, but in a real application, you’d want to save the paging tokens to a file or database so you can pick up where you left off in case the program crashes or the user closes it.
 
-<code-example name="Criar um Query de Pagamentos">
+<code-example name="Create a Payments Query">
 
 ```js
 var payments = server.payments().forAccount(accountId);
@@ -505,16 +505,16 @@ if (lastToken != null) {
 
 </code-example>
 
-Segundo, se faz `stream` com os resultados da query. Essa é maneira mais fácil de vigiar se há pagamentos ou outras transações. Cada pagamento existente é enviado pelo stream, um por um. Quando todos os pagamentos existentes tiverem sido enviados, o stream se mantém aberto e novos pagamentos são enviados assim que forem feitos.
+Second, the results of the query are streamed. This is the easiest way to watch for payments or other transactions. Each existing payment is sent through the stream, one by one. Once all existing payments have been sent, the stream stays open and new payments are sent as they are made.
 
-Experimente: Rode este programa, e então, em outra janela, crie e submeta um pagamento. Você verá este programa logar o pagamento.
+Try it out: Run this program, and then, in another window, create and submit a payment. You should see this program log the payment.
 
-<code-example name="Stream de Pagamentos">
+<code-example name="Stream Payments">
 
 ```js
 payments.stream({
   onmessage: function(payment) {
-    // tratar um pagamento
+    // handle a payment
   }
 });
 ```
@@ -523,21 +523,21 @@ payments.stream({
 paymentsRequest.stream(new EventListener<OperationResponse>() {
   @Override
   public void onEvent(OperationResponse payment) {
-    // Cuidar de um pagamento
+    // Handle a payment
   }
 });
 ```
 
 </code-example>
 
-Também é possível solicitar pagamentos em grupos, ou páginas. Quando tiver processado cada página de pagamentos, será preciso solicitar a próxima até não sobrar nenhuma.
+You can also request payments in groups, or pages. Once you’ve processed each page of payments, you’ll need to request the next one until there are none left.
 
-<code-example name="Pagamentos Paginados">
+<code-example name="Paged Payments">
 
 ```js
 payments.call().then(function handlePage(paymentsPage) {
   paymentsPage.records.forEach(function(payment) {
-    // tratar um pagamento
+    // handle a payment
   });
   return paymentsPage.next().then(handlePage);
 });
@@ -547,7 +547,7 @@ payments.call().then(function handlePage(paymentsPage) {
 Page<OperationResponse> page = payments.execute();
 
 for (OperationResponse operation : page.getRecords()) {
-	// tratar um pagamento
+	// handle a payment
 }
 
 page = page.getNextPage();
@@ -556,36 +556,36 @@ page = page.getNextPage();
 </code-example>
 
 
-## Transacionar em Outras Moedas
+## Transacting in Other Currencies
 
-Uma das coisas incríveis sobre a rede Stellar é que é possível enviar e receber muitos tipos de ativos como dólares americanos, nairas nigerianos, moedas digitais como o Bitcoin, ou até mesmo ou seu próprio e inédito tipo de ativo.
+One of the amazing things about the Stellar network is that you can send and receive many types of assets, such as US dollars, Nigerian naira, digital currencies like bitcoin, or even your own new kind of asset.
 
-Enquanto que o ativo nativo do Stellar, o lumen, é bem simples, pode-se pensar em todos os outros ativos como um crédito emitido por uma conta específica. Inclusive, ao trocar dólares na rede Stellar, não se troca dólares realmente — troca-se dólares *de uma conta específica*. É por isso que os ativos no exemplo acima tinham tanto um `code` (código) e um `issuer` (emissor). O `issuer` é o ID da conta que criou o ativo. Entender que conta emitiu o ativo é importante — é preciso confiar que, se você quiser resgatar seus dólares da rede Stellar e recebê-los em cédulas, o emissor irá providenciá-los a você. Por isso, normalmente recomenda-se confiar apenas em grandes instituições financeiras quanto a ativos que representem moedas nacionais.
+While Stellar’s native asset, the lumen, is fairly simple, all other assets can be thought of like a credit issued by a particular account. In fact, when you trade US dollars on the Stellar network, you don’t actually trade US dollars—you trade US dollars *from a particular account.* That’s why the assets in the example above had both a `code` and an `issuer`. The `issuer` is the ID of the account that created the asset. Understanding what account issued the asset is important—you need to trust that, if you want to redeem your dollars on the Stellar network for actual dollar bills, the issuer will be able to provide them to you. Because of this, you’ll usually only want to trust major financial institutions for assets that represent national currencies.
 
-Stellar também permite pagamentos enviados como um tipo de ativo e recebidos em outro. É possível enviar nairas nigerianos a um amigo na Alemanha e fazer que ele receba em euros. Essas transações multimoedas são possíves por causa de um mecanismo de mercado embutido onde pessoas podem fazer ofertas para comprar e vender diferentes tipos de ativos. O Stellar vai automaticamente encontrar as melhores pessoas com quem trocar moedas para converter seus nairas em euros. Esse sistema é chamado de [exchange distribuída](../concepts/exchange.md).
+Stellar also supports payments sent as one type of asset and received as another. You can send Nigerian naira to a friend in Germany and have them receive euros. These multi-currency transactions are made possible by a built-in market mechanism where people can make offers to buy and sell different types of assets. Stellar will automatically find the best people to exchange currencies with in order to convert your naira to euros. This system is called [distributed exchange](../concepts/exchange.md).
 
-Leia mais sobre os detalhes dos ativos na [visão geral sobre ativos](../concepts/assets.md).
+You can read more about the details of assets in the [assets overview](../concepts/assets.md).
 
-## E Agora?
+## What Next?
 
-Agora que você consegue enviar e receber pagamentos usando a API do Stellar, você já está encaminhado para escrever softwares financeiros incríveis de todos os tipos. Teste outras partes da API, depois dê uma lida em tópicos mais detalhados:
+Now that you can send and receive payments using Stellar’s API, you’re on your way to writing all kinds of amazing financial software. Experiment with other parts of the API, then read up on more detailed topics:
 
-- [Tornar-se uma âncora](../anchor/)
-- [Segurança](../security.md)
+- [Become an anchor](../anchor/)
+- [Security](../security.md)
 - [Federation](../concepts/federation.md)
 - [Compliance](../compliance-protocol.md)
 
 <div class="sequence-navigation">
-  <a class="button button--previous" href="create-account.html">Voltar para Passo 2: Criar uma Conta</a>
+  <a class="button button--previous" href="create-account.html">Back to Step 2: Create an Account</a>
 </div>
 
 
-[^1]:  Uma lista de todas as operações possíveis pode ser encontrada na [página de operações](../concepts/operations.md).
+[^1]: A list of all the possible operations can be found on the [operations page](../concepts/operations.md).
 
-[^2]: Os detalhes completos sobre transações podem ser encontrados na [página de transações](../concepts/transactions.md).
+[^2]: The full details on transactions can be found on the [transactions page](../concepts/transactions.md).
 
-[^3]: Os 100 stroops são a **tarifa base** do Stellar. A tarifa base pode ser mudada, mas é improvável que mudanças nas tarifas do Stellar aconteçam mais do que uma vez a cada vários anos. Você pode descobrir as tarifas atuais [checando os detalhes do último ledger](https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html).
+[^3]: The 100 stroops is called Stellar’s **base fee**. The base fee can be changed, but a change in Stellar’s fees isn’t likely to happen more than once every several years. You can look up the current fees by [checking the details of the latest ledger](https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html).
 
-[^4]: Embora a maioria das respostas da API REST do Horizon use JSON, a maior parte dos dados no Stellar na verdade é armazenada em um formato chamado XDR, ou External Data Representation. XDR não só é mais compacto do que JSON, como também armazena dados de uma maneira previsível, o que torna mais fácil assinar e verificar uma mensagem codificada em XDR. Pegue mais detalhes na [nossa página sobre XDR](https://www.stellar.org/developers/horizon/reference/xdr.html).
+[^4]: Even though most responses from the Horizon REST API use JSON, most of the data in Stellar is actually stored in a format called XDR, or External Data Representation. XDR is both more compact than JSON and stores data in a predictable way, which makes signing and verifying an XDR-encoded message easier. You can get more details on [our XDR page](https://www.stellar.org/developers/horizon/reference/xdr.html).
 
-[^5]: Em situações em que é preciso realizar um número alto de transações em um curto período de tempo (por exemplo, um banco pode realizar transações em nome de vários clientes usando uma conta Stellar), você pode criar várias contas Stellar que trabalham simultaneamente. Leia mais sobre isso no [guia para canais](../channels.md).
+[^5]: In situations where you need to perform a high number of transactions in a short period of time (for example, a bank might perform transactions on behalf of many customers using one Stellar account), you can create several Stellar accounts that work simultaneously. Read more about this in [the guide to channels](../channels.md).

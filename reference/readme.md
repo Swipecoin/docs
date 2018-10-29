@@ -5,7 +5,7 @@ Horizon is the client-facing API server for the Stellar ecosystem.  It acts as t
 
 You can interact directly with Horizon via cURL or a web browser. Stellar.org also provides a [JavaScript SDK](https://www.stellar.org/developers/js-stellar-sdk/learn/) for clients to use to interact with Horizon.
 
-Stellar.org runs an [instance of Horizon](https://horizon-testnet.stellar.org/) that is connected to the testnet.
+Stellar.org runs an [instance of Horizon](https://horizon-testnet.stellar.org/) that is connected to the [testnet](../guides/concepts/test-net.md).
 
 ## Libraries
 
@@ -23,3 +23,4 @@ Community-maintained libraries (in various states of completion) for interacting
 - [C#](https://github.com/QuantozTechnology/csharp-stellar-base)
 - [C++](https://bitbucket.org/bnogal/stellarqore/wiki/Home)
 - [Scala](https://github.com/Synesso/scala-stellar-sdk)
+- [iOS & macOS](https://github.com/Soneso/stellar-ios-mac-sdk)

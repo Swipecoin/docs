@@ -2,84 +2,85 @@
 title: Ledger
 ---
 
-Um **ledger** representa o estado do universo Stellar em dado momento. Um ledger contém a lista de todas as contas e saldos, todas as ordens na exchange distribuída, e qualquer outro dado que persista.
+A **ledger** represents the state of the Stellar universe at a given point in time. It contains the list of all the accounts and balances, all the orders in the distributed exchange, and any other data that persists.
 
-O primeiro ledger na história da rede é chamado de ledger gênesis.
+The first ledger in the history of the network is called the genesis ledger.
 
-A cada rodada do [Protocolo de Consenso Stellar (SCP)](https://www.stellar.org/developers/learn/concepts/scp.html), a rede chega a um consenso sobre que [conjunto de transações](./transactions.md#conjuntos-de-transações) aplicar ao último ledger fechado; quando um novo conjunto é aplicado, é definido um novo "último ledger fechado".
+Every [Stellar Consensus Protocol (SCP)](https://www.stellar.org/developers/learn/concepts/scp.html) round, the network reaches consensus on which [transaction set](./transactions.md#transaction-set) to apply to the last closed ledger; when the new set is applied, a new "last closed ledger" is defined.
 
-Cada ledger está criptograficamente ligado a um ledger anterior único, criando uma corrente histórica de ledgers que chegam até o ledger gênesis.
+Each ledger is cryptographically linked to a unique previous ledger, creating a historical ledger chain that goes back to the genesis ledger.
 
-Definimos o número sequencial de um ledger recursivamente:
-* Ledger gênesis possui número sequencial 1
-* O ledger que segue diretamente um ledger com número sequencial n possui número sequencial igual a n+1
+We define the sequence number of a ledger recursively:
+* Genesis ledger has sequence number 1
+* Ledger directly following a ledger with sequence number n has sequence number n+1
 
 ## Ledger header
-Todo ledger tem um **ledger header**. Esse header tem referências aos dados que estão dentro do ledger, assim como uma referência ao ledger anterior. Referências aqui são hashes criptográficos do conteúdo sendo referenciado – os hashes se comportam como ponteiros em estruturas de dados comuns, mas com garantias de segurança adicionais.
+Every ledger has a **ledger header**. This header has references to the actual data within the ledger as well as a reference to the previous ledger. References here are cryptographic hashes of the content being referenced--the hashes behave like pointers in typical data structures but with added security guarantees.
 
-Pode-se pensar na cadeia histórica dos ledgers como uma lista de ledger headers encadeada:
+You can think of the historical ledger chain as a linked list of ledger headers:
 
 [Genesis] <---- [LedgerHeader_1] <----- ... <---- [LedgerHeader_n]
 
-Leia o arquivo sobre o protocolo para ver definições de objeto ([`src/xdr/Stellar-ledger.x`](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-ledger.x)).
+See the protocol file for the object definitions.
+[`src/xdr/Stellar-ledger.x`](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-ledger.x)
 
-Todo ledger header tem os seguintes campos:
+Every ledger header has the following fields:
 
-- **Version**: Versão do protocolo deste ledger.
+- **Version**: Protocol version of this ledger.
 
-- **Previous Ledger Hash**: Hash do ledger anterior. Forma uma cadeia de ledgers que se estende até o ledger gênesis.
+- **Previous Ledger Hash**: Hash of the previous ledger. Forms a chain of ledgers stretching back to the genesis ledger.
 
-- **SCP value**: Durante o consenso, todos os nós da rede rodam o SCP e chegam a um acordo sobre um valor em particular. Esse valor é gravado aqui e nos próximos três campos (transaction set hash, close time e upgrades).
+- **SCP value**: During consensus all the nodes in the network run SCP and come to agreement about a particular value. This value is stored here and in the next three fields (transaction set hash, close time, and upgrades).
 
-  - **Transaction set hash**: Hash do conjunto de transações que foi aplicado ao ledger anterior.
+  - **Transaction set hash**: Hash of the transaction set that was applied to the previous ledger.
 
-  - **Close time**: Quando a rede fechou este ledger. Timestamp UNIX.
+  - **Close time**: When the network closed this ledger. UNIX timestamp.
 
-  - **Upgrades**: Como a rede ajusta a [tarifa base](./fees.md) e migra para uma versão nova do protocolo. Este campo é normalmente vazio. Para mais informações, veja [versionamento](./versioning.md).
+  - **Upgrades**: How the network adjusts the [base fee](./fees.md) and moves to a new protocol version. This field is usually empty. For more info, see [versioning](./versioning.md).
 
-- **Transaction set result hash**: Hash dos resultados de se aplicar o conjunto de transações. Esses dados não são, a rigor, necessários para validar os resultados das transações. No entanto, esses dados tornam mais fácil para entidades validarem o resultado de dada transação sem ter que aplicar o conjunto de transações ao ledger anterior.
+- **Transaction set result hash**: Hash of the results of applying the transaction set. This data is not, strictly speaking, necessary for validating the results of the transactions. However, this data makes it easier for entities to validate the result of a given transaction without having to apply the transaction set to the previous ledger.
 
-- **Bucket list hash**: Hash de todos os objetos neste ledger. A estrutura de dados que contém todos os objetos é chamada de [bucket list](https://github.com/stellar/stellar-core/tree/master/src/bucket).
+- **Bucket list hash**: Hash of all the objects in this ledger. The data structure that contains all the objects is called the [bucket list](https://github.com/stellar/stellar-core/tree/master/src/bucket).
 
-- **Ledger sequence**: O número sequencial deste ledger.
+- **Ledger sequence**: The sequence number of this ledger.
 
-- **Total coins**: Número total de lumens existentes.
-- **Fee pool**: Número de lumens que foram pagos em tarifas. Este número será adicionado à inflation pool e resetado a 0 na próxima vez que a inflação rodar. Note que isso é denominado em lumens, mesmo que o campo [`fee`](./transactions.md#tarifa) esteja em stroops.
+- **Total coins**: Total number of lumens in existence.
 
+- **Fee pool**: Number of lumens that have been paid in fees. This number will be added to the inflation pool and reset to 0 the next time inflation runs. Note this is denominated in lumens, even though a transaction’s [`fee`](./transactions.md#fee) field is in stroops.
 
-- **Inflation sequence**: Número de vezes que se rodou o inflation.
+- **Inflation sequence**: Number of times inflation has been run.
 
-- **ID pool**: O último ID global usado. Estes IDs são usados para gerar objetos.
+- **ID pool**: The last used global ID. These IDs are used for generating objects.
 
-- **Maximum Number of Transactions**: O número máximo de [transações](./transactions.md) que os validadores concordaram em processar em dado ledger. Se forem submetidas mais transações do que este número, os validadores irão incluir aquelas com as maiores tarifas.
+- **Maximum Number of Transactions**: The maximum number of [transactions](./transactions.md) the validators have agreed to process in a given ledger. If more transactions are submitted than this number, the validators will include those with the highest fees.
 
-- **Base fee**: A [tarifa](./fees.md#tarifa-de-transação) que a rede cobra por [operação](./operations.md) em uma [transação](./transactions.md). Este campo está em stroops, que é 1/10,000,000 avos de um lumen.
+- **Base fee**: The [fee](./fees.md#transaction-fee) the network charges per [operation](./operations.md) in a [transaction](./transactions.md). This field is in stroops, which are 1/10,000,000th of a lumen.
 
-- **Base reserve**: A [reserva](./fees.md#saldo-mínimo-da-conta) que a rede usa ao calcular o saldo mínimo de uma conta.
+- **Base reserve**: The [reserve](./fees.md#minimum-account-balance) the network uses when calculating an account's minimum balance.
 
-- **Skip list**: Hashes de ledgers passados. Permite pular de volta no tempo na cadeia de ledgers sem ter que andar ledger por ledger. Há 4 ledger hashes armazenados na skip list. Cada slot contém o ledger mais antigo que é mod de ora 50  5000  50000 ora 500000 dependendo do index skipList[0] mod(50), skipList[1] mod(5000), etc.
+- **Skip list**: Hashes of ledgers in the past. Allows you to jump back in time in the ledger chain without walking back ledger by ledger. There are 4 ledger hashes stored in the skip list. Each slot contains the oldest ledger that is mod of either 50  5000  50000 or 500000 depending on index skipList[0] mod(50), skipList[1] mod(5000), etc.
 
 
 
 # Ledger Entries
 
-O ledger é uma coleção de **entries**, ou entradas. Atualmente há 4 tipos de ledger entries. Eles estão especificados em
+The ledger is a collection of **entries**. Currently there are 4 types of ledger entries. They're specified in
 [`src/xdr/Stellar-ledger-entries.x`](https://github.com/stellar/stellar-core/blob/master/src/xdr/Stellar-ledger-entries.x).
 
 ## Account entry
-Esta entrada representa uma [conta](./accounts.md). No Stellar, tudo é construído ao redor de contas: transações são realizadas por contas, e contas controlam o direito de acesso a saldos.
+This entry represents an [account](./accounts.md). In Stellar, everything is built around accounts: transactions are performed by accounts, and accounts control the access rights to balances.
 
-Outras entradas são add-ons, posse de uma account entry principal. Com cada nova entrada
-anexa à conta, o saldo mínimo em XLM sobre para a
-conta. Para mais detalhes, veja [tarifas e saldo mínimo](./fees.md#saldo-mínimo-da-conta).
+Other entries are add-ons, owned by a main account entry. With every new entry
+attached to the account, the minimum balance in XLM goes up for the
+account. For details, see [fees and minimum balance](./fees.md#minimum-account-balance).
 
 ## Trustline entry
-[Trustlines](./assets.md) são linhas de crédito que a conta deu a um emissor particular em uma moeda específica.
+[Trustlines](./assets.md) are lines of credit the account has given a particular issuer in a specific currency.
 
-Trustline entries definem as regras que envolvem o uso desta moeda. Regras podem ser definidas pelo usuário – ex.: definir um limite do saldo para limitar o risco – ou pelo emissor – ex.: uma flag authorized.
+Trustline entries define the rules around the use of this currency. Rules can be defined by the user--e.g., setting a balance limit to limit risk--or by the issuer--e.g., an authorized flag.
 
 ## Offer entry
-Ofertas são entradas que uma conta cria no livro de ordens. São uma maneira de automatizar trocas simples dentro da rede Stellar. Para mais sobre ofertas, consulte o documento sobre a [exchange distribuída](exchange.md).
+Offers are entries that an account creates in the orderbook. They are a way to automate simple trading inside the Stellar network. For more on offers, refer to the [distributed exchange documentation](exchange.md).
 
 ## Data entry
-Data entries são pares chave-valor anexos a uma conta. Permitem aos controladores de uma conta anexar dados arbitrários à conta. Isso providencia um ponto de extensão flexível para adicionar dados específicos a aplicativos dentro do ledger.
+Data entries are key value pairs attached to an account. They allow account controllers to attach arbitrary data to their account. It provides a flexible extension point to add application specific data into the ledger.

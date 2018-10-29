@@ -1,88 +1,90 @@
 ---
-title: Ativos
+title: Assets
 ---
 
-A rede distribuída Stellar pode ser usada para rastrear, manter e transferir qualquer tipo de **ativo**: dólares, euros, bitcoin,
-ações, ouro, e outras representações (tokens) de valor. Qualquer ativo na rede pode ser trocado e feito câmbio com qualquer outro.
+The Stellar distributed network can be used to track, hold, and transfer any type of **asset**: dollars, euros, bitcoin,
+stocks, gold, and other tokens of value. Any asset on the network can be traded and exchanged with any other.
 
-Além dos lumens (veja abaixo), todos os ativos têm
-- **Tipo de ativo**: ex.: USD ou BTC
-- **Emissor**: a conta que criou o ativo
+Other than lumens (see below), all assets have
+- **Asset type**: e.g., USD or BTC
+- **Issuer**: the account that created the asset
 
 ## Trustlines
-Quando se detém ativos no Stellar, na verdade o que se tem é crédito de algum emissor. O emissor concordou previamente que irá
-trocar com você o seu crédito na rede Stellar pelo ativo correspondente – ex.: moedas fiat, metais preciosos – por fora do Stellar.
-Digamos que Scott emite laranjas como crédito na rede. Se você possui créditos de laranja, você e Scott têm
-um acordo baseado em confiança, ou em uma trustline (linha de confiança): ambos concordam que, ao dar a Scott um crédito de laranja, ele deverá te dar uma laranja.
+When you hold assets in Stellar, you're actually holding credit from a particular issuer. The issuer has agreed that it
+will trade you its credit on the Stellar network for the corresponding asset--e.g., fiat currency, precious metal--outside
+of Stellar. Let's say that Scott issues oranges as credit on the network. If you hold orange credits, you and Scott have
+an agreement based on trust, or a trustline: you both agree that when you give Scott an orange credit, he gives you an orange.
 
-Ao deter um ativo, você precisa confiar que o emissor irá resgatar seu crédito. Como não se espera que os usuários do Stellar
-confiem em qualquer emissor, as contas precisam explicitamente confiar em uma conta emissora antes de poderem deter o crédito daquele emissor.
-No exemplo acima, você precisa explicitamente confiar em Scott antes de poder deter créditos de laranja.
+When you hold an asset, you must trust the issuer to properly redeem its credit. Since users of Stellar will not want to
+trust just any issuer, accounts must explicitly trust an issuing account before they're able to hold the issuer's credit.
+In the example above, you must explicitly trust Scott before you can hold orange credits.
 
-Para confiar em uma conta emissora, cria-se uma **trustline.** Trustlines são entradas que permanecem no ledger do Stellar.
-Monitoram o limite da confiança da sua conta na conta emissora e o valor do crédito da conta emissora que sua conta possui no momento.
+To trust an issuing account, you create a **trustline.** Trustlines are entries that persist in the Stellar ledger. They
+track the limit for which your account trusts the issuing account and the amount of credit from the issuing account that your account currently holds.
+
+Starting in protocol version 10, each trustline also tracks the liabilities for the corresponding account and asset. Buying liabilities equal the total amount of this asset offered to buy aggregated over all offers owned by this account, and selling liabilities equal the total amount of this asset offered to sell aggregated over all offers owned by this account. A trustline must always have balance sufficiently large to satisfy its selling liabilities, and a balance sufficiently below its limit to accomodate its buying liabilities.
 
 ## Lumens (XLM)
-**Lumens (XLM)** são a moeda nativa da rede. Um lumen é o único tipo de ativo que pode ser usado na rede
-Stellar que não requer um emissor ou trustline.
-Qualquer conta pode deter lumens. Pode-se trocar lumens por outros ativos na rede.
+**Lumens (XLM)** are the native currency of the network. A lumen is the only asset type that can be used on the Stellar
+network that doesn't require an issuer or a trustline.
+Any account can hold lumens. You can trade lumens for other assets in the network.
 
 
-## Âncoras: emitir ativos
-Qualquer conta pode emitir ativos na rede Stellar. Entidades que emitem ativos são chamadas **âncoras** (anchors). Âncoras podem ser
-rodadas por indivíduos, pequenos negócios, comunidades locais, organizações sem fins lucrativos, etc. Qualquer tipo de instituição financeira – um banco, uma empresa de meios de pagamento – pode ser uma âncora.
+## Anchors: issuing assets
+Any account can issue assets on the Stellar network. Entities that issue assets are called **anchors.** Anchors can be
+run by individuals, small businesses, local communities, nonprofits, organizations, etc. Any type of financial institution--a bank, a payment processor--can be an anchor.
 
-Cada âncora tem uma **conta emissora** a partir da qual emite o ativo.
+Each anchor has an **issuing account** from which it issues the asset.
 
-Sendo uma âncora, ao emitir um ativo, dá-se um **código de ativo**. Ativos são identificados de maneira única pelo código do ativo e o emissor.
-Em última instância, é uma decisão do emissor definir o código do ativo. Porém, por convenção, moedas devem ser representadas pelo
-[código ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) apropriado. Para ações financeiras e títulos, use o [número ISIN](https://en.wikipedia.org/wiki/International_Securities_Identification_Number) apropriado.
-Para as suas âncoras que emitem laranjas, bodes, favores ou cerveja, você está por conta própria – invente um código adequado!
+As an anchor, when you issue an asset, you give it an **asset code**. Assets are uniquely identified by the asset code and the issuer.
+Ultimately, it's up to the issuer to set the asset code. By convention, however, currencies should be represented by the
+appropriate [ISO 4217 code](https://en.wikipedia.org/wiki/ISO_4217). For stocks and bonds, use the appropriate [ISIN number](https://en.wikipedia.org/wiki/International_Securities_Identification_Number).
+For your orange, goat, favor, or beer anchors, you're on your own--invent an appropriate code!
 
-Atualmente existem dois formatos suportados de códigos de ativo.
+Currently there are two supported formats for asset codes.
 
-#### Alfanumérico, máximo de 4 caracteres
-Qualquer caractere do conjunto [a-z][A-Z][0-9] é permitido. O código pode ser menor do que 4 caracteres, mas não devem haver caracteres desnecessários (como espaços ou vírgulas) antes ou depois do código.
+#### Alphanumeric 4-character maximum
+Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be shorter than 4 characters, but the trailing characters must all be empty.
 
-#### Alfanumérico, máximo de 12 caracteres
-Qualquer caractere do conjunto [a-z][A-Z][0-9] é permitido. O código pode ser qualquer número de caracteres de 5 a 12, mas não devem haver caracteres desnecessários (como espaços ou vírgulas) antes ou depois do código.
+#### Alphanumeric 12-character maximum
+Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be any number of characters from 5 to 12, but the trailing characters must all be empty.
 
 
-### Controlar detentores de um ativo
-Por padrão, qualquer um pode criar uma trustline com um emissor de um ativo para aceitar um ativo. No entanto, sendo uma âncora, é possível **autorizar explicitamente** e **revogar** o acesso de usuários a seu ativo, habilitando as seguintes flags na sua conta emissora (leia mais [aqui](https://www.stellar.org/developers/guides/concepts/accounts.html#flags)).
+### Controlling asset holders
+By default, anyone can create a trustline with an asset issuer to accept an asset. However, as an anchor, you can **explicitly authorize** and **revoke** user access to your asset by enabling the following flags on your issuing account (read more [here](https://www.stellar.org/developers/guides/concepts/accounts.html#flags)).
 
-* `AUTHORIZATION REQUIRED`: com esta opção, a âncora deve aprovar todos os usuários que quiserem deter seu ativo, permitindo-a controlar quem são seus clientes. A aprovação é feita pela âncora definindo a flag `Authorize` de uma trustline preexistente como **true** com a operação [Allow Trust](./list-of-operations.md#allow-trust).
-* `AUTHORIZATION REVOCABLE`: com esta opção, a âncora pode definir a flag `Authorize` de uma trustline preexistente como `false` com a operação [Allow Trust](./list-of-operations.md#allow-trust), assim congelando o ativo detido por outra conta. Quando um ativo é congelado, a conta detentora não pode transferí-lo para outras contas, nem mesmo de volta à âncora. Esta opção permite que a conta emissora revogue ativos emitidos por acidente ou que foram obtidos de maneira imprópria. Para usar esta opção, `AUTHORIZATION REQUIRED` deve também estar habilitado.
+* `AUTHORIZATION REQUIRED`: with this setting, the anchor must approve anyone who wants to hold its asset, allowing it to control who its customers are. Approving is done by the anchor by setting the `Authorize` flag of an existing trustline to **true** with the [Allow Trust](./list-of-operations.md#allow-trust) operation.
+* `AUTHORIZATION REVOCABLE`: with this setting, the anchor can set `Authorize` flag of existing trustline to `false` with the [Allow Trust](./list-of-operations.md#allow-trust) operation, to freeze the asset held by another account. When an asset is frozen for a particular account, that account can’t transfer the asset to any other account, not even back to the anchor. This setting allows the issuing account to revoke assets that it accidentally issued or that were obtained improperly. To use this setting, `AUTHORIZATION REQUIRED` must also be enabled.
 
-**Fluxo de exemplo para uma conta que tenha `AUTHORIZATION REQUIRED` e `AUTHORIZATION REVOCABLE` habilitados:**
-1. Usuário decide que quer aceitar um ativo
-2. Usuário abre uma trustline com a conta emissora deste ativo
-3. Emissor autoriza a trustline do usuário
-4. Usuário pode aceitar e enviar o ativo a quem mais quiser e que tenha uma trustline aberta com o emissor
-5. Emissor quer congelar o acesso do usuário ao ativo
-6. Emissor desautoriza a trustline do usuário
-7. Usuário não pode enviar ou aceitar este ativo
+**Example flow for an account with `AUTHORIZATION REQUIRED` and `AUTHORIZATION REVOCABLE` enabled:**
+1. User decides he/she wants to accept an asset
+2. User opens a trust line with this asset's issuing account
+3. Issuer authorizes the user's trustline
+4. User can accept and send the asset to whomever else has a trustline open with the issuer
+5. Issuer wants to freeze user's access to asset
+6. Issuer deauthorizes user's trustline
+7. User cannot send or accept this asset
 
-**Um fluxo alternativo:** note que é possível definir essas flags posteriormente. Pode ser que no início você tenha decidido permitir que qualquer um abrisse uma trustline, mas depois percebeu que não era uma boa ideia. Depois de emitir este ativo, você pode então habilitar **ambas** as flags acima. Nesse momento, todos que tenham uma trustline aberta retêm seu status de autorizado, mas agora você pode revogar a confiança (supondo que você não ajustou o peso de sua chave mestre e/ou [limiares da conta](./multi-sig.md#thresholds)).
+**An alternative flow:** note it is possible to set these flags later. Maybe you originally allow anyone to open a trustline but later realize this was not a great idea. After issuing this asset, you can then set **both** of the above flags. At this point, everyone with an open trustline retains their authorized status, however you can now revoke trust (assuming you have not adjusted your master key weight and/or [account thresholds](./multi-sig.md#thresholds)) .
 
-**Note:** quando âncoras emitem ativos, frequentemente desejam limitar a quantidade de tokens em circulação. É possível criar esta quantidade limitada e ainda manter a habilidade de autorizar e revogar, pois a operação [Allow Trust](./list-of-operations.md#allow-trust) é de *limiar baixo* enquanto que as operações [Set Options](./list-of-operations.md#set-options) e [Payment](./list-of-operations.md#payment) são de *limiar alto/médio*. Para aprender mais sobre criar ativos e limitar a oferta de tokens, [leia aqui](../walkthroughs/custom-assets.md#opcional-transação-a-limitar-a-quantidade-de-tokens).
+**Note:** when anchors issue assets, they often wish to limit the supply of tokens in circulation. It is still possible to create this limited supply and maintain the ability to authorize and revoke because the [Allow Trust](./list-of-operations.md#allow-trust)  operation is `low threshold` while the [Set Options](./list-of-operations.md#set-options)  and [Payment](./list-of-operations.md#payment) operations are `high/medium threshold`. To learn more about creating assets and limiting token supply [read here](../walkthroughs/custom-assets.md#optional-transaction-a-limit-token-supply). 
 
-**Garantir aos detentores do ativo que eles não serão revogados**: as funcionalidades acima são ótimas para emissores de ativos que desejam controlar quem pode e quem não pode deter e transacionar seu ativo. Porém, e se eu for um detentor de um ativo e estiver preocupado que um emissor congele os ativos que eu possuo? Para dar confiança aos potenciais detentores, a conta emissora pode habilitar a seguinte flag:
+**Ensuring asset holders they won't be revoked**: the above functionalities are great for asset issuers who wish to control who can and cannot hold/transact their asset. However, what if I am an asset holder and I am worried that an issuer may freeze the assets I hold? To instill trust in potential asset holders, the issuing account can enable the following flag:
 
-* `AUTHORIZATION IMMUTABLE`: com esta opção, nenhuma das flags de autorização podem ser habilitadas e a conta nunca pode ser deletada.
+* `AUTHORIZATION IMMUTABLE`: with this setting, none of the authorization flags can be set and the account can never be deleted.
 
-## Precisão e representação de quantidades
-Toda quantia de um ativo é codificada nas [estruturas XDR](https://www.stellar.org/developers/horizon/learn/xdr.html) como um número inteiro 64-bits signed. A unidade da quantidade de um ativo (aquela que é vista pelos usuários finais) é reduzida em um fator de dez milhões (10,000,000) para chegar à representação nativa como números inteiros 64-bits. Por exemplo, o valor de número inteiro `25,123,456` equivale a `2.5123456` unidades do ativo. Esse escalamento permite que haja **sete casas decimais** de precisão em unidades mais amigáveis aos usuários.
+## Amount precision and representation
+Each asset amount is encoded as a signed 64-bit integer in the [XDR structures](https://www.stellar.org/developers/horizon/learn/xdr.html). An asset amount unit (that which is seen by end users) is scaled down by a factor of ten million (10,000,000) to arrive at the native 64-bit integer representation. For example, the integer amount value `25,123,456` equals `2.5123456` units of the asset. This scaling allows for **seven decimal places** of precision in human-friendly amount units.
 
-A menor unidade diferente de zero é `0.0000001` (um decimilionésimo), representada pelo valor `1` em números inteiros. A maior unidade possível é `((2^63)-1)/(10^7)` (derivada da int64 máxima), que é igual a `922,337,203,685.4775807`.
+The smallest non-zero amount unit is `0.0000001` (one ten-millionth) represented as an integer value of one. The largest amount unit possible is `((2^63)-1)/(10^7)` (derived from max int64 scaled down) which is `922,337,203,685.4775807`.
 
-Os números são representados como `int64`s. Esses valores são gravados como apenas números inteiros signed, para evitar bugs provenientes de se misturar números inteiros signed e unsigned.
+The numbers are represented as `int64`s. Amount values are stored as only signed integers to avoid bugs that arise from mixing signed and unsigned integers.
 
-### Relevância para bibliotecas cliente do Horizon e Stellar
-No Horizon e em bibliotecas do lado cliente como `js-stellar-sdk`, o valor codificado em números inteiros é abstraído. Várias APIs esperam o próprio valor da unidade (o valor mostrado aos usuários finais.)
+### Relevance in Horizon and Stellar client libraries
+In Horizon and client side libraries such as `js-stellar-sdk`, the integer encoded value is abstracted away. Many APIs expect amount unit value (the scaled up amount displayed to end users).
 
-### Manter precisão com bibliotecas "big number"
-Algumas linguagens de programação (como JavaScript) têm problemas para manter precisão com alguns números. Recomenda-se usar bibliotecas "big number" que podem gravar números decimais de precisão arbitrária sem perda de precisão.
+### Maintaining precision with "big number" libraries
+Some programming languages (such as JavaScript) have problems with maintaining precision on a number amount. It is recommended to use "big number" libraries that can record arbitrary precision decimal numbers without a loss of precision.
 
-### Um stroop, múltiplos stroops
-Um "stroop" é a menor unidade. É igual a um decimilionésimo: `1/10000000` ou `0.0000001`. O termo stroop é usado como uma forma conveniente de se referir a essas pequenas medidas de quantidade. A forma plural é "stroops" (ex.: "100 stroops"). Curiosidade: este termo é derivado do Stroopy, o nome do mascote do Stellar cujo nome é derivado de [stroopwafels](https://pt.wikipedia.org/wiki/Stroopwafel).
+### One stroop, multiple stroops
+A "stroop" is the smallest amount unit. It is one ten-millionth: `1/10000000` or `0.0000001`. The term stroop is used as a convenient way to refer to these small measurements of amounts. The plural form is "stroops" (e.g. "100 stroops"). Fun fact: this term is derived from Stroopy, the name of the Stellar mascot whose name is derived from [stroopwafels](https://en.wikipedia.org/wiki/Stroopwafel).

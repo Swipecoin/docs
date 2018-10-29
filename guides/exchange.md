@@ -1,90 +1,90 @@
 ---
-title: Adicione Stellar a sua Exchange
+title: Add Stellar To Your Exchange
 ---
 
-Este guia irá indicar os passos de integração para adicionar Stellar a sua exchange. Este exemplo usa Node.js e o [SDK de Stellar para JS](https://github.com/stellar/js-stellar-sdk), mas deve ser fácil adaptá-los a outras linguagens.
+This guide describes how to add tokens from the Stellar network to your exchange. First, we walk through adding Stellar's native asset, lumens. Following that, we describe how to add other tokens. This example uses Node.js and the [JS Stellar SDK](https://github.com/stellar/js-stellar-sdk), but it should be easy to adapt to other languages.
 
-Há várias maneiras de arquitetar uma exchange. Este guia usa o seguinte design:
- - `issuing account`: Conta emissora. Uma conta Stellar que detém offline a maioria dos depósitos dos clientes.
- - `base account`: Conta base. Uma conta Stellar que detém online uma pequena quantidade de depósitos dos clientes e é usada para custear pedidos de saque.
- - `customerID`: ID do cliente. Cada usuário possui um customerID, usado para correlacionar envios de depósito e a conta de um usuário específico na exchange.
+There are many ways to architect an exchange. This guide uses the following design:
+ - `issuing account`: One Stellar account that holds the majority of customer deposits offline.
+ - `base account`: One Stellar account that holds a small amount of customer deposits online and is used to payout to withdrawal requests.
+ - `customerID`: Each user has a customerID, used to correlate incoming deposits with a particular user's account on the exchange.
 
-Os dois pontos principais de integração ao Stellar para uma exchange são:<br>
-1) Escutar transações de depósito a partir da rede Stellar<br>
-2) Submeter transações de saque à rede Stellar
+The two main integration points to Stellar for an exchange are:<br>
+1) Listening for deposit transactions from the Stellar network<br>
+2) Submitting withdrawal transactions to the Stellar network
 
-## Configuração
+## Setup
 
-### Operacional
-* *(opcional)* Configurar [Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html)
-* *(opcional)* Configurar [Horizon](https://www.stellar.org/developers/horizon/reference/index.html)
+### Operational
+* *(optional)* Set up [Stellar Core](https://www.stellar.org/developers/stellar-core/software/admin.html)
+* *(optional)* Set up [Horizon](https://www.stellar.org/developers/horizon/reference/index.html)
 
-Se sua exchange não tiver que lidar com muito volume, não é preciso montar suas próprias instâncias de Stellar Core e Horizon. Ao invés disso, use um dos servidores públicos de Horizon do Stellar.org.
+It's recommended, though not strictly necessary, to run your own instances of Stellar Core and Horizon - [this doc](https://www.stellar.org/developers/stellar-core/software/admin.html#why-run-a-node) lists more benefits. If you choose not to, it's possible to use the Stellar.org public-facing Horizon servers. Our test and live networks are listed below: 
+
 ```
   test net: {hostname:'horizon-testnet.stellar.org', secure:true, port:443};
   live: {hostname:'horizon.stellar.org', secure:true, port:443};
 ```
 
-### Conta emissora
-Uma conta emissora é tipicamente usada para guardar com segurança a maior parte dos fundos dos clientes. Uma conta emissora é uma conta Stellar cujas chaves secretas não estão em nenhum dispositivo que tenha contato com a Internet. transações são iniciadas manualmente por um humano e assinadas localmente na máquina offline — uma instalação local de `js-stellar-sdk` cria uma `tx_blob` que contém a transação assinada. Esta `tx_blob` pode ser transportada para uma máquina conectada à Internet por métodos offline (ex.: USB ou manualmente). Esta operação torna a chave secreta da conta emissora muito mais difícil de ser comprometida.
+### Issuing account
+An issuing account is typically used to keep the bulk of customer funds secure. An issuing account is a Stellar account whose secret keys are not on any device that touches the Internet. Transactions are manually initiated by a human and signed locally on the offline machine—a local install of `js-stellar-sdk` creates a `tx_blob` containing the signed transaction. This `tx_blob` can be transported to a machine connected to the Internet via offline methods (e.g., USB or by hand). This design makes the issuing account secret key much harder to compromise.
 
-### Conta base
-Uma conta base contém um número mais limitado de fundos que uma conta emissora. Uma conta base é uma conta Stellar usada em uma máquina que está conectada à Internet. Ela realiza operações cotidianas de envio e recebimento de lumens. O número limitado de fundos numa conta base evita maiores perdas em caso de uma quebra de segurança.
+### Base account
+A base account contains a more limited amount of funds than an issuing account. A base account is a Stellar account used on a machine that is connected to the Internet. It handles the day-to-day sending and receiving of lumens. The limited amount of funds in a base account restricts loss in the event of a security breach.
 
-### Base de dados
-- Necessário criar uma tabela de saques pendentes, `StellarTransactions`.
-- Necessário criar uma tabela para guardar a última posição do cursor do stream de depósitos, `StellarCursor`.
-- Necessário adicionar uma linha à sua tabela de usuários que cria um `customerID` único para cada usuário.
-- Necessário popular a linha customerID.
+### Database
+- Need to create a table for pending withdrawals, `StellarTransactions`.
+- Need to create a table to hold the latest cursor position of the deposit stream, `StellarCursor`.
+- Need to add a row to your users table that creates a unique `customerID` for each user.
+- Need to populate the customerID row.
 
 ```
 CREATE TABLE StellarTransactions (UserID INT, Destination varchar(56), XLMAmount INT, state varchar(8));
 CREATE TABLE StellarCursor (id INT, cursor varchar(50)); // id - AUTO_INCREMENT field
 ```
 
-Os valores possíveis de `StellarTransactions.state` são "pending", "done", e "error".
+Possible values for `StellarTransactions.state` are "pending", "done", "error".
 
 
-### Código
+### Code
 
-Aqui está um template de código que pode ser usado para integrar Stellar à sua exchange. As seções a seguir descrevem cada passo.
+Use this code framework to integrate Stellar into your exchange. For this guide, we use placeholder functions for reading/writing to the exchange database. Each database library connects differently, so we abstract away those details. The following sections describe each step:
 
-Para este guia, usamos funções placeholder para ler/editar a base de dados da exchange. Cada biblioteca de base de dados se conecta de maneira de diferente, então abstraímos esses detalhes.
 
 ```js
-// Configurar seu servidor
+// Config your server
 var config = {};
-config.baseAccount = "endereço da sua conta base";
-config.baseAccountSecret = "chave secreta da sua conta base";
+config.baseAccount = "your base account address";
+config.baseAccountSecret = "your base account secret key";
 
-// Pode-se usar a instância do Horizon do Stellar.org ou a sua própria
+// You can use Stellar.org's instance of Horizon or your own
 config.horizon = 'https://horizon-testnet.stellar.org';
 
-// Incluir o SDK de Stellar para JS
-// Ele fornece uma interface lado cliente para o Horizon
+// Include the JS Stellar SDK
+// It provides a client-side interface to Horizon
 var StellarSdk = require('stellar-sdk');
-// descomentar para usar a rede ativa:
+// uncomment for live network:
 // StellarSdk.Network.usePublicNetwork();
 
-// Inicializar o SDK de Stellar com a instância do Horizon
-// Conectar-se a
+// Initialize the Stellar SDK with the Horizon instance
+// You want to connect to
 var server = new StellarSdk.Server(config.horizon);
 
-// Receber a última posição do cursor
+// Get the latest cursor position
 var lastToken = latestFromDB("StellarCursor");
 
-// Escutar pagamentos a partir do último ponto onde parou
+// Listen for payments from where you last stopped
 // GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}/payments?cursor={last_token}
 let callBuilder = server.payments().forAccount(config.baseAccount);
 
-// Se nenhum cursor estiver sido salvo ainda, não adicionar o parâmetro cursor
+// If no cursor has been saved yet, don't add cursor parameter
 if (lastToken) {
   callBuilder.cursor(lastToken);
 }
 
 callBuilder.stream({onmessage: handlePaymentResponse});
 
-// Carregar o número sequencial da conta a partir do Horizon e retornar a conta
+// Load the account sequence number from Horizon and return the account
 // GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}
 server.loadAccount(config.baseAccount)
   .then(function (account) {
@@ -92,19 +92,19 @@ server.loadAccount(config.baseAccount)
   })
 ```
 
-## Escutar depósitos
-Quando um usuário quiser depositar lumens na sua exchange, instrua-os a enviar XLM à conta base que você possui, inserindo o customerID no campo memo da transação.
+## Listening for deposits
+When a user wants to deposit lumens in your exchange, instruct them to send XLM to your base account address with the customerID in the memo field of the transaction.
 
-Você deve escutar pagamentos que caem na conta base e creditar todos os usuários que enviarem XLM lá. Aqui está um código que escuta esses pagamentos:
+You must listen for payments to the base account and credit any user that sends XLM there. Here's code that listens for these payments:
 
 ```js
-// Começar a escutar pagamentos a partir do último ponto onde parou
+// Start listening for payments from where you last stopped
 var lastToken = latestFromDB("StellarCursor");
 
 // GET https://horizon-testnet.stellar.org/accounts/{config.baseAccount}/payments?cursor={last_token}
 let callBuilder = server.payments().forAccount(config.baseAccount);
 
-// Se nenhum cursor tiver sido salvo ainda, não adicionar o parâmetro cursor
+// If no cursor has been saved yet, don't add cursor parameter
 if (lastToken) {
   callBuilder.cursor(lastToken);
 }
@@ -113,95 +113,95 @@ callBuilder.stream({onmessage: handlePaymentResponse});
 ```
 
 
-Para cada pagamento recebido pela conta base, você deve:<br>
--checar o campo memo para determinar que usuário enviou o depósito.<br>
--gravar o cursor na tabela `StellarCursor` para poder continuar o processamento do pagamento de onde parou.<br>
--creditar a conta do usuário na base de dados com o número de XLM enviados no depósito.
+For every payment received by the base account, you must:<br>
+ - check the memo field to determine which user sent the deposit.<br>
+ - record the cursor in the `StellarCursor` table so you can resume payment processing where you left off.<br>
+ - credit the user's account in the DB with the number of XLM they sent to deposit.
 
-Então, você passa essa função como a opção `onmessage` ao fazer stream dos pagamentos:
+So, you pass this function as the `onmessage` option when you stream payments:
 
 ```js
 function handlePaymentResponse(record) {
 
-  // GET https://horizon-testnet.stellar.org/transaction/{id da transação que é parte deste pagamento}
+  // GET https://horizon-testnet.stellar.org/transaction/{id of transaction this payment is part of}
   record.transaction()
     .then(function(txn) {
       var customer = txn.memo;
 
-      // Se isso não for um pagamento à conta base, pular
+      // If this isn't a payment to the baseAccount, skip
       if (record.to != config.baseAccount) {
         return;
       }
       if (record.asset_type != 'native') {
-         // Se você é uma exchange de XLM e o cliente envia a você
-         // um ativo não nativo, algumas opções para tratá-lo é
-         // 1. Trocar o ativo para nativo e creditar aquela quantia
-         // 2. Devolvê-lo ao cliente
+         // If you are a XLM exchange and the customer sends
+         // you a non-native asset, some options for handling it are
+         // 1. Trade the asset to native and credit that amount
+         // 2. Send it back to the customer  
       } else {
-        // Creditar o cliente no campo memo
+        // Credit the customer in the memo field
         if (checkExists(customer, "ExchangeUsers")) {
-          // Atualizar em uma transação atômica
+          // Update in an atomic transaction
           db.transaction(function() {
-            // Armazenar a quantia paga pelo cliente em sua base de dados
+            // Store the amount the customer has paid you in your database
             store([record.amount, customer], "StellarDeposits");
-            // Armazenar o cursor em sua base de dados
+            // Store the cursor in your database
             store(record.paging_token, "StellarCursor");
           });
         } else {
-          // Se o cliente não pode ser encontrado, pode-se apontar um erro,
-          // adicioná-lo a sua lista de clientes e creditá-los,
-          // ou tomar qualquer outra ação apropriada a suas necessidades
+          // If customer cannot be found, you can raise an error,
+          // add them to your customers list and credit them,
+          // or do anything else appropriate to your needs
           console.log(customer);
         }
       }
     })
     .catch(function(err) {
-      // Processar erro
+      // Process error
     });
 }
 ```
 
 
-## Submeter saques
-Quando um usuário pede um saque de lumens da sua exchange, você deve gerar uma transação Stellar para enviar os lumens a ele. Aqui se encontra uma documentação adicional sobre [Construir Transações](https://www.stellar.org/developers/js-stellar-base/learn/building-transactions.html).
+## Submitting withdrawals
+When a user requests a lumen withdrawal from your exchange, you must generate a Stellar transaction to send them XLM. See [building transactions](https://www.stellar.org/developers/js-stellar-base/learn/building-transactions.html) for more information.
 
-A função `handleRequestWithdrawal` irá enfileirar uma transação na tabela `StellarTransactions` da exchange sempre que houver um pedido de saque.
+The function `handleRequestWithdrawal` will queue up a transaction in the exchange's `StellarTransactions` table whenever a withdrawal is requested.
 
 ```js
 function handleRequestWithdrawal(userID,amountLumens,destinationAddress) {
-  // Atualizar em uma transação atômica
+  // Update in an atomic transaction
   db.transaction(function() {
-    // Ler o saldo do usuário a partir da base de dados da exchange
+    // Read the user's balance from the exchange's database
     var userBalance = getBalance('userID');
 
-    // Verificar se o usuário possui os lumens necessários
+    // Check that user has the required lumens
     if (amountLumens <= userBalance) {
-      // Debitar o saldo de lumens interno do usuário na quantia de lumens que ele está sacando
+      // Debit the user's internal lumen balance by the amount of lumens they are withdrawing
       store([userID, userBalance - amountLumens], "UserBalances");
-      // Salvar as informações da transação na tabela StellarTransactions
+      // Save the transaction information in the StellarTransactions table
       store([userID, destinationAddress, amountLumens, "pending"], "StellarTransactions");
     } else {
-      // Se o usuário não tiver XLM suficientes, você pode alertá-los
+      // If the user doesn't have enough XLM, you can alert them
     }
   });
 }
 ```
 
-Então, você deve rodar `submitPendingTransactions`, que irá procurar em `StellarTransactions` por transações pendentes e submetê-las.
+Then, you should run `submitPendingTransactions`, which will check `StellarTransactions` for pending transactions and submit them.
 
 ```js
 StellarSdk.Network.useTestNetwork();
-// Esta é a função que cuida de submeter uma transação individual
+// This is the function that handles submitting a single transaction
 
 function submitTransaction(exchangeAccount, destinationAddress, amountLumens) {
-  // Atualizar estado da transação para sending para que
-  // ela não seja reenviada em caso de falha.
+  // Update transaction state to sending so it won't be
+  // resubmitted in case of the failure.
   updateRecord('sending', "StellarTransactions");
 
-  // Verificar se o endereço de destino existe
+  // Check to see if the destination address exists
   // GET https://horizon-testnet.stellar.org/accounts/{destinationAddress}
   server.loadAccount(destinationAddress)
-    // Se sim, continuar e submeter uma transação à conta de destino
+    // If so, continue by submitting a transaction to the destination
     .then(function(account) {
       var transaction = new StellarSdk.TransactionBuilder(exchangeAccount)
         .addOperation(StellarSdk.Operation.payment({
@@ -209,7 +209,7 @@ function submitTransaction(exchangeAccount, destinationAddress, amountLumens) {
           asset: StellarSdk.Asset.native(),
           amount: amountLumens
         }))
-        // Assinar a transação
+        // Sign the transaction
         .build();
 
       transaction.sign(StellarSdk.Keypair.fromSecret(config.baseAccountSecret));
@@ -217,13 +217,13 @@ function submitTransaction(exchangeAccount, destinationAddress, amountLumens) {
       // POST https://horizon-testnet.stellar.org/transactions
       return server.submitTransaction(transaction);
     })
-    // Mas se o destino não existir...
+    //But if the destination doesn't exist...
     .catch(StellarSdk.NotFoundError, function(err) {
-      // criar uma conta e colocar fundos
+      // create the account and fund it
       var transaction = new StellarSdk.TransactionBuilder(exchangeAccount)
         .addOperation(StellarSdk.Operation.createAccount({
           destination: destinationAddress,
-          // Criar uma conta requer financiá-la com XLM
+          // Creating an account requires funding it with XLM
           startingBalance: amountLumens
         }))
         .build();
@@ -233,36 +233,36 @@ function submitTransaction(exchangeAccount, destinationAddress, amountLumens) {
       // POST https://horizon-testnet.stellar.org/transactions
       return server.submitTransaction(transaction);
     })
-    // Submeter a transação criada em todo caso
+    // Submit the transaction created in either case
     .then(function(transactionResult) {
       updateRecord('done', "StellarTransactions");
     })
     .catch(function(err) {
-      // Dar catch em erros, provavelmente com a rede ou sua transação
+      // Catch errors, most likely with the network or your transaction
       updateRecord('error', "StellarTransactions");
     });
 }
 
-// Esta função é responsável por submeter todas as transações pendentes, e chama a anterior
-// Esta função deve estar rodando em segundo plano continuadamente
+// This function handles submitting all pending transactions, and calls the previous one
+// This function should be run in the background continuously
 
 function submitPendingTransactions(exchangeAccount) {
-  // Ver que transações na db ainda estão pendentes
-  // Atualizar em uma transação atômica
+  // See what transactions in the db are still pending
+  // Update in an atomic transaction
   db.transaction(function() {
     var pendingTransactions = querySQL("SELECT * FROM StellarTransactions WHERE state =`pending`");
 
     while (pendingTransactions.length > 0) {
       var txn = pendingTransactions.pop();
 
-      // Esta função é assíncrona, então não irá dar block. Para facilitar, estamos usando
-      // a keyword ES7 `await` mas recomendamos criar uma "promise waterfall"
-      // para que a linha `setTimeout` abaixo seja executada após todas as transações serem submetidas.
-      // Se não fizer isso, será possível enviar uma transação duas vezes ou mais.
+      // This function is async so it won't block. For simplicity we're using
+      // ES7 `await` keyword but you should create a "promise waterfall" so
+      // `setTimeout` line below is executed after all transactions are submitted.
+      // If you won't do it will be possible to send a transaction twice or more.
       await submitTransaction(exchangeAccount, tx.destinationAddress, tx.amountLumens);
     }
 
-    // Aguardar 30 segundos e processar o próximo lote de transações.
+    // Wait 30 seconds and process next batch of transactions.
     setTimeout(function() {
       submitPendingTransactions(sourceAccount);
     }, 30*1000);
@@ -270,19 +270,21 @@ function submitPendingTransactions(exchangeAccount) {
 }
 ```
 
-## Indo além...
+## Going further...
 ### Federation
-O protocolo federation permite dar a seus usuários endereços fáceis — ex.: zezinho*suaexchange.com — no lugar de endereços difíceis de usar, como GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ?19327.
+The federation protocol allows you to give your users easy addresses—e.g., bob*yourexchange.com—rather than cumbersome raw addresses such as: GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ?19327
 
-Para mais informações, dê uma olhada no [guia sobre federation](./concepts/federation.md).
+For more information, check out the [federation guide](./concepts/federation.md).
 
-### Âncora
-Se você for uma exchange, é fácil se tornar uma âncora Stellar também. Os pontos de integração são muito parecidos, com o mesmo nível de dificuldade. Tornar-se uma âncora poderia expandir seus negócios.
+### Anchor
+If you're an exchange, it's easy to become a Stellar anchor as well. Anchors are entities people trust to hold their deposits and issue credits into the Stellar network. As such, they act a bridge between existing currencies and the Stellar network.  Becoming a anchor could potentially expand your business.
 
-Para aprender mais sobre o que significa ser uma âncora, veja o [guia para âncoras](./anchor/index.html).
+To learn more about what it means to be an anchor, see the [anchor guide](./anchor/index.html).
 
-### Aceitar ativos não nativos
-Primeiro, abra uma [trustline](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) com a conta emissora do ativo não nativo; sem isso, não é possível começar a aceitar esse ativo.
+### Accepting Other Tokens 
+If you'd like to accept other non-lumen tokens follow these instructions. 
+
+First, open a [trustline](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) with the issuing account of the token you'd like to list -- without this you cannot begin to accept the token. 
 
 ```js
 var someAsset = new StellarSdk.Asset('ASSET_CODE', issuingKeys.publicKey());
@@ -291,17 +293,16 @@ transaction.addOperation(StellarSdk.Operation.changeTrust({
         asset: someAsset
 }))
 ```
-Se o emissor do ativo definiu `authorization_required` como true, será preciso aguardar a trustline ser autorizada antes de começar a aceitar esse ativo. Leia mais sobre [autorização de trustlines aqui](https://www.stellar.org/developers/guides/concepts/assets.html#controlar-detentores-de-um-ativo).
+If the token issuer has `authorization_required` set to true, you will need to wait for the trustline to be authorized before you can begin accepting this token. Read more about [trustline authorization here](https://www.stellar.org/developers/guides/concepts/assets.html#controlling-asset-holders).
 
-Depois, faça algumas pequenas mudanças ao código de exemplo acima:
-* Na função `handlePaymentResponse`, lidamos com o caso de receber ativos não nativos. Agora que estamos aceitando ativos não nativos, é preciso alterar essa condição; se o usuário nos enviar lumens, tomaremos uma das seguintes ações:
-	1. Trocar lumens pelo ativo não nativo desejado
-	2. Devolver os lumens ao remetente
+Then, make a few changes to the example code above:
+* In the `handlePaymentResponse` function, we dealt with the case of incoming non-lumen assets. Since we are now accepting other tokens, you will need to change this condition; if the user sends us XLM we will either:
+	1. Trade lumens for the desired token
+	2. Send the lumens back to the sender
 
-*Note*: o usuário não pode nos enviar ativos não nativos de contas emissoras com que não tivermos aberto uma trustline explicitamente.
+*Note*: the user cannot send us tokens whose issuing account we have not explicitly opened a trustline with.
 
-* Na função `withdraw`, ao adicionar uma operação à transação, precisamos especificar os detalhes do ativo que estamos enviando. Por exemplo:
-
+* In the `withdraw` function, when we add an operation to the transaction, we must specify the details of the token we are sending. For example: 
 ```js
 var someAsset = new StellarSdk.Asset('ASSET_CODE', issuingKeys.publicKey());
 
@@ -311,10 +312,9 @@ transaction.addOperation(StellarSdk.Operation.payment({
         amount: '10'
       }))
 ```
+* In the `withdraw` function your customer must have opened a trustline with the issuing account of the token they are withdrawing. So you must take the following into consideration:
+	* Confirm the user receiving the token has a trustline
+	* Parse the [Horizon error](https://www.stellar.org/developers/guides/concepts/list-of-operations.html#payment) that will occur after sending a token to an account without a trustline
 
-* Também na função `withdraw`, note que seu cliente deve ter aberto uma trustline com a conta emissora do ativo que estiver sacando. Assim é preciso levar em consideração o seguinte:
-	* Confirmar que o usuário para quem você está enviando o ativo tem uma trustline
-	* Parsear o [erro do Horizon](https://www.stellar.org/developers/guides/concepts/list-of-operations.html#payment) que irá ocorrer após enviar um ativo à conta sem uma trustline
 
-
-Para mais informações sobre ativos, dê uma olhada no [guia geral sobre ativos](https://www.stellar.org/developers/guides/concepts/assets.html) e o [guia para emitir ativos](https://www.stellar.org/developers/guides/issuing-assets.html).
+For more information about tokens check out the [general asset guide](https://www.stellar.org/developers/guides/concepts/assets.html) and the [issuing asset guide](https://www.stellar.org/developers/guides/issuing-assets.html).

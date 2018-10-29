@@ -1,40 +1,40 @@
 ---
-title: Versionamento e Upgrades
+title: Versioning and Upgrading
 ---
 
 
-Este documento descreve os vários mecanismos usados para manter o sistema como um todo funcionando enquanto evolui.
+This document describes the various mechanisms used to keep the overall system working as it evolves.
 
-# Versionamento do ledger
+# Ledger versioning
 ## ledgerVersion
-Este uint32 armazenado no ledger header descreve o número da versão do protocolo geral.
-Protocolo, neste caso, é definido tanto como "wire format" – como as formas serializadas de todos os objetos armazenados no ledger – e seu comportamento.
+This uint32 stored in the ledger header describes the version number of the overall protocol.
+Protocol in this case is defined both as "wire format"--i.e., the serialized forms of all objects stored in the ledger--and its behavior.
 
-Esse número da versão é incrementado a cada vez que o protocolo muda.
+This version number is incremented every time the protocol changes.
 
-### Integração com consenso
-Na maioria das vezes, o consenso é simplesmente alcançado em relação a que conjunto de transações deve ser aplicado ao ledger anterior.
+### Integration with consensus
+Most of the time, consensus is simply reached on which transaction set needs to be applied to the previous ledger.
 
-Porém, pode-se também obter consenso em relação aos passos de um upgrade.
+Consensus can also, however, be reached on upgrade steps.
 
-Um tal passo é "faça update no ledgerVersion para o valor X após o ledger N".
+One such upgrade step is "update ledgerVersion to value X after ledger N".
 
-Se os nós não considerarem que o passo do upgrade é válido, eles simplesmente abandonam o passo de upgrade em sua votação.
+If nodes do not consider that the upgrade step is valid, they simply drop the upgrade step from their vote.
 
-Um nó pode considerar um passo inválido ou porque não o entendeu, ou porque alguma condição não foi cumprida. No exemplo anterior, pode ser que X não seja suportado pelo nó ou que o número do ledger ainda não chegou a N.
+A node considers a step invalid either because they do not understand it or some condition is not met. In the previous example, it could be that X is not supported by the node or that the ledger number didn't reach N yet.
 
-Passos de upgrade são aplicados antes de aplicar o conjunto de transações para garantir que a lógica que organiza os passos é mesma que os processa. Senão, os passos teriam que ser aplicados após o fechamento do ledger.
+Upgrade steps are applied before applying the transaction set to ensure that the logic scheduling steps is the same that is processing it. Otherwise, the steps would have to be applied after the ledger is closed.
 
-### Versões suportadas
-Cada nó tem sua própria maneira de acompanhar que versão ele suporta – por exemplo, uma "versão min", "versão max" – mas também pode incluir coisas como "versões na lista negra". Versões suportadas não são monitoradas internamente no protocolo.
+### Supported versions
+Each node has its own way of tracking which version it supports--for example, a "min version", "max version"--but it can also include things like "black listed versions." Supported versions are not tracked from within the protocol.
 
-Note que minProtocolVersion é diferente da versão que uma instância entende:
-tipicamente, uma implementação entende versões n … maxProtocolVersion, onde n <= minProtocolVersion.
-O motivo disso é que nós devem ser capazes de rever transações do histórico (até a versão 'n'), mas pode haver algum problema/vulnerabilidade que não queremos que seja abusada para novas transações.
+Note that minProtocolVersion is distinct from the version an instance understands:
+typically an implementation understands versions n .. maxProtocolVersion, where n <= minProtocolVersion.
+The reason for this is that nodes must be able to replay transactions from history (down to version 'n'), yet there might be some issue/vulnerability that we don't want to be exploitable for new transactions.
 
-## Versionamento de objetos do ledger
+## Ledger object versioning
 
-Estruturas de dados que têm probabilidade de evoluir ao longo do tempo contêm o seguinte ponto de extensão:
+Data structures that are likely to evolve over time contain the following extension point:
 ```C++
 union switch(int v)
 {
@@ -43,23 +43,23 @@ case 0:
 } ext;
 ```
 
-Neste caso, a versão 'v' se refere à versão do objeto e permite a adição de novos braços.
+In this case, the version 'v' refers to the version of the object and permits the addition of new arms.
 
-Esse esquema oferece diversos benefícios:
-* Implementações tornam-se wire compatible sem mudanças no código, apenas atualizando seus arquivos de definição de protocolo.
-* Mesmo sem atualizar os arquivos de definição de protocolo, implementações mais antigas continuam funcionando, contanto que não encontrem formatos mais novos.
-* Promove compartilhamento de código entre versões dos objetos.
+This scheme offers several benefits:
+* Implementations become wire compatible without code changes only by updating their protocol definition files.
+* Even without updating the protocol definition files, older implementations continue to function as long as they don't encounter newer formats.
+* It promotes code sharing between versions of the objects.
 
-Note que, enquanto que esse esquema promove compartilhamento de código para componentes que consomem esses objetos, o compartilhamento de código não é necessariamente promovido para o próprio stellar-core porque o comportamento precisa ser preservado para todas as versões: para reconstruir a cadeia de ledgers a partir de períodos de tempo arbitrários, o comportamento deve ser 100% compatível.
+Note that while this scheme promotes code sharing for components consuming those objects, code sharing is not necessarily promoted for stellar-core itself because the behavior must be preserved for all versions: In order to reconstruct the ledger chain from arbitrary points in time, the behavior must be 100% compatible.
 
-## Versionamento de operações
+## Operations versioning
 
-Operações são versionadas como um todo: se um novo parâmetro precisa ser adicionado ou alterado, o versionamento ocorre por meio da adição de uma nova operação.
-Isso causa um pouco de duplicação da lógica nos clientes, mas evita introduzir bugs em potencial. Por exemplo, o código que for assinar somente certos tipos de transações deve estar inteiramente consciente do que está sendo assinado.
+Operations are versioned as a whole: If a new parameter needs to be added or changed, versioning is achieved by adding a new operation.
+This causes some duplication of logic in clients but avoids introducing potential bugs. For example, code that would sign only certain types of transactions must be fully aware of what it's signing.
 
-## Versionamento de envelope
+## Envelope versioning
 
-Padrão usado para permitir extensibilidade de envelopes (conteúdo assinado):
+Pattern used to allow for extensibility of envelopes (signed content):
 ```C++
 union TransactionEnvelope switch (int v)
 {
@@ -72,31 +72,35 @@ case 0:
 };
 ```
 
-Esse padrão permite a capacidade de modificar o envelope se necessário e certifica que clientes não consumam cegamente conteúdo que não puderam validar.
+This pattern allows the capability to modify the envelope if needed and ensures that clients don't blindly consume content that they couldn't validate.
 
-## Upgrade em objetos que não têm um ponto de extensão
+## Upgrading objects that don't have an extension point
 
-Os esquemas do objeto devem ser clonados e seu objeto pai deve ser atualizado para usar o novo tipo de objeto. Aqui, supõe-se que não haja nenhum objeto "root" desversionado.
+The object's schema must be cloned and its parent object must be updated to use the new object type. The assumption here is that there is no unversioned "root" object.
 
-## Considerações sobre o tempo de vida de implementações suportadas
+## Supported implementations lifetime considerations
 
-Para manter a base de código em um estado sustentável, implementações podem não preservar a habilidade de rever tudo a partir do gênesis. Ao invés disso, podem optar por suportar um alcance limitado – por exemplo, preservar apenas a capacidade de rever os 3 meses anteriores de transações (supondo que o minProtocolVersion da rede seja mais recente do que isso).
+In order to keep the codebase in a maintainable state, implementations may not preserve the ability to play back from genesis. Instead they may opt to support a limited range--for example, only preserve the capability to replay the previous 3 months of transactions (assuming that the network's minProtocolVersion is more recent than that).
 
-Isso não muda a habilidade do nó de se (re)juntar ou participar na rede; somente afeta a habilidade do nó realizar uma validação histórica.
+This does not change the ability of the node to (re)join or participate in the network; it only affects the ability for a node to do historical validation.
 
-# Versionamento overlay
+# Overlay versioning
 
-Overlay segue um padrão similar para versionamento: possui um min-maxOverlayVersion.
+Overlay follows a similar pattern for versioning: It has a min-maxOverlayVersion.
 
-A política de versionamento na camada de overlay é bem mais agressiva quanto à rotina de descontinuação; o conjunto de nós envolvidos é limitado àqueles que se conectam diretamente à instância.
+The versioning policy at the overlay layer is a lot more aggressive when it comes to the deprecation schedule; the set of nodes involved is limited to the ones that connect directly to the instance.
 
-Com isso em mente, estruturas seguem o modelo "clone" nesta camada:
-se uma mensagem precisa ser modificada, uma nova mensagem é definida por meio da clonagem do tipo da mensagem antiga usando um novo identificador de tipo.
+With this in mind, structures follow the "clone" model at this layer:
+if a message needs to be modified, a new message is defined by cloning the old message type using a new type identifier.
 
-Sabendo que a implementação antiga será deletada de qualquer maneira, o modelo clone torna impossível refatorar grandes partes do código e evita a dor de cabeça de se manter versões antigas.
+Knowing that the older implementation will be deleted anyway, the clone model makes it possible to refactor large parts of the code and avoids the headache of maintaining older versions.
 
-Nesta camada, é aceitável modificar o comportamento de versões antigas, contanto que permaneçam compatíveis.
+At this layer, it's acceptable to modify the behavior of older versions as long as it stays compatible.
 
-A implementação pode decidir compartilhar o código subjacente – por exemplo, convertendo mensagens legacy ao novo formato internamente.
+The implementation may decide to share the underlying code--for example, by converting legacy messages into the new format internally.
 
-A mensagem "HELLO" trocada quando pares se conectam um com o outro contém a versão min e max suportada pela instância. O outro endpoint pode decidir desconectar imediatamente caso não seja compatível.
+The "HELLO" message exchanged when peers connect to each other contains the min and max version the instance supports. The other endpoint may decide to disconnect right away if it's not compatible.
+
+
+
+

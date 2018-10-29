@@ -1,15 +1,15 @@
-Documentação Stellar
+Stellar Docs
 ============
 
-Neste repositório se encontra a documentação Stellar. Estes documentos alimentam o [builder do site Stellar para desenvolvedores](https://github.com/stellar/developers) e estão expostos em [stellar.org/developers](https://www.stellar.org/developers/).
+This repository is home to the Stellar documentation. These docs feed into the [Stellar developers site builder](https://github.com/stellar/developers) and are on display at [stellar.org/developers](https://www.stellar.org/developers/).
 
-## Como escrever documentos
+## How to write docs
 
-Há algumas convenções ao escrever documentos que vão para o site de Stellar para Desenvolvedores. A maioria dos documentos são escritos em formato Markdown. Para uma introdução ao Markdown, dê uma olhada no [Guia do Github "Mastering Markdown"](https://guides.github.com/features/mastering-markdown/).
+There are a few conventions when writing docs that go into the Stellar Developers site. Most of the docs are written in Markdown format. For an introduction to Markdown, take a look at [Github's Mastering Markdown Guide](https://guides.github.com/features/mastering-markdown/).
 
 ### Headers
 
-Linhas que começam com um símbolo hash (`#`) são consideradas como headers. Veja abaixo um exemplo de alguns e do nome do header:
+Lines that start with a hash symbol (`#`) are considered headers. Below is an example of a few and the name of the header:
 
 ```
 # h1
@@ -18,62 +18,62 @@ Linhas que começam com um símbolo hash (`#`) são consideradas como headers. V
 #### h4
 ```
 
-- NÃO usar h1, pois é reservado para o título da página gerado a partir da front matter.
-- NÃO pular tamanhos de headers (não vá de h2 para h4).
-- NÃO usar headers menores (mais símbolos hash) para representar que uma seção está inserida dentro de uma seção pai com um header maior.
-- Adicionar SIM um espaço após os símbolos hash. Alguns parsers de Markdown não irão renderizar o texto como header se não houver o espaço.
+- DO NOT use h1 since that is reserved for the page title generated from front matter.
+- DO NOT skip a header size (don't go from h2 to h4).
+- DO use smaller headers (more hash symbols) to represent that a section is nested under a parent one with a larger header.
+- DO add a space after the hash symbols. Some Markdown parsers will not render the text as a header without the space.
 
 ### Front matter
 
-No topo da maioria dos documentos há algo chamado de "front matter" (conteúdo antes do texto). Trata-se de metadados para o arquivo escrito em [formato YAML](https://en.wikipedia.org/wiki/YAML).
+At the top of most documents is something called "front matter". This is metadata for the file written in [YAML format](https://en.wikipedia.org/wiki/YAML).
 
-Aqui está um exemplo da front matter em ação:
+Here is an example of front matter in action:
 ```
 ---
-title: Referência de Horizon
+title: Horizon Reference
 ---
 ```
 
-As chaves sendo usadas na front matter são:
+The currently used keys in the front matter are:
 - title
 
-### Título do documento
+### Document title
 
-Não comece uma página com um header em Markdown (`# Title`). Em vez disso, deixe-o na front matter. O site para desenvolvedores irá pegar o título a partir da front matter.
+Do not start a page with a Markdown header (`# Title`). Instead, leave it in the front matter. The developers site will take the title from the front matter.
 
 ### Links
 
-Use links em linha e não referencie links.
+Use inline links and not reference links.
 
-Há três tipos diferentes de links, e cada tipo de link tem seu próprio significado. Alguns desses links são transformados durante a geração do site para desenvolvedores.
+There are three different kinds of links, and each different kind of link has a significant meaning. Some of these links are transformed in the generation of the developers site.
 
 <table>
   <tbody>
     <tr>
-      <th>tipo de link</th>
-      <th>onde usar</th>
-      <th>exemplo de link em markdown</th>
-      <th>link resultante (após processamento pelo portal)</th>
+      <th>link type</th>
+      <th>where to use</th>
+      <th>markdown link example</th>
+      <th>resulting link (after dev portal processing)</th>
     </tr>
     <tr>
     <tr>
-      <td>Relativo</td>
-      <td><ul><li>links dentro do mesmo repositório</li></ul></td>
+      <td>Relative</td>
+      <td><ul><li>links within same repository</li></ul></td>
       <td>../reference/accounts-all.md</td>
       <td>../reference/accounts-all.html</td>
     </tr>
     <tr>
-      <td>Relativo à raiz</td>
-      <td><ul><li>quando quiser usar o visualizador de arquivos do GitHub (ex.: para arquivos fonte)</li></ul></td>
+      <td>Root relative</td>
+      <td><ul><li>when you want to use the GitHub file viewer (e.g. for source files)</li></ul></td>
       <td>/src/ledger/AccountFrame.cpp</td>
-      <td>https://github.com/stellar/REPOSITÓRIO-ATUAL/tree/master/src</td>
+      <td>https://github.com/stellar/CURRENT-REPOSITORY/tree/master/src</td>
     </tr>
     <tr>
-      <td>Links absolutos</td>
+      <td>Absolute links</td>
       <td>
         <ul>
-          <li>links entre repositórios (deve linkar ao portal para desenvolvedores em www.stellar.org/developers/)</li>
-          <li>links a sites externos (como https://www.google.com/)</li>
+          <li>cross repository links (should link to the dev portal at www.stellar.org/developers/)</li>
+          <li>links to external sites (like https://www.google.com/)</li>
         </ul>
       </td>
       <td>https://www.stellar.org/developers/js-stellar-base/learn/building-transactions.html</td>
@@ -82,14 +82,14 @@ Há três tipos diferentes de links, e cada tipo de link tem seu próprio signif
   </tbody>
 </table>
 
-### Arquivos que não estejam em Markdown
+### Non-markdown files
 
-Às vezes vamos incluir outros tipos de conteúdo, como em `.pdf`. Para adicionar front matter ao PDF, crie um arquivo irmão com o nome do arquivo PDF e uma extensão adicional de `.metadata`. Esse arquivo pode então definir metadados para o título do `.pdf`.
+Sometimes we want to include other types of content such as `.pdf`'s. To add front matter to the PDF, create a sibling file with the PDF file name and an added extension of `.metadata`. This file can then define metadata for the title of the `.pdf`.
 
-Veja um exemplo na [pasta software do stellar-core](https://github.com/stellar/stellar-core/tree/master/docs/software).
+An example can be seen in [stellar-core's software folder](https://github.com/stellar/stellar-core/tree/master/docs/software).
 
-## Contribuições
+## Contributing
 
-Suas contribuições à rede Stellar vão ajudar a melhorar a infraestrutura financeira mundial mais rapidamente.
+Your contributions to the Stellar network will help improve the world’s financial infrastructure, faster.
 
-Queremos que seja o mais fácil possível para contribuir alterações que ajudem a rede Stellar a crescer e prosperar. Há algumas orientações que pedimos que os contribuidores sigam para podermos realizar merge com suas mudanças rapidamente. Por favor leia nosso [Guia de Contribuições](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) e assine nosso [Acordo da Licença do Contribuidor](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).
+We want to make it as easy as possible to contribute changes that help the Stellar network grow and thrive. There are a few guidelines that we ask contributors to follow so that we can merge your changes quickly. Please read our [Contribution Guide](https://github.com/stellar/docs/blob/master/CONTRIBUTING.md) and sign our [Contributor License Agreement](https://docs.google.com/forms/d/1g7EF6PERciwn7zfmfke5Sir2n10yddGGSXyZsq98tVY/viewform).

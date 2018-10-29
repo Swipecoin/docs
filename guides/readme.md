@@ -1,25 +1,25 @@
 ---
-title: Guias de Desenvolvimento do Stellar
+title: Stellar Development Guides
 ---
 
-Estes guias são feitos para ajudar você a aprender mais sobre os aspectos técnicos de integrar Stellar a sua aplicação ou serviço, desde [o mais básico](./get-started) até tópicos mais detalhados, como [submeter transações a alta frequência com canais](./channels.md).
+These guides are designed to help you learn more about the technical aspects of integrating Stellar into your application or service, from [the very basics](./get-started) to more detailed topics like [submitting transactions at a high rate with channels](./channels.md).
 
-Se você procura por documentação mais detalhada sobre o API HTTP do Stellar ou bibliotecas cliente para sua linguagem de programação favorita, dê uma olhada na seção de [Referência da API](../reference).
+If you are looking for detailed documentation on Stellar’s HTTP API or client libraries for your favorite programming language, check out the [API Reference](../reference) section.
 
-Alguns guias estão agrupados juntos:
+Some guides are grouped together:
 
-## Para Começar
+## Get Started
 
-O [guia Para Começar](./get-started) faz uma apresentação dos aspectos técnicos básicos do Stellar, começando com uma introdução às várias partes da rede Stellar, para em seguida abordar como criar contas e realizar transações programaticamente.
+The [Get Started guide](./get-started) will introduce you to the basic technical aspects of Stellar, starting with an introduction to the various parts of the Stellar network, then moving on to address programmatically creating accounts and performing transactions.
 
-## Conceitos
+## Concepts
 
-A seção Conceitos contém visões gerais e explicações sobre vários objetos, termos e tecnologias usadas através do ecossistema Stellar, desde [contas](./concepts/accounts.md) até detalhes do [Protocolo de Consenso Stellar](./concepts/scp.md) que está na base de tudo.
+The Concepts section contains overviews and explanations of various objects, terms, and technologies used throughout the Stellar ecosystem, from [accounts](./concepts/accounts.md) to the details of the [Stellar Consensus Protocol](./concepts/scp.md) that underlies everything.
 
 ## SDKs
 
-Procurando por mais detalhes sobre os SDKs cliente do Stellar? Veja a documentação detalhada para cada SDK cliente na seção [Referência da API](../reference).
+Looking for more details on Stellar’s client SDKs? You can find detailed documentation for each client SDK in the [API Reference](../reference) section.
 
-## Guias Passo a Passo
+## Walkthroughs
 
-Precisa de mais ajuda? Precisa entender como implementar alguma coisa? Use esses padrões de design e tutoriais como ponto de partida!
+Need more help? Need to understand how to implement something? Use these design patterns and tutorials as a starting place!

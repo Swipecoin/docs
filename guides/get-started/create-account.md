@@ -1,20 +1,20 @@
 ---
-title: Criar uma Conta
+title: Create an Account
 ---
 
-A primeira coisa necessária para fazer qualquer coisa na rede Stellar é uma conta. Nas contas fica todo o seu dinheiro dentro do Stellar e lhe permitem enviar e receber pagamentos — pode-se dizer que praticamente tudo no Stellar está de alguma maneira atrelado a uma conta.
+The first thing you’ll need to do anything on the Stellar network is an account. Accounts hold all your money inside Stellar and allow you to send and receive payments—in fact, pretty much everything in Stellar is in some way tied to an account.
 
-Toda conta Stellar tem uma **chave pública** e uma **seed secreta**. Stellar usa criptografia em chaves públicas para garantir que toda transação é segura. É sempre seguro compartilhar a chave pública — outras pessoas precisam dela para identificar sua conta e verificar que você autorizou uma transação. A seed, no entanto, é uma informação privada que prova que você é o dono de sua conta. Recomenda-se nunca compartilhar a seed com ninguém. É tipo como a combinação de um cadeado — qualquer um que souber a combinação pode abrí-lo. Da mesma maneira, qualquer um que souber a seed da sua conta pode controlá-la.
+Every Stellar account has a **public key** and a **secret seed**. Stellar uses public key cryptography to ensure that every transaction is secure. The public key is always safe to share—other people need it to identify your account and verify that you authorized a transaction. The seed, however, is private information that proves you own your account. You should never share the seed with anyone. It’s kind of like the combination to a lock—anyone who knows the combination can open the lock. In the same way, anyone who knows your account’s seed can control your account.
 
-Se você tem familiaridade com criptografia de chaves públicas, pode estar se perguntando qual é a diferença entre a seed e uma chave privada. A seed, na verdade, é o único dado secreto que é usado para gerar tanto a chave pública como a chave privada para a sua conta. As ferramentas do Stellar usam a seed no lugar da chave privada para sua conveniência: para ter acesso pleno a uma conta, é preciso apenas informar uma seed em vez das duas chaves, pública e privada.[^1]
+If you’re familiar with public key cryptography, you might be wondering how the seed differs from a private key. The seed is actually the single secret piece of data that is used to generate both the public and private key for your account. Stellar’s tools use the seed instead of the private key for convenience: To have full access to an account, you only need to provide a seed instead of both a public key and a private key.[^1]
 
-Como a seed deve ser mantida em segredo, o primeiro passo para criar uma conta é criando sua própria seed e chave — quando finalmente criar a conta, você enviará apenas a chave pública ao servidor do Stellar. Você pode gerar a seed e chave com o seguinte comando:
+Because the seed must be kept secret, the first step in creating an account is creating your own seed and key—when you finally create the account, you’ll send only the public key to a Stellar server. You can generate the seed and key with the following command:
 
-<code-example name="Gerar Chaves">
+<code-example name="Generating Keys">
 
 ```js
-// criar um par de chaves completamente novo e único
-// veja mais sobre objetos KeyPair: https://stellar.github.io/js-stellar-sdk/Keypair.html
+// create a completely new and unique pair of keys
+// see more about KeyPair objects: https://stellar.github.io/js-stellar-sdk/Keypair.html
 var pair = StellarSdk.Keypair.random();
 
 pair.secret();
@@ -24,8 +24,8 @@ pair.publicKey();
 ```
 
 ```java
-// criar um par de chaves completamente novo e único
-// veja mais sobre objetos KeyPair: https://stellar.github.io/java-stellar-sdk/org/stellar/sdk/KeyPair.html
+// create a completely new and unique pair of keys.
+// see more about KeyPair objects: https://stellar.github.io/java-stellar-sdk/org/stellar/sdk/KeyPair.html
 import org.stellar.sdk.KeyPair;
 KeyPair pair = KeyPair.random();
 
@@ -59,15 +59,15 @@ func main() {
 
 </code-example>
 
-Agora que você possui uma seed e uma chave pública, você pode criar uma conta. Para impedir pessoas de criar um número enorme de contas desnecessárias, cada conta deve ter um saldo mínimo de 1 lumen (lumens é a moeda embutida na rede Stellar).[^2] Porém, como você ainda não tem nenhum lumen, você ainda não pode pagar para ativar uma conta. No mundo real, normalmente você pagaria a uma exchange que vende lumens para conseguir criar uma nova conta.[^3] Na rede de testes do Stellar, por outro lado, você pode pedir ao FriendBot, nosso robozinho amigável que tem uma carteira bem gorda, para criar uma conta para você.
+Now that you have a seed and public key, you can create an account. In order to prevent people from making a huge number of unnecessary accounts, each account must have a minimum balance of 1 lumen (lumens are the built-in currency of the Stellar network).[^2] Since you don’t yet have any lumens, though, you can’t pay for an account. In the real world, you’ll usually pay an exchange that sells lumens in order to create a new account.[^3] On Stellar’s test network, however, you can ask Friendbot, our friendly robot with a very fat wallet, to create an account for you.
 
-Para criar uma conta teste, mande ao FriendBot a chave pública que criou. Ele vai criá-la e colocar fundos usando aquela chave pública como o ID da conta.
+To create a test account, send Friendbot the public key you created. It’ll create and fund a new account using that public key as the account ID.
 
-<code-example name="Criar uma Conta Teste">
+<code-example name="Creating a test account">
 
 ```js
-// O SDK não tem ferramentas para criar contas teste, então você precisará
-// fazer seu próprio request HTTP.
+// The SDK does not have tools for creating test accounts, so you'll have to
+// make your own HTTP request.
 var request = require('request');
 request.get({
   url: 'https://friendbot.stellar.org',
@@ -75,17 +75,17 @@ request.get({
   json: true
 }, function(error, response, body) {
   if (error || response.statusCode !== 200) {
-    console.error('ERRO!', error || body);
+    console.error('ERROR!', error || body);
   }
   else {
-    console.log('SUCCESSO! Você tem uma nova conta :)\n', body);
+    console.log('SUCCESS! You have a new account :)\n', body);
   }
 });
 ```
 
 ```java
-// O SDK não tem ferramentas para criar contas teste, então você precisará
-// fazer seu próprio request HTTP.
+// The SDK does not have tools for creating test accounts, so you'll have to
+// make your own HTTP request.
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -95,7 +95,7 @@ String friendbotUrl = String.format(
   pair.getAccountId());
 InputStream response = new URL(friendbotUrl).openStream();
 String body = new Scanner(response, "UTF-8").useDelimiter("\\A").next();
-System.out.println("SUCCESSO! Você tem uma nova conta :)\n" + body);
+System.out.println("SUCCESS! You have a new account :)\n" + body);
 ```
 
 ```go
@@ -109,8 +109,8 @@ import (
 )
 
 func main() {
-	// pair é o par que foi gerado no exemplo anterior, ou crie um par baseado em
-	// chaves já existentes.
+	// pair is the pair that was generated from previous example, or create a pair based on 
+	// existing keys.
 	address := pair.Address()
 	resp, err := http.Get("https://friendbot.stellar.org/?addr=" + address)
 	if err != nil {
@@ -128,18 +128,18 @@ func main() {
 
 </code-example>
 
-Agora o último passo: pegar os detalhes da conta e verificar seu saldo. Contas podem ter múltiplos saldos — um para cada tipo de moeda que possuírem.
+Now for the last step: Getting the account’s details and checking its balance. Accounts can carry multiple balances—one for each type of currency they hold.
 
-<code-example name="Pegar detalhes da conta">
+<code-example name="Getting account details">
 
 ```js
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
-// o SDK de JS usa promises para a maioria das ações, como retirar uma conta
+// the JS SDK uses promises for most actions, such as retrieving an account
 server.loadAccount(pair.publicKey()).then(function(account) {
-  console.log('Saldos para conta: ' + pair.publicKey());
+  console.log('Balances for account: ' + pair.publicKey());
   account.balances.forEach(function(balance) {
-    console.log('Tipo:', balance.asset_type, ', Saldo:', balance.balance);
+    console.log('Type:', balance.asset_type, ', Balance:', balance.balance);
   });
 });
 ```
@@ -150,10 +150,10 @@ import org.stellar.sdk.responses.AccountResponse;
 
 Server server = new Server("https://horizon-testnet.stellar.org");
 AccountResponse account = server.accounts().account(pair);
-System.out.println("Saldos para conta" + pair.getAccountId());
+System.out.println("Balances for account " + pair.getAccountId());
 for (AccountResponse.Balance balance : account.getBalances()) {
   System.out.println(String.format(
-    "Tipo: %s, Código: %s, Saldo: %s",
+    "Type: %s, Code: %s, Balance: %s",
     balance.getAssetType(),
     balance.getAssetCode(),
     balance.getBalance()));
@@ -176,7 +176,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Saldos para conta:", pair.Address())
+	fmt.Println("Balances for account:", pair.Address())
 
 	for _, balance := range account.Balances {
 		log.Println(balance)
@@ -186,16 +186,16 @@ func main() {
 
 </code-example>
 
-Agora que você tem uma conta, pode [começar a enviar e receber pagamentos](transactions.md).
+Now that you’ve got an account, you can [start sending and receiving payments](transactions.md).
 
 <div class="sequence-navigation">
-  <a class="button button--previous" href="index.html">Anterior: Visão Geral da Rede Stellar</a>
-  <a class="button button--next" href="transactions.html">Próximo: Enviar e Receber Dinheiro</a>
+  <a class="button button--previous" href="index.html">Back: Stellar Network Overview</a>
+  <a class="button button--next" href="transactions.html">Next: Send and Receive Money</a>
 </div>
 
 
-[^1]: Uma chave privada ainda é usada para encriptar dados e assinar transações. Ao criar um objeto `KeyPair` usando uma seed, a chave privada é gerada imediatamente e armazenada internamente.
+[^1]: A private key is still used to encrypt data and sign transactions. When you create a `KeyPair` object using a seed, the private key is immediately generated and stored internally.
 
-[^2]: Outros recursos do Stellar, como [trust lines](../concepts/assets.md#trustlines), requerem saldos mínimos maiores. Para mais sobre saldos mínimos, veja [tarifas](../concepts/fees.md#saldo-mínimo-da-conta)
+[^2]: Other features of Stellar, like [trust lines](../concepts/assets.md#trustlines), require higher minimum balances. For more on minimum balances, see [fees](../concepts/fees.md#minimum-account-balance)
 
-[^3]: CoinMarketCap tem uma lista de corretoras que vendem lumens em http://coinmarketcap.com/currencies/stellar/#markets
+[^3]: CoinMarketCap maintains a list of exchanges that sell lumens at http://coinmarketcap.com/currencies/stellar/#markets

@@ -2,155 +2,155 @@
 title: Multisignature
 ---
 
-## Assinaturas de transações
-Stellar usa **assinaturas** (signatures) como autorização. Transações sempre precisam de autorização de pelo menos uma chave pública para
-serem consideradas válidas. Geralmente, transações somente precisam de autorização da chave pública da conta fonte.
+## Transaction signatures
+Stellar uses **signatures** as authorization. Transactions always need authorization from at least one public key in order
+to be considered valid. Generally, transactions only need authorization from the public key of the source account.
 
-Assinaturas de transações são criadas assinando criptograficamente o conteúdo da transação com uma chave secreta.
-O Stellar atualmente usa o esquema de assinatura ed25519, mas também há um mecanismo para adicionar mais tipos de esquemas com chaves públicas/privadas.
-Considera-se que uma transação com uma assinatura anexa tenha autorização daquela chave pública.
+Transaction signatures are created by cryptographically signing the transaction object contents with a secret key. Stellar
+currently uses the ed25519 signature scheme, but there's also a mechanism for adding additional types of public/private
+key schemes. A transaction with an attached signature is considered to have authorization from that public key.
 
-Em dois casos, uma transação pode precisar de mais de uma assinatura. Se a transação tiver operações que afetam mais de uma conta,
-será necessária a autorização de todas as contas em questão. Uma transação também precisará de assinaturas adicionais se
-a conta associada com a transação tiver mais de uma chave pública. Para ver exemplos, veja o [guia de operações](./operations.md#exemplos).
+In two cases, a transaction may need more than one signature. If the transaction has operations that affect more than one
+account, it will need authorization from every account in question. A transaction will also need additional signatures if
+the account associated with the transaction has multiple public keys. For examples, see the [operations guide](./operations.md#examples).
 
 ## Thresholds
-[Operações](./operations.md) caem em uma das seguintes categorias de thresholds (limiares): low, medium ou high (baixo, médio, ou alto).
-Cada nível de limiar pode ser definido por um número na faixa 0-255. Esse limiar é o peso da assinatura necessário para autorizar uma operação naquele nível.
+[Operations](./operations.md) fall under a specific threshold category: low, medium, or high.
+The threshold for a given level can be set to any number from 0-255. This threshold is the amount of signature weight required to authorize an operation at that level.
 
-Digamos que Diyang defina o limiar médio de uma de suas contas para 4. Se aquela conta submeter uma transação que inclua uma operação payment (segurança média), o limiar da transação é 4 – os pesos das assinaturas devem ser maior ou igual a 4 para rodar. Se a chave mestra de Diyang – a chave correspondente à chave pública que identifica a conta que Diyang possui – tiver um peso menor que 4, ela não pode autorizar a transação sem outros signatários.
+Let's say Diyang sets the medium threshold on one of her accounts to 4. If that account submits a transaction that includes a payment operation (medium security), the transaction's threshold is 4--the signature weights on it need to be greater than or equal to 4 in order to run. If Diyang's master key--the key corresponding to the public key that identifies the account she owns--has a weight less than 4, she cannot authorize a transaction without other signers.
 
-Após o limiar da assinatura ser cumprido, se houver assinaturas restantes, então a transação é considerada como tendo assinaturas em excesso, o que resulta em uma transação falha, mesmo que essas assinaturas sejam válidas, o que quer dizer: para uma transação assinada com N assinaturas, se o limiar é alcançado usando K assinaturas, a assinatura irá falhar se N > K.
+Once the signature threshold is met if there are any leftover signatures then the transaction is regarded as having too many signatures which results in a failed transaction even if the remaining signatures are valid, i.e. for a transaction signed with N signatures, if the threshold is reached using K signatures then the transaction will fail if N > K.
 
-Cada conta pode definir seus próprios valores para limiares. Por padrão, todos os níveis dos limiares são definidos como 0, e a chave mestra tem seu peso definido como 1. A operação [Set Options](./list-of-operations.md#set-options) permite mudar o peso da chave mestra e adicionar outras chaves signatárias com diferentes pesos.
+Each account can set its own threshold values. By default all thresholds levels are set to 0, and the master key is set to weight 1. The [Set Options](./list-of-operations.md#set-options) operation allows you to change the weight of the master key and to add other signing keys with different weights.
 
-Baixa Segurança:
-  * [Processar uma transação](./transactions.md)
-    * Cobrar uma tarifa ou atualizar o número sequencial para a conta fonte
-  * Operação [Allow Trust](./list-of-operations.md#allow-trust)
-    * Usada para permitir que pessoas detenham crédito desta conta sem expor a chave que permite enviar pagamentos desta conta.
+Low Security:
+  * [Transaction processing](./transactions.md)
+    * Charging a fee or updating the sequence number for the source account
+  * [Allow Trust](./list-of-operations.md#allow-trust) operation
+    * Used to allow people to hold credit from this account without exposing the key that enables sending payments from this account.
   * [Bump Sequence](./list-of-operations.md#bump-sequence)
-    * Modifica diretamente o número sequencial da conta
+    * Modify the account's sequence number directly
 
-Segurança Média:
- * Todas as [outras operações](./list-of-operations.md)
+Medium Security:
+ * All [other operations](./list-of-operations.md)
 
-Alta Segurança:
-  * [Set Options](./list-of-operations.md#set-options) para mudar os signatários ou os limiares
-    * Permite criar um conjunto de signatários que dão ou revogam acesso à conta
-  * [Account Merge](./list-of-operations.md#account-merge) para fundir contas
+High Security:
+  * [Set Options](./list-of-operations.md#set-options) to change the signers or the thresholds
+    * Allows you to create a set of signers that give or revoke access to the account.
+  * [Account Merge](./list-of-operations.md#account-merge) to merge accounts
 
-Para a maioria dos casos, é recomendado definir os limiares tal que `low <= medium <= high`.
+For most cases, it is recommended to set thresholds such that `low <= medium <= high`.
 
-## Chaves adicionais
-Contas são identificadas por uma chave pública. A chave privada que corresponde a esta chave pública é chamada de **chave mestra**, ou master key. Chaves adicionais podem ser adicionadas à conta usando a operação [Set Options](./list-of-operations.md#set-options).
+## Additional signing keys
+Accounts are identified by a public key. The private key that corresponds to this public key is called the **master key**. Additional signing keys can be added to the account using the [Set Options](./list-of-operations.md#set-options) operation.
 
-Se o peso da chave mestra for atualizado para 0, a chave mestra é considerada uma chave inválida e é impossível assinar transações com ela (mesmo para operações com valor do limiar igual a 0). Se houver outros signatários listados na conta, eles podem continuar a assinar transações.
+If the weight of the master key is ever updated to 0, the master key is considered to be an invalid key and you cannot sign any transactions with it (even for operations with a threshold value of 0). If there are other signers listed on the account, they can still continue to sign transactions.
 
-"Signatários", ou "signers", refere-se à chave mestre ou quaisquer chaves adicionadas posteriormente. Define-se um signatário como o par: chave pública, peso.
+"Signers" refers to the master key or to any signing keys added later. A signer is defined as the pair: public key, weight. 
 
-Cada signatário adicional além da chave mestra aumenta o [saldo mínimo](./fees.md#saldo-mínimo-da-conta) da conta.
+Each additional signer beyond the master key increases the account's [minimum balance](./fees.md#minimum-account-balance).
 
-## Tipos Alternativos de Assinaturas
-Para habilitar alguns recursos avançados de smart contracts, há alguns tipos adicionais de assinatura. Tais tipos também têm pesos e podem ser adicionados e removidos de forma semelhante aos tipos normais de assinatura. Mas em vez de verificar a autorização por meio de uma assinatura criptográfica, eles têm métodos diferentes de provar validade à rede.
+## Alternate Signature Types
+To enable some advanced smart contract features there are a couple of additional signature types. These signature types also have weights and can be added and removed similarly to normal signature types. But rather than check a cryptographic signature for authorization they have a different method of proving validity to the network.
 
-### Transação Pré-autorizada
-É possível uma conta pré-autorizar uma transação específica adicionando o hash da transação futura como um "signatário" da conta. Para fazer isso, é preciso preparar a transação de antemão com o número sequencial adequado. Então, pode-se obter o hash desta transação e adicioná-lo como um signatário à conta.
+### Pre-authorized Transaction
+It is possible for an account to pre-authorize a particular transaction by adding the hash of the future transaction as a "signer" on the account. To do that you need to prepare the transaction beforehand with proper sequence number. Then you can obtain the hash of this transaction and add it as signer to account.
 
-Signatários deste tipo são automaticamente removidos da conta quando uma transação compatível for aplicamente adequadamente. Em caso de erro, ou quando uma transação compatível nunca for submetida, o signatário permanece e deve ser removido manualmente usando a operação [Set Options](./list-of-operations.md#set-options).
+Signers of this type are automatically removed from the account when a matching transaction is properly applied. In case of error, or when matching transaction is never submitted, the signer remains and must be manually removed using the [Set Options](./list-of-operations.md#set-options) operation.
 
-Este tipo de signatário é especialmente útil em contas escrow. Pode-se pré-autorizar duas transações diferentes. Ambas poderiam ter o mesmo número sequencial mas diferentes destinos. Isso quer dizer que apenas uma delas pode ser executada.
+This type of signer is especially useful in escrow accounts. You can pre-authorize two different transactions. Both could have the same sequence number but different destinations. This means that only one of them can be executed.
 
 ### Hash(x)
-Adicionar uma assinatura do tipo hash(x) permite que qualquer um que conheça `x` assinar a transação. Este tipo de signatário é especialmente útil em [atomic cross-chain swaps](https://en.bitcoin.it/wiki/Atomic_cross-chain_trading), que são necessários para protocolos inter-blockchains como [lightning networks](https://lightning.network).
+Adding a signature of type hash(x) allows anyone who knows `x` to sign the transaction. This type of signer is especially useful in [atomic cross-chain swaps](https://en.bitcoin.it/wiki/Atomic_cross-chain_trading) which are needed for inter-blockchain protocols like [lightning networks](https://lightning.network).
 
-Primeiro, crie um valor aleatório 256 bits, que chamamos de `x`. O hash SHA256 daquele valor pode ser adicionado como um signatário do tipo hash(x). Então, para autorizar uma transação, `x` é adicionado como uma das assinaturas da transação.
-Atente-se que `x` será conhecido pelo mundo assim que uma transação for submetida à rede com `x` como uma assinatura. Isso significa que qualquer um passará a poder assinar por aquela conta com o signatário hash(x). Comumente, é preferível que haja signatários adicionais de modo que alguém deve ter uma chave secreta específica e conhecer `x` para atingir o limiar de peso necessário para autorizar transações na conta.
+First, create a random 256 bit value, which we call `x`. The SHA256 hash of that value can be added as a signer of type hash(x). Then in order to authorize a transaction, `x` is added as one of the signatures of the transaction.
+Keep in mind that `x` will be known to the world as soon as a transaction is submitted to the network with `x` as a signature. This means anyone will be able to sign for that account with the hash(x) signer at that point. Often you want there to be additional signers so someone must have a particular secret key and know `x` in order to reach the weight threshold required to authorize transactions on the account.
 
 
 
 ## Envelopes
-Um **envelope** de uma transação embrulha a transação com um conjunto de assinaturas. O objeto transação (transaction) é o que os signatários estão de fato assinando. Tecnicamente, um envelope de transação é a coisa que é passada adiante na rede e incluída em conjuntos de transações.
+A transaction **envelope** wraps a transaction with a set of signatures. The transaction object is the thing that the signers are actually signing. Technically, a transaction envelope is the thing that is passed around the network and included in transaction sets.
 
-## Authorização
-Para determinar se uma transação tem a autorização necessária para rodar, os pesos de todas as assinaturas no envelope da transação são somados. Se esta soma for igual ou maior que o limiar (veja abaixo) definido para aquele tipo de operação, a operação é autorizada.
+## Authorization
+To determine if a transaction has the necessary authorization to run, the weights of all the signatures in the transaction envelope are added up. If this sum is equal to or greater than the threshold (see below) set for that operation type, then the operation is authorized.
 
-Este esquema é bem flexível. Pode-se requerer que muitos signatários autorizem pagamentos de uma conta individual. É possível ter uma conta em nome da qual qualquer número de pessoas possa autorizar. Pode-se ter uma chave mestra que concede acesso ou revoga o acesso de outros. Isso suporta qualquer esquema m de n.
+This scheme is very flexible. You can require many signers to authorize payments from a particular account. You can have an account that any number of people can authorize for. You can have a master key that grants access or revokes access from others. It supports any m of n setup.
 
 
-## Operações
-### Exemplo 1: Âncoras
-> Você opera uma âncora que gostaria de manter sua chave emissora offline. Assim, é menos provável que um mau agente possa se apossar da chave da âncora e começar a emitir crédito de maneira imprópria. Porém, sua âncora precisa autorizar pessoas que detêm crédito por meio da operação `Allow Trust`. Antes de emitir crédito a uma conta, você precisa verificar que aquela conta está OK.
+## Operations
+### Example 1: Anchors
+> You run an anchor that would like to keep its issuing key offline. That way, it's less likely a bad actor can get ahold of the anchor's key and start issuing credit improperly. However, your anchor needs to authorize people holding credit by running the `Allow Trust` operation. Before you issue credit to an account, you need to verify that account is OK.
 
-Multisig permite que você faça tudo isso sem expor a chave mestra de sua âncora. Você pode adicionar outra chave signatária
-para sua conta com a operação `Set Options`. Esta chave adicional deve ter um peso menor que o limiar médio da sua conta âncora.
-Como `Allow Trust` é uma operação de limiar baixo, esta chave extra autoriza usuários a deter o crédito de sua âncora.
-No entanto, como `Payment` é uma operação de limiar médio,  esta chave não permite que ninguém sabote sua âncora para emitir crédito.
+Multisig allows you to do all of this without exposing the master key of your anchor. You can add another signing key
+to your account with the operation `Set Options`.  This additional key should have a weight below your anchor account's
+medium threshold. Since `Allow Trust` is a low-threshold operation, this extra key authorizes users to hold your anchor's
+credit. But, since `Payment` is a medium-threshold operation, this key does not allow anyone who compromises your anchor to issue credit.
 
-Configuração da sua conta:
+Your account setup:
 ```
-  master weight: 2
-  peso da chave signatária adicional: 1
+  master key weight: 2
+  additional signing key weight: 1
   low threshold: 0
   medium threshold: 2
   high threshold: 2
 ```
 
-### Exemplo 2: Contas Conjuntas
-> Você quer montar uma conta conjunta com Kalil e Bruna, em que qualquer um de vocês possa autorizar um pagamento. Você quer também montar uma conta tal que, se você decidir alterar signatários (ex.: remover ou adicionar alguém), uma operação de limiar alto, todos os 3 devem concordar. Você adiciona Kalil e Bruna como signatários à conta conjunta. Você também confirma que seja necessário os pesos de todas as suas chaves para alcançar o limiar alto, mas apenas o peso de uma para cruzar o limiar médio.
+### Example 2: Joint Accounts
+> You want to set up a joint account with Bilal and Carina such that any of you can authorize a payment. You also want to set up the account so that, if you choose to change signers (e.g., remove or add someone), a high-threshold operation, all 3 of you must agree. You add Bilal and Carina as signers to the joint account. You also ensure that it takes all of your key weights to clear the high threshold but only one to clear the medium threshold.
 
-Configuração de uma conta conjunta:
+Joint account setup:
 ```
-  master weight: 1
+  master key weight: 1
   low threshold: 0
   medium threshold: 0
   high threshold: 3
-  peso da chave de Kalil: 1
-  peso da chave de Bruna: 1
+  Bilal's signing key weight: 1
+  Carina's signing key weight: 1
 ```
 
-### Exemplo 3: Contas Corporativas
-> Sua empresa quer montar uma conta que precise que 3 de 6 funcionários concordem com *qualquer* transação que saia dessa conta.
+### Example 3: Company Accounts
+> Your company wants to set up an account that requires 3 of 6 employees to agree to *any* transaction from that account.
 
-Configuração de uma conta corporativa:
+Company account setup:
 ```
-  master weight: 0 (Desligada para esta conta não poder fazer nada sem um funcionário)
+  master key weight: 0 (Turned off so this account can't do anything without an employee)
   low threshold: 3
   medium threshold: 3
   high threshold: 3
-  peso da chave do Funcionário 1: 1
-  peso da chave do Funcionário 2: 1
-  peso da chave do Funcionário 3: 1
-  peso da chave do Funcionário 4: 1
-  peso da chave do Funcionário 5: 1
-  peso da chave do Funcionário 6: 1
+  Employee 1 key weight: 1
+  Employee 2 key weight: 1
+  Employee 3 key weight: 1
+  Employee 4 key weight: 1
+  Employee 5 key weight: 1
+  Employee 6 key weight: 1
 ```
 
-### Exemplo 4: Contas para Despesas
-> Você controla por completo uma conta para despesas, mas você quer que seus dois colaboradores Diyuan e Emil sejam capazes de autorizar transações
-dessa conta. Você adiciona as chaves de Diyuan e Emil à conta. Se tanto Diyuan como Emil deixarem a empresa,
-você pode remover suas chaves, uma operação de limiar alto.
+### Example 4: Expense Accounts
+> You fully control an expense account, but you want your two coworkers Diyuan and Emil to be able to authorize transactions
+from this account. You add Diyuan and Emil's signing keys to the expense account. If either Diyuan or Emil leave the company,
+you can remove their signing key, a high-threshold operation.
 
-Configuração de uma conta para despesas:
+Expense account setup:
 ```
-  master weight: 3
-  low threshold: 0
-  medium threshold: 0
-  high threshold: 3
-  peso da chave de Diyuan: 1
-  peso da chave de Emil: 1
+  master key weight: 3
+  low: 0
+  medium: 0
+  high: 3
+  Diyuan's key weight: 1
+  Emil's key weight: 1
 ```
 
-### Exemplo 5: Moedas Personalizadas
-> Você quer emitir uma moeda personalizada e garantir que nunca será criado mais dessa moeda. Você faz uma conta fonte e emite
-a quantidade máxima da moeda a uma conta detentora. Então, você define o peso da chave mestra da conta fonte para abaixo do limiar médio
-– a conta fonte não pode mais emitir moeda.
+### Example 5: Custom Currencies
+> You want to issue a custom currency and ensure that no more will ever be created. You make a source account and issue
+the maximum amount of currency to a holding account. Then you set the master weight of the source account to below the
+medium threshold--the source account can no longer issue currency.
 
-Configuração da conta fonte:
+Source account setup:
 ```
-  master weight: 0
+  master key weight: 0
   low threshold: 0
   medium threshold: 0
   high threshold: 0
 ```
-Note que, embora os limiares sejam 0 aqui, chave mestra não pode assinar uma transação com sucesso porque seu próprio peso é 0, o que a torna uma chave inválida.
+Note that even though the thresholds are 0 here, the master key cannot successfully sign a transaction because it's own weight is 0, which makes it an invalid signing key.

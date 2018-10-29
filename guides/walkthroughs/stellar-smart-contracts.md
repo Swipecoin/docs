@@ -2,260 +2,262 @@
 title: Stellar Smart Contracts
 ---
 
-Stellar pode ser usado para construir smart contracts sofisticados. Smart contracts são programas de computador que podem executar automaticamente um acordo baseado em lógica de programação.
+Stellar can be used to build sophisticated smart contracts. Smart contracts are computer programs that can automatically execute an agreement based on programmed logic.
 
-O conceito de integrar tecnologia e contratos jurídicos data desde os anos 1950, quando acadêmicos construiram métodos computacionais que poderiam executar regras jurídicas sem envolver processos jurídicos tradicionais. Foram definidos formalmente por Nick Szabo em 1997:
+The concept of integrating technology and legal contracts dates back to the 1950s when scholars built computational methods that could enforce legal rules without involving traditional legal processes. Smart contracts were formally defined by Nick Szabo in 1997:
 
-> Smart contracts combinam protocolos com interfaces de usuário para formalizar e proteger relações por meio de redes informáticas. Os objetivos e princípios do design desses sistemas são derivados de princípios jurídicos, teoria econômica e teorias de protocolos confiáveis e seguros.
+> Smart contracts combine protocols with user interfaces to formalize and secure relationships over computer networks. Objectives and principles for the design of these systems are derived from legal principles, economic theory, and theories of reliable and secure protocols. 
 
-Nos últimos anos, a tecnologia blockchain tem tornado possível uma nova geração de smart contracts com armazenamento imutável de termos do acordo, autorização criptográfica e transferências de valor integradas.
+In recent years, blockchain technology has enabled a new breed of smart contracts with immutable storage of agreement terms, cryptographic authorization, and integrated transfers of value. 
 
-Para a Rede Stellar, smart contracts se manifestam como Stellar Smart Contracts. Um **Stellar Smart Contract** (SSC) é expresso como composições de transações que são conectadas e executadas usando vários condicionamentos. A seguir estão exemplos de condicionamentos que podem ser considerados e implementados ao criar SSCs:
+For the Stellar Network, smart contracts are manifested as Stellar Smart Contracts. A **Stellar Smart Contract** (SSC) is expressed as compositions of transactions that are connected and executed using various constraints. The following are examples of constraints that can be considered and implemented when creating SSCs:
 
-- *Multisignature* - Que chaves são necessárias para autorizar certa operação? Quais partes devem concordar em dada circunstância para executar os passos?
+- *Multisignature* - What keys are needed to authorize a certain operation? What parties need to agree on a circumstance in order to execute the steps?
 
-Multisignature ou multiassinaturas é o conceito de exigir assinaturas de múltiplas partes para assinar transações que originadas de uma conta. Por meio de pesos das assinaturas e limiares, cria-se uma representação de poder nas assinaturas.
+Multisignature is the concept requiring signatures of multiple parties to sign transactions stemming from an account. Through signature weights and thresholds, representation of power in signatures is created. 
 
-- *Batching/Atomicidade* - Que operações devem ocorrer todas ao mesmo tempo ou falhar? O que deve acontecer para forçar isso a falhar ou passar?
+- *Batching/Atomicity* - What operations must all occur together or fail? What must happen in order to force this to fail or pass?
 
-Batching é o conceito de incluir múltiplas operações em uma transação. Atomicidade é a garantia que, dada uma série de operações submetidas à rede, se uma operação falhar, todas as operações na transação falham.
+Batching is the concept of including multiple operations in one transaction. Atomicity is the guarantee that given a series of operations, upon submission to the network if one operation fails, all operation in the transaction fails. 
 
-- *Sequência* - Em que ordem uma série de transações deverá ser processada? Quais são as limitações e relações de dependência?
+- *Sequence* - In what order should a series of transactions be processed? What are the limitations and dependencies?
 
-O conceito de sequência é representado na Rede Stellar por meio do número sequencial. Utilzando números sequenciais ao manipular transações, pode-se garantir que transações específicas não terão sucesso se uma transação alternativa for submetida.
+The concept of sequence is represented on the Stellar Network through sequence number. Utilizing sequence numbers in transaction manipulation, it can be guaranteed that specific transactions do not succeed if an alternative transaction is submitted. 
 
-- *Limites de tempo* - Quando uma transação pode ser processada?
+- *Time Bounds* - When can a transaction be processed?
 
-Limites de tempo ou time bounds são restrições ao período de tempo durante o qual uma transação é válida. Usar os limites de tempo permite que períodos de tempo sejam representados em um SSC.
+Time bounds are limitations on the time period over which a transaction is valid. Using time bounds enables time periods to be represented in an SSC. 
 
-Esta visão geral apresenta dois padrões de design comuns que podem ser usados para criar SSCs na Rede Stellar. As transações podem ser traduzidas em API requests ou podem ser executadas usando o [Laboratório Stellar](https://www.stellar.org/laboratory/).
+This overview presents two common design patterns that can be used to create SSCs on the Stellar Network. The transactions can be translated to API requests or can be executed using [Stellar Laboratory](https://www.stellar.org/laboratory/).
 
 
-## Conta Escrow Multisignature para Duas Partes com Bloqueio Temporal e Recuperação
-### Exemplo de Caso de Uso
-Ben Bitdiddle vende 50 tokens CODE para Alyssa P. Hacker, com a condição de que Alyssa não poderá revender os tokens até ter se passado um ano. Ben não confia completamente em Alyssa, então Ben sugere que ele detenha os tokens para Alyssa durante o ano.
+## 2-Party Multisignature Escrow Account with Time Lock & Recovery
+### Use Case Scenario
+Ben Bitdiddle sells 50 CODE tokens to Alyssa P. Hacker, under the condition that Alyssa won’t resell the tokens until one year has passed. Ben doesn’t completely trust Alyssa so he suggests that he holds the tokens for Alyssa for the year.
 
-Alyssa protesta. Como ela irá saber se o Ben ainda terá os tokens depois de um ano? Como ela pode confiar que ele irá realmente entregá-los?
+Alyssa protests. How will she know that Ben will still have the tokens after one year? How can she trust him to eventually deliver them?
 
-Além disso, às vezes Alyssa é meio esquecida. Existe a possibilidade de que ela não irá lembrar de resgatar seus tokens depois de decorrido um ano. Ben gostaria de embutir um mecanismo de recuperação para, caso Alyssa não resgate seus tokens, eles podem ser recuperados. Assim, os tokens não serão perdidos para sempre.
+Additionally, Alyssa is sometimes forgetful. There’s a chance she won’t remember to claim her tokens at the end of the year long waiting period. Ben would like to build in a recovery mechanism so that if Alyssa doesn’t claim the tokens, they can be recovered. This way, the tokens won’t be lost forever.
 
-### Implementação
-Um acordo escrow é criado entre duas entidades: a origem – a entidade que financia o acordo, e o alvo – a entidade que recebe os fundos no final do contrato.
+### Implementation
+An escrow agreement is created between two entities: the origin - the entity funding the agreement, and the target - the entity receiving the funds at the end of the contract. 
 
-Três contas são necessárias para executar um contrato escrow entre duas partes: uma conta fonte, uma conta de destino e uma conta escrow. A conta fonte é a conta da origem que está iniciando e fundando o acordo escrow. A conta de destino é a conta do alvo que por fim irá ganhar controle dos fundos. A conta escrow é criada pela origem e detém os fundos durante o período de travamento.
+Three accounts are required to execute a time-locked escrow contract between the two parties: a source account, a destination account, and an escrow account. The source account is the account of the origin that is initializing and funding the escrow agreement. The destination account is the account of the target that will eventually gain control of the escrowed funds. The escrow account is created by the origin and holds the escrowed funds during the lock up period. 
 
-Dois períodos de tempo devem ser estabelecidos e acordados para este acordo escrow: um período de trancamento, durante o qual nenhuma parte pode manipular (transferir, utilizar) os ativos, e um período de recuperação, depois do qual a origem consegue recuperar os fundos da conta escrow.
+Two periods of time must be established and agreed upon for this escrow agreement: a lock-up period, during which neither party may manipulate (transfer, utilize) the assets, and a recovery period, after which the origin has the ability to recover the escrowed funds from the escrow account. 
 
-Cinco transações são usadas para criar um contrato escrow, explicadas abaixo em ordem de criação. As variáveis a seguir serão usadas na explicação:
--  **N**, **M** – número sequencial da conta escrow e da conta fonte, respectivamente; N+1 representa próximo número sequencial da transação, e de assim em diante
-- **T** – o período de trancamento
-- **D** – a data a partir da qual começar o período de trancamento
-- **R** – o período de recuperação
+Five transactions are used to create an escrow contract - they are explained below in the order of creation. The following variables will be used in the explanation:
+-  **N**, **M** - sequence number of escrow account and source account, respectively; N+1 means the next sequential transaction number, and so on
+- **T** - the lock-up period
+- **D** - the date upon which the lock-up period starts
+- **R** - the recovery period
 
-Para o padrão de design descrito abaio, o ativo sendo trocado é o ativo nativo. A ordem de envio das transações à rede Stellar é diferente da ordem de criação. A imagem a seguir mostra a ordem de envio, no que diz respeito ao tempo:
+For the design pattern described below, the asset being exchanged is the native asset. The order of submission of transactions to the Stellar network is different from the order of creation. The following shows the submission order, in respect to time: 
 
 ![Diagram Transaction Submission Order for Escrow Agreements](assets/ssc-escrow.png)
 
-#### Transação 1: Criar uma Conta Escrow
-**Conta**: conta fonte  
-**Número Sequencial**: M  
-**Operações**:
-- [Create Account](../concepts/list-of-operations.md#create-account): criar conta escrow no sistema
-	 - saldo inicial: [saldo mínimo](../concepts/fees.md#saldo-mínimo-da-conta) + [tarifa de transação](../concepts/fees.md#tarifa-de-transação)
+#### Transaction 1: Creating the Escrow Account
+**Account**: source account  
+**Sequence Number**: M  
+**Operations**:
+- [Create Account](../concepts/list-of-operations.md#create-account): create escrow account in system
+	 - starting balance: [minimum balance](../concepts/fees.md#minimum-account-balance) + [transaction fee](../concepts/fees.md#transaction-fee)
 
-**Signatários**: source account
+**Signers**: source account
 
-A Transação 1 é submetida à rede pela origem por meio da conta fonte. Cria-se a conta escrow, financiada com a reserva mínima atual, e dá-se à origem acesso às chaves pública e privada da conta escrow. A conta escrow é financiada com o saldo mínimo, sendo assim uma conta válida na rede. Ela recebe dinheiro adicional para custear a tarifa que incorre ao transferir os ativos no fim do acordo escrow. Ao criar novas contas, recomenda-se financiar a conta com um saldo maior que o saldo inicial calculado.
+Transaction 1 is submitted to the network by the origin via the source account. This creates the escrow account, funds the account with the current minimum reserve, and gives the origin access to the public and private key of the escrow account. The escrow account is funded with the minimum balance so it is a valid account on the network. It is given additional money to handle the transfer fee of transferring the assets at the end of the escrow agreement. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance.
 
 
-#### Transação 2: Habilitar Multi-sig
-**Conta**: conta escrow   
-**Número Sequencial**: N  
-**Operações**:
-- [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a conta de destino como um signatário com peso em transações para a conta escrow
+#### Transaction 2: Enabling Multi-sig
+**Account**: escrow account   
+**Sequence Number**: N  
+**Operations**:
+- [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add the destination account as a signer with weight on transactions for the escrow account
 	 - weight: 1
-- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir o peso da chave mestra e alterar os limiares para exigirem todas as assinaturas (2 de 2 signers)
+- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require all signatures (2 of 2 signers)
 	 - master weight: 1
 	 - low threshold: 2
 	 - medium threshold: 2
-	 - high threshold: 2
+	 - high threshold: 2 
 
-**Signatários**: conta escrow
+**Signers**: escrow account
 
-A Transação 2 é criada e submetida à rede. É feita pela origem usando a conta escrow, já que a origin tem controle sobre a conta escrow nesse momento. A primeira operação adiciona à conta escrow a conta de destino como um segundo signatário com um peso igual a 1.
+Transaction 2 is created and submitted to the network. It is done by the origin using the escrow account, as origin has control of the escrow account at this time. The first operation adds the destination account as a second signer with a signing weight of 1 to the escrow account. 
 
-Por padrão, as limiares são desiguais. A segunda operação define o peso da chave mestra como igual a 1, nivelando seu peso com o peso da conta de destino. Na mesma operação, os limiares são definidos como iguais a 2. Isso faz que qualquer tipo de transação que origine da conta escrow exija que todas as assinaturas tenham um peso total de 2. Nesse momento, o peso de assinar com tanto a conta escrow e a conta de destino são somados, resultando em um total igual a 2. Isso garante que, desse ponto em diante, ambas a conta escrow e a conta de destino (a origem e o alvo) precisem assinar todas as transações referentes à conta escrow. Isso dá controle parcial da conta escrow ao alvo.
+By default, the thresholds are uneven. The second operation sets the weight of the master key to 1, leveling out its weight with that of the destination account. In the same operation, the thresholds are set to 2. This makes is so that all and any type of transactions originating from the escrow account now require all signatures to have a total weight of 2. At this point, the weight of signing with both the escrow account and the destination account adds up to 2. This ensures that from this point on, both the escrow account and the destination account (the origin and the target) must sign all transactions that regard the escrow account. This gives partial control of the escrow account to the target. 
 
-#### Transação 3: Destravar  
-**Conta**: conta escrow  
-**Número Sequencial**: N+1  
-**Operações**:
-- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir peso da chave mestra e alterar limiares para exigirem apenas 1 assinatura
+#### Transaction 3: Unlock  
+**Account**: escrow account  
+**Sequence Number**: N+1  
+**Operations**:
+- [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
 	 - master weight: 0
 	 - low threshold: 1
 	 - medium threshold: 1
-	 - high threshold: 1
+	 - high threshold: 1 
 
-**Limites de Tempo**:
-- tempo mínimo: data do destravamento
-- tempo máximo: 0  
+**Time Bounds**:
+- minimum time: unlock date
+- maximum time: 0  
 
-**Signatário Imediato**: conta escrow  
-**Signatário Eventual**: conta de destino
+**Immediate Signer**: escrow account  
+**Eventual Signer**: destination account
 
 
-#### Transação 4: Recuperação
-**Conta**: conta escrow  
-**Número Sequencial**: N+1  
-**Operações**:
-- [Set Option - Signer](../concepts/list-of-operations.md#set-options): remover a conta de destino como signatário
+#### Transaction 4: Recovery 
+**Account**: escrow account  
+**Sequence Number**: N+1  
+**Operations**:
+- [Set Option - Signer](../concepts/list-of-operations.md#set-options): remove the destination account as a signer
 	 - weight: 0  
- - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): definir o peso da chave mestra e alterar limiares para exigirem apenas 1 assinatura
+ - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): set weight of master key and change thresholds weights to require only 1 signature
 	 - low threshold: 1
 	 - medium threshold: 1
 	 - high threshold: 1  
 
-**Limites de Tempo**:
-- tempo mínimo: data da recuperação
-- tempo máximo: 0
+**Time Bounds**:
+- minimum time: recovery date
+- maximum time: 0
 
-**Signatário Imediato**: conta escrow  
-**Signatário Eventual**: conta de destino  
+**Immediate Signer**: escrow account  
+**Eventual Signer**: destination account  
 
-A Transação 3 e a Transação 4 são criadas e assinadas pela conta escrow pela origem. A origem então dá as transações 3 e 4, em [forma XDR](https://www.stellar.org/developers/horizon/reference/xdr.html), ao alvo para que ele assine usando a conta de destino. O alvo então as publica para a origem [verificá-las](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) e salvá-las em um lugar seguro. Uma vez assinadas por ambas as partes, essas transações não podem ser modificadas. Tanto a origem como o alvo devem reter uma cópia dessas transações assinadas em sua forma XDR, e as transações podem ser armazenadas em um lugar publicamente acessível sem receio de alterações maliciosas.
+Transaction 3 and Transaction 4 are created and signed by the escrow account by the origin. The origin then gives Transaction 3 and Transaction 4, in [XDR form](https://www.stellar.org/developers/horizon/reference/xdr.html), to the target to sign using the destination account. The target then publishes them for the origin to [review](https://www.stellar.org/laboratory/#xdr-viewer?type=TransactionEnvelope&network=test) and save in a safe location. Once signed by both parties, these transactions cannot be modified. Both the origin and target must retain a copy of these signed transactions in their XDR form, and the transactions can be stored in a publicly accessible location without concerns of tampering.
 
-A Transação 3 e a Transação 4 são criadas e assinadas antes da conta escrow ser financiada, e possuem o mesmo número de transação. Isso é feito para garantir que ambas as partes estejam de acordo. Se as circunstâncias mudarem antes antes de uma dessas duas transações forem submetidas, ambos a origem e o alvo devem autorizar transações utilizando a conta escrow. Isso é representado pela exigência por assinaturas de tanto a conta de destino como a conta escrow.
+Transaction 3 and Transaction 4 are created and signed before the escrow account is funded, and have the same transaction number. This is done to ensure that the two parties are in agreement. If circumstances were to change before one of these two transactions are submitted, both the origin and the target need to authorize transactions utilizing the escrow account. This is represented by the requirement of the signatures of both the destination account and the escrow account. 
 
-A Transação 3 remove a conta escrow como um signatário para transações geradas a partir de si mesma. Esta transação transfere o controle total da conta escrow ao alvo. Depois do fim do período de trancamento, a única conta que é necessária para assinar transações a partir da conta escrow é a conta de destino. A data de destravamento (D+T) é a primeira data em que a transação de destravamento pode ser submetida. Se a Transação 3 for submetida antes dessa data, a transação não será válida. O tempo máximo é definido como igual a 0, para denotar que a transação não possui uma data de expiração.
+Transaction 3 removes the escrow account as a signer for transactions generated from itself. This transaction transfers complete control of the escrow account to target. After the end of the lock-up time period, the only account that is needed to sign for transactions from the escrow account is the destination account. The unlock date (D+T) is the first date that the unlock transaction can be submitted. If Transaction 3 is submitted before the unlock date, the transaction will not be valid. The maximum time is set to 0, to denote that the transaction does not have an expiration date. 
 
-A Transação 4 existe para a recuperação da conta, caso o alvo não submeta a transação de destravamento. Ela remove a conta de destino como signatário, e reestabelece os pesos para apenas exigir sua própria assinatura. Isso retorna o controle total da conta escrow à origem. A Transação 4 pode apenas ser submetida após a data de recuperação (D+T+R), e não possui data de expiração.
+Transaction 4 is for account recovery in the event that target does not submit the unlock transaction. It removes the destination account as a signer, and resets the weights for signing transactions to only require its own signature. This returns complete control of the escrow account to the origin. Transaction 4 can only be submitted after the recovery date (D+T+R), and has no expiration date. 
 
-A Transação 3 pode ser submetida a qualquer momento durante o período de recuperação (R). Se o alvo não submeter a Transação 3 para permitir acesso aos fundos na conta escrow, a origem pode submeter a Transação 4 após a data de recuperação. A origem pode retomar os ativos trancados caso deseje, já que a Transação 4 faz que o alvo não seja mais necessário para assinar transações da conta escrow. Após a data de recuperação, ambas Transações 3 e 4 são válidas e possíveis de serem enviadas à rede, mas apenas uma transação será aceita pela rede. Isso é garantido pelo recurso de que ambas as transações têm o mesmo número sequencial.
+Transaction 3 can be submitted at any time during the recovery period, R. If the target does not submit Transaction 3 to enable access to the funds in the escrow account, the origin can submit Transaction 4 after the recovery date. The origin can reclaim the locked up assets if desired as Transaction 4 makes it so the target is no longer required to sign transactions for escrow account. After the recovery date, both Transaction 3 and Transaction 4 are valid and able to be submitted to the network but only one transaction will be accepted by the network. This is ensured by the feature that both transactions have the same sequence number. 
 
-Para resumir: se a Transação 3 não for submetida pelo alvo, a Transação 4 será submetida pela origem depois do período de recuperação.
+To summarize: if Transaction 3 is not submitted by the target, then Transaction 4 is submitted by the origin after the recovery period.
 
-#### Transação 5: Financiamento  
-**Conta**: conta fonte  
-**Número Sequencial**: M+1  
-**Operações**:
-- [Payment](../concepts/list-of-operations.md#payment): Pagar à conta escrow a quantidade adequada de ativos  
+#### Transaction 5: Funding  
+**Account**: source account  
+**Sequence Number**: M+1  
+**Operations**:
+- [Payment](../concepts/list-of-operations.md#payment): Pay the escrow account the appropriate asset amount  
 
-**Signer**: conta fonte
+**Signer**: source account
 
-A Transação 5 é a transação que deposita a quantidade adequada de ativos na conta escrow a partir da conta fonte. Deve ser submetida após a Transação 3 e a Transação 4 forem assinadas pela conta de destino e publicadas de volta à conta fonte.
+Transaction 5 is the transaction that deposits the appropriate amount of assets into the escrow account from the source account. It should be submitted once Transaction 3 and Transaction 4 have been signed by the destination account and published back to the source account.
 
-## Crowdfunding Conjunto
-### Exemplo de Caso de Uso
-Alyssa P. Hacker precisa juntar dinheiro para pagar por um serviço de uma empresa, Tutoriais de Código para Cães, mas ela quer captar os fundos do público por meio de crowdfunding. Se pessoas suficientes doarem, ela conseguirá pagar o serviço diretamente à empresa. Caso contrário, ela terá um mecanismo para retornar as doações. Para garantir sua confiabilidade aos doadores, ela decide perguntar a Ben Bitdiddle se ele estaria disposto a ajudá-la a arranjar pessoas que gostariam de participar do crowdfunding. Ele também irá dar sua palavra a seus amigos de que Alyssa é confiável, como maneira de convencê-los a doar para o projeto.
+## Joint-Entity Crowdfunding 
+### Use Case Scenario
+Alyssa P. Hacker needs to raise money to pay for a service from a company, Coding Tutorials For Dogs, but she wants to source the funding from the public via crowdfunding. If enough people donate, she will be able to pay for the service directly to the company. If not, she will have a mechanism to return the donations. To guarantee her trustworthiness and reliability to the donors, she decides to asks Ben Bitdiddle if he’s willing to help her with getting people to commit to the crowdfunding. He will also vouch for Alyssa’s trustworthiness to his friends as a way to get them to donate to the crowdfunding efforts. 
 
-### Implementação de Padrão
-No exemplo mais simples, um smart contract para crowdfunding requer pelo menos três partes: duas das quais (daqui em diante chamadas de parte A e parte B) concordam em patrocinar o crowdfunding, e uma terceira para a qual os fundos finais serão entregues (chamada de alvo). Um token deve ser criado como o mecanismo para executar o crowdfunding. O token de participação utilizado, assim como uma conta de armazenamento, devem ser criados por uma ou mais partes. Uma conta de armazenamento emite tokens de participação cujo preço pode ser igual a qualquer valor por token. A conta de armazenamento coleta os fundos e, após o fim do período de crowdfunding, irá retornar os fundos aos contribuidores caso a meta não seja atingida.
+### Pattern Implementation
+In the simplest example, a crowdfunding smart contract requires at least three parties: two of which (from here out called party A and party B) agree to sponsor the crowdfunding, and a third to which the final funds will be given (called the target). A token must be created as the mechanism to execute the crowdfunding. The participation token utilized, as well as a holding account, must be created by one of two parties. A holding account issues participation tokens that can be priced at any value per token. The holding account collects the funding, and, after the end of the crowdfunding period, will return contributors funds if the value goal isn't met. 
 
-Cinco transações são usadas para criar um contrato de crowdfunding. As seguintes variáveis são usadas para explicar a formulação do contrato:
-- **N**, **M** - número sequencial da conta da parte A e a conta de armazenamento, respectivamente; N+1 representa o próximo número sequencial da transação, e de assim em diante
-- **V** - valor total que a campanha de crowdfunding quer levantar
-- **X** - valor pelo qual os tokens serão vendidos
+Five transactions are used to create a crowdfunding contract. The following variables are used in explaining the formulation of the contract:
+- **N**, **M** - sequence number of party A's account and the holding account, respectively; N+1 means the next sequential transaction number, and so on
+- **V** - total value the crowdfunding campaign is looking to raise
+- **X** - value at which the tokens will be sold
 
-Há quatro contas usadas para criar um esquema básico de crowdfunding. A primeira é a conta de armazenamento, que é a conta encarregada de coletar e interagir com os doadores. Ela requer a assinatura de ambas partes A e B para realizar qualquer transação. A segunda é a conta objetivo, possuída pelo alvo, que receberá os fundos levantados caso o objetivo do crowdfunding seja atingido com sucesso. As duas contas restantes são posse da parte A e da parte B respectivamente, que estão organizando o crowdfunding.
+There are four accounts used for creating a basic crowdfunding schema. First is the holding account, which is the account that deals with collecting and interacting with the donors. It requires the signature of both party A and party B in order to carry out any transactions. The second is the goal account, the account owned by the target to which the crowdfunded value is delivered to on success. The two remaining accounts are respectively owned by party A and party B, who are running the crowdfunding. 
 
-As transações que criam este padrão de design podem ser criadas e submetidas por qualquer parte que patrocinar a campanha. As transações são apresentadas em ordem de criação. A ordem do envio à Rede Stellar é condicional, e depende do sucesso da campanha de crowdfunding.
+The transactions that create this design pattern can be created and submitted by any party sponsoring the crowdfunding campaign. The transactions are presented in order of creation. The order of submission to the Stellar Network is conditional, and depends on the success of the crowdfunding campaign.
 
 ![Diagram Transaction Submission Order for Crowdfunding Campaigns](assets/ssc-crowdfunding.png)
 
 
-#### Transação 1: Criar a Conta de Armazenamento
-**Conta**: parte A  
-**Número Sequencial**: M  
-**Operações**:
-- [Create Account](../concepts/list-of-operations.md#create-account): criar a conta de armazenamento no sistema
-	- [starting balance](../concepts/fees.md#saldo-mínimo-da-conta): saldo mínimo
+#### Transaction 1: Create the Holding Account
+**Account**: party A  
+**Sequence Number**: M  
+**Operations**:
+- [Create Account](../concepts/list-of-operations.md#create-account): create holding account in system
+	- [starting balance](../concepts/fees.md#minimum-account-balance): minimum balance
 
-**Signatários**: parte A
+**Signers**: party A
 
-#### Transação 2: Adicionar signatários
-**Conta**: conta de armazenamento  
-**Número Sequencial**: N  
-**Operações**:
- - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a parte A como um signatário com peso em transações para a conta escrow
+#### Transaction 2: Add signers
+**Account**: holding account  
+**Sequence Number**: N  
+**Operations**:
+ - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party A as a signer with weight on transactions for the escrow account
 	- weight: 1
- - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Adicionar a parte B como um signatário com peso em transações para a conta escrow
+ - [Set Option - Signer](../concepts/list-of-operations.md#set-options): Add party B as a signer with weight on transactions for the escrow account
 	- weight: 1
- - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remover chave mestra e alterar limiares para exigirem todas as outras assinaturas (2 de 2 signatários)
+ - [Set Option - Thresholds & Weights](../concepts/list-of-operations.md#set-options): remove master keys and change thresholds weights to require all other signatures (2 of 2 signers)
 	- master weight: 0
 	- low threshold: 2
 	- medium threshold: 2
 	- high threshold: 2
 
-**Signatários**: conta de armazenamento
+**Signers**: holding account
 
 
-As Transações 1 and 2 são criadas e submetidas por uma das duas partes que patrocinam a campanha de crowdfunding. A Transação 1 cria a conta de armazenamento. A conta de armazenamento é financiada com um saldo inicial para torná-la válida na rede. Ao criar novas contas, recomenda-se financiá-las com um saldo maior do que o saldo inicial calculado. A Transação 2 remove a conta de armazenamento como signatário de suas próprias transações, e adiciona a parte A e a parte B como signatários. Desse ponto em diante, todas as partes envolvidas devem acordar e assinar todas as transações provenientes da conta de armazenamento. Este mecanismo de confiança existe para proteger doadores contra uma das partes tomar ações maliciosas.
+Transaction 1 and 2 are created and submitted by one of the two parties sponsoring the crowdfunding campaign. Transaction 1 creates the holding account. The holding account is funded with a starting balance in order to make it valid on the network. It is recommended that when creating new accounts to fund the account with a balance larger than the calculated starting balance. Transaction 2 removes the holding account as a signer for its own transactions, and adds party A and party B as signers. From this point on, all parties involved must agree and sign all transactions coming from the holding account. This trust mechanism is in place to protect donors from one party carrying malicious actions.  
 
-Depois da Transação 2, a conta de armazenamento deve ser financiada com os tokens a serem usados para a campanha de crowdfunding, assim como lumens suficientes para cobrir as tarifas de transações de todas as transações a seguir.
+After Transaction 2, the holding account should be funded with the tokens to be used for the crowdfunding campaign, as well as with enough lumens to cover the transaction fees for all of the following transactions. 
 
-#### Transação 3: Começar o Crowdfunding
-**Conta**: conta de armazenamento  
-**Número Sequencial**: N+1  
-**Operações**:
-- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): vender tokens de participação a um preço de X por token
+#### Transaction 3: Begin Crowdfunding
+**Account**: holding account  
+**Sequence Number**: N+1  
+**Operations**:
+- [Manage Offer - Sell](../concepts/list-of-operations.md#manage-offer): sell participation tokens at a rate of X per token
 
-**Signer**: conta da parte A, conta da parte B
+**Signer**: party A’s account, party B’s account
 
-A Transação 3 é criada e submetida à rede para começar a campanha de crowdfunding. Ela cria uma oferta na rede que vende os tokens de participação a um preço de X por token. Dado que uma quantidade limitada de tokens é criada para a campanha, o preço dos tokens deve ser tal que um total de V possa ser levantado por meio das vendas.
+Transaction 3 is created and submitted to the network to begin the crowdfunding campaign. It creates an offer on the network that sells the participation tokens at a rate of X per token. Given a limited amount of tokens are created for the crowdfunding campaign, the tokens are priced in a manner that enables a total of V to be raised through sales. 
 
-#### Transação 4: Sucesso do Crowdfunding  
-**Conta**: conta de armazenamento  
-**Número Sequencial**: N+2    
-**Operações**:
-- [Payment](../concepts/list-of-operations.md#payment): enviar V da conta de armazenamento à conta objetivo
+#### Transaction 4: Crowdfunding Succeeds  
+**Account**: holding account  
+**Sequence Number**: N+2    
+**Operations**:
+- [Payment](../concepts/list-of-operations.md#payment): send V from the holding account to the goal account
 
+
+**Time Bounds**: 
+- minimum time: end of crowdfunding period
+- maximum time: 0
+
+**Signers**: party A’s account, party B’s account
+
+#### Transaction 5: Crowdfunding Fails
+**Account**: holding account    
+**Sequence Number**: N+3      
+**Operations**: 
+- [Manage Offer - Cancel](../concepts/list-of-operations.md#manage-offer): cancel pre-existing offer to sell tokens 
+ - [Manage Offer - Buy](../concepts/list-of-operations.md#manage-offer): holding account buys participation tokens at a rate of X per token
 
 **Time Bounds**:
-- tempo mínimo: fim do período de crowdfunding
-- tempo máximo: 0
+- minimum time: end of crowdfunding period
+- maximum time: 0
 
-**Signatários**: conta da parte A, conta da parte B
+**Signers**: party A’s account, party B’s account  
 
-#### Transação 5: Falha do Crowdfunding
-**Conta**: conta de armazenamento    
-**Número Sequencial**: N+3      
-**Operações**:
-- [Manage Offer - Cancel](../concepts/list-of-operations.md#manage-offer): cancelar oferta preexistente de venda de tokens
- - [Manage Offer - Buy](../concepts/list-of-operations.md#manage-offer): conta de armazenamento compra tokens de participação a um preço de X por token
+Transaction 4 and Transaction 5 are pre-signed, unsubmitted transactions that are published. Both transactions have a minimum time of the end of the crowdfunding period to prevent them from being submitted earlier than agreed upon by the sponsoring parties. They can be submitted by anyone upon the end of the crowdfunding. Transaction 4 transfers the raised amount to the goal account. Transaction 5 prevents all remaining tokens from being sold by canceling the offer and enables donors to create offers to sell back tokens to the holding account.
 
-**Time Bounds**:
-- tempo mínimo: fim do período de crowdfunding
-- tempo máximo: 0
+Security is provided through sequence numbers. As noted, the sequence number for Transaction 4 is *N+2* and the sequence number for Transaction 5 is *N+3*. These sequential sequence numbers demand that both Transaction 4 and Transaction 5 are submitted to the network in the appropriate order.  
 
-**Signatários**: conta da parte A, conta da parte B  
+The crowdfunding was a failure when not enough funds were raised by the expected date. This is the equivalent to not selling all of the participation tokens. Transaction 4 is submitted to the network, but it will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. An error will occur, though, because there will not be enough funds in the account to cover the actual requested amount of the payment. Transaction 5 is then submitted to the network, enabling contributors to sell back their tokens. Additionally, Transaction 5 cancels the holding account’s ability to sell participation tokens, halting the status of the crowdfunding event.  
 
-A Transação 4 e a Transação 5 são transações pré-assinadas e não submetidas que são publicadas. Ambas as transações têm um tempo mínimo igual ao fim do período de crowdfunding que previne que sejam submetidas antes do tempo acordado pelas partes patrocinadoras. Elas podem ser submetidas por qualquer pessoa no fim do crowdfunding. A Transação 4 transfere a quantia levantada à conta objetivo. A Transação 5 impede a venda de todos os tokens restantes cancelando a oferta e permitindo aos doadores criarem ofertas para vender tokens de volta à conta de armazenamento.
+The crowdfunding is a success if V was raised by the appropriate time. Raising enough funds is equivalent to having all participation tokens being purchased from the holding account. Transaction 4 is submitted to the network and will succeed because there are enough funds present in the account to fulfill the payment operation, as well as cover the transaction fee. Transaction 5 will then be submitted to the network, but will fail. The holding account will have enough lumens to pay the transaction fee, so the transaction will be considered in consensus and a sequence number will get consumed. The transaction will succeed, but because the holding account will not have the funds to buy back the tokens, participants will not be able to make attempts to recover their funds. 
 
-A segurança é providenciada por meio de números sequenciais. Como mencionado, o número sequencial da Transação 4 é *N+2* e o número sequencial da Transação 5 é *N+3*. Estes números sequenciais requerem que ambas a Transação 4 e a Transação 5 sejam submetidas à rede na ordem adequada.
+#### Bonus: Crowdfunding Contributors
+The following steps are carried out in order to become a contributor to the crowdfunding:
+1. [Create a trustline](../concepts/list-of-operations.md#change-trust) to the holding account for participation tokens
+	- The trustline creates trust between the contributor and the holding accounts, enabling transactions involving participation tokens to be valid
+2. [Create an offer](../concepts/list-of-operations.md#manage-offer) to buy participation tokens
+	- The contributor account will receive participation tokens and the holding account will receive the value
+3. If the crowdfunding:
+	- succeeds - do nothing
+	- fails - create an offer to sell participation tokens, enabling the contributor to get back their value invested
 
-O crowdfunding falha quando não foram levantados fundos suficientes até a data esperada. Isso equivale a não vender todos os tokens de participação. A Transação 4 é submetida à rede, mas irá falhar. A conta de armazenamento terá lumens suficientes para pagar a tarifa de transação, então a transação será considerada em consenso e um número sequencial será consumido. Ocorrerá um erro, no entanto, porque não haverá fundos suficientes na conta para cobrir a quantia especificada no pagamento. A Transação 5 é então submetida à rede, permitindo que contribuidores vendam de volta seus tokens. Além disso, a Transação 5 cancela a habilidade da conta de armazenamento de vender tokens de participação, interrompendo o status do evento de crowdfunding.
+## SSC Best Practices
+When it comes to designing a smart contract, parties must come together and clearly outline the purpose of the contract, the cooperation between parties, and the desired outcomes. In this outline, clear conditions and their outcomes should be agreed upon. After establishing the conditions and their outcomes, the contract can then be translated to a series of operations and transactions. As a reminder, smart contracts are created using code. Code can contain bugs or may not perform as intended. Be sure to analyze and agree upon all possible edge cases when coming up with the conditions and outcomes of the smart contract. 
 
-O crowdfunding obtém sucesso se V foi levantado até a data esperada. Levantar fundos suficientes equivale a todos os tokens de participação da conta de armazenamento terem sido comprados. A Transação 4 é submetida à rede e terá sucesso porque há fundos suficientes presentes na conta para concretizar a operação de pagamento, assim como cobrir a taxa de transação. A Transação 5 será então submetida à rede, mas irá falhar. A conta de armazenamento terá lumens suficientes para pagar a tarifa de transação, então a transação será considerada em consenso e um número sequencial será consumido. A transaction obterá sucesso, mas como a conta de armazenamento não terá fundos para comprar de volta os tokens, os participantes não poderão tentar recuperar seus fundos.
 
-#### Bonus: Contribuidores de Crowdfunding
-Os passos a seguir são realizados para se tornar um contribuidor do crowdfunding:
-1. [Criar uma trustline](../concepts/list-of-operations.md#change-trust) com a conta de armazenamento para tokens de participação
-	- A trustline cria confiança entre o contribuidor e a conta de armazenamento, tornando válidas as transações que envolverem tokens de participação
-2. [Criar uma oferta](../concepts/list-of-operations.md#manage-offer) para comprar tokens de participação
-	- A conta do contribuidor receberá tokens de participação e a conta de armazenamento receberá o valor
-3. Se o crowdfunding:
-	- tiver sucesso - não fazer nada
-	- falhar - criar uma oferta para vender tokens de participação, permitindo que o contribuidor recupere o valor investido
+## Resources
 
-## Boas Práticas para SSC
-Quando se trata do design de um smart contract, as partes devem se reunir e combinar claramente o propósito do contrato, a cooperação entre as partes, e os resultados desejados. Neste combinado, deve-se acordar sobre condições claras e suas consequências. Após estabelecer as condições e suas consequências, o contrato pode então ser traduzido em uma série de operações e transações. Lembramos que smart contracts são criados usando código. Código de programação pode conter bugs ou pode não se comportar como planejado. Certifique-se de analisar e concordar com todos os edge cases possíveis quando formular as condições e consequências do smart contract.
-
-## Recursos
-
-- [Jurimetrics - The Next Steps Forward](http://heinonline.org/HOL/LandingPage?handle=hein.journals/mnlr33&div=28&id=&page) - Lee Loevinger
-- [Formalizing and Securing Relationships on Public Networks](http://firstmonday.org/article/view/548/469) - Nick Szabo
+- [Jurimetrics - The Next Steps Forward](http://heinonline.org/HOL/LandingPage?handle=hein.journals/mnlr33&div=28&id=&page) - Lee Loevinger 
+- [Formalizing and Securing Relationships on Public Networks](http://firstmonday.org/article/view/548/469) - Nick Szabo 
 - [Smart Contracts: 12 Use Cases for Business and Beyond](https://bloq.com/assets/smart-contracts-white-paper.pdf) - Chamber of Digital Commerce
-- [Conceito: Transações](https://www.stellar.org/developers/guides/concepts/transactions.html) - Stellar<span>.org
-- [Conceito: Multisignature](https://www.stellar.org/developers/guides/concepts/multi-sig.html) - Stellar<span>.org
-- [Conceito: Time Bounds](https://www.stellar.org/developers/guides/concepts/transactions.html#time-bounds) - Stellar<span>.org
-- [Conceito: Trustlines](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) - Stellar<span>.org
+- [Concept: Transactions](https://www.stellar.org/developers/guides/concepts/transactions.html) - Stellar<span>.org
+- [Concept: Multisignature](https://www.stellar.org/developers/guides/concepts/multi-sig.html) - Stellar<span>.org
+- [Concept: Time Bounds](https://www.stellar.org/developers/guides/concepts/transactions.html#time-bounds) - Stellar<span>.org
+- [Concept: Trustlines](https://www.stellar.org/developers/guides/concepts/assets.html#trustlines) - Stellar<span>.org
+

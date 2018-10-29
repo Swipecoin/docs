@@ -1,57 +1,65 @@
 ---
-title: Exchange Distribuída
+title: Distributed Exchange
 ---
 
 
-Além de suportar a emissão e movimentação de [ativos](./assets.md), a rede Stellar também age como uma **exchange distribuída** descentralizada
-de qualquer tipo de ativo que tiver sido adicionado à rede. Seu ledger armazena tanto os saldos mantidos pelas contas dos usuários como ofertas que essas contas fazem para comprar ou vender ativos.
+In addition to supporting the issuing and movement of [assets](./assets.md), the Stellar network also acts as a decentralized **distributed exchange**
+of any type of asset that people have added to the network. Its ledger stores both balances held by user accounts and offers that user accounts make to buy or sell assets.
 
-## Ofertas
-Contas podem fazer ofertas para comprar ou vender ativos usando a operação [Manage Offer](./list-of-operations.md#manage-offer).
-Para fazer uma oferta, a conta deve deter o ativo que quer vender. Similarmente, a conta deve confiar no emissor do ativo que quiser comprar.
+## Offers
+An account can make offers to buy or sell assets using the [Manage Offer](./list-of-operations.md#manage-offer) operation.
+In order to make an offer, the account must hold the asset it wants to sell. Similarly, the account must trust the issuer of the asset it's trying to buy.
 
-Quando uma conta faz uma oferta, a oferta é comparada com o livro de ordens existente para aquele par de ativos. Se a oferta cruzar
-outra oferta existente, ela é executada no preço da oferta existente. Digamos que você faça uma oferta para comprar 10 XLM por 2 BTC. Se já existir uma oferta
-para vender 10 XLM por 2 BTC, sua oferta irá aceitar a outra – você ficará com 2 BTC a menos, mas 10 XLM a mais.
+When an account makes an offer, the offer is checked against the existing orderbook for that asset pair. If the offer crosses
+an existing offer, it is filled at the price of the existing offer. Let's say that you make an offer to buy 10 XLM for 2 BTC. If an offer already
+exists to sell 10 XLM for 2 BTC, your offer will take that offer--you'll be 2 BTC poorer but 10 XLM richer.
 
-Se a oferta não cruzar outra oferta já existente, a oferta é salva no livro de ordens até ser aceita por outra oferta,
-aceita por um pagamento, cancelada pela conta que criou a oferta, ou invalidada pelo fato de a conta que fez a oferta não mais possuir o ativo que está vendendo.
+If the offer doesn't cross an existing offer, the offer is saved in the orderbook until it is either taken by another offer,
+taken by a payment, canceled by the account that created the offer, or invalidated because the account making the offer no longer has the asset for sale.
 
-Ofertas no Stellar se comportam como ordens de limite (limit orders) em mercados tradicionais.
+Starting in protocol version 10, it is no longer possible for an offer to be invalidated because the account owning the offer no longer has the asset for sale. Each offer contributes
+selling liabilities for the selling asset and buying liabilities for the buying asset, which are aggregated in the account (for lumens) or trustline (for other assets) owned by
+the account creating the offer. Any operation that would cause an account to be unable to satisfy its liabilities, such as sending away too much balance, will fail. This guarantees that
+any offer in the orderbook can be executed entirely.
 
-Quanto a ofertas colocadas com o mesmo preço, a oferta mais antiga é realizada antes da mais nova.
+Offers in Stellar behave like limit orders in traditional markets. 
 
-## Livro de ordens
-Um **livro de ordens** ou orderbook é um registro de ordens pendentes na rede Stellar. Esse registro se coloca entre qualquer par de ativos – neste caso,
-digamos que os ativos sejam ovelhas e trigo. O livro de ordens grava toda conta que quer comprar ovelhas por trigo de um lado e toda conta que quer vender ovelhas por trigo no outro lado.
+For offers placed at the same price, the older offer is filled before the newer one.  
 
-Alguns ativos terão entre eles um livro de ordens muito fino ou mesmo inexistente. Tudo bem: como discutido em mais detalhes abaixo, os caminhos das ordens podem facilitar o câmbio entre dois ativos trocados com pouca frequência.
+## Orderbook
+An **orderbook** is a record of outstanding orders on the Stellar network. This record sits between any two assets--in this case,
+let's say the assets are sheep and wheat. The orderbook records every account wanting to buy sheep for wheat on one side and every account wanting to sell sheep for wheat on the other side.
 
-
-## Ofertas passivas
-**Ofertas passivas**, ou passive offers, permitem que os mercados tenham spread zero. Se quiser oferecer USD da âncora A por por USD da âncora B a um preço 1:1, você pode criar duas ofertas passivas para que as duas ofertas não cruzem uma com a outra.
-
-Uma oferta passiva é uma oferta que não aceita contraofertas de mesmo preço. Ela somente irá aceitar ofertas com preço distinto.
-Por exemplo, se a melhor oferta para comprar BTC por XLM tem um preço de 100 XLM/BTC, e você faz uma oferta passiva para vender BTC por 100 XLM/BTC, sua oferta passiva *não* aceita a oferta existente.
-Se, em vez disso, você fizer uma oferta passiva para vender BTC a 99 XLM/BTC, ela iria cruzar com a oferta já existente e ser realizada a 100 XLM/BTC.
+Some assets will have a very thin or nonexistent orderbook between them. That's fine: as discussed in greater detail below, paths of orders can facilitate exchange between two thinly traded assets.
 
 
-## Pagamentos entre ativos
-Suponha que você detenha ovelhas e quer comprar algo de uma loja que somente aceita trigo. Você pode criar um pagamento no
-Stellar que irá automaticamente converter suas ovelhas em trigo. O sistema passa pelo livro de ordens de ovelhas/trigo e converte suas ovelhas na melhor taxa disponível.
+## Passive offers
+**Passive offers** allow markets to have zero spread. If you want to offer USD from anchor A for USD from anchor B at a 1:1 price, you can create two passive offers so the two offers don't fill each other.
 
-Também é possível fazer caminhos mais complicados para a conversão de ativos. Imagine que o livro de ordens de ovelhas/trigo tenha um spread muito alto
-ou seja inexistente. Nesse caso, você talvez consiga uma taxa melhor se primeiro trocar suas ovelhas por tijolos e então vender os tijolos por trigo.
-Então um caminho possível seria em 2 pulos: ovelhas->tijolos->trigo. Este caminho passaria pelo livro de ordens de ovelhas/tijolos e depois pelo de tijolos/trigo.
-
-Esses caminhos de conversão de ativos podem conter até 6 pulos, mas todo o pagamento é atômico – ele irá ou ter sucesso ou falhar. Quem envia o pagamento nunca irá sobrar com um ativo indesejado nas mãos.
-
-Esse processo de achar o melhor caminho de um pagamento é chamado de **pathfinding**. Pathfinding envolve olhar para os livros de ordens atuais
-e encontrar quais séries de conversões daria a melhor taxa. Isso é realizado por fora do stellar-core por ferramentas como o Horizon.
+A passive offer is an offer that does not take a counteroffer of equal price. It will only fill if the prices are not equal.
+For example, if the best offer to buy BTC for XLM has a price of 100XLM/BTC, and you make a passive offer to sell BTC at 100XLM/BTC, your passive offer *does not* take that existing offer.
+If you instead make a passive offer to sell BTC at 99XLM/BTC it would cross the existing offer and fill at 100XLM/BTC.
 
 
-## Moeda de preferência
-Já que fazer pagamentos entre ativos é tão simples com Stellar, os usuários podem manter seu dinheiro em qualquer ativo que preferirem, ou em sua **moeda de preferência**, o que cria um sistema aberto muito flexível.
+## Cross-asset payments
+Suppose you are holding sheep and want to buy something from a store that only accepts wheat. You can create a payment in
+Stellar that will automatically convert your sheep into wheat. It goes through the sheep/wheat orderbook and converts your sheep at the best available rate.
 
-Imagine um mundo em que, sempre que for viajar, nunca precisar fazer câmbio de moedas exceto no momento de compra. Um mundo onde
-é possível escolher manter todos seus ativos em, por exemplo, ações do Google, desembolsando pequenas quantias para fazer pagamentos. Os pagamentos entre ativos tornam esse mundo possível.
+You can also make more complicated paths of asset conversion. Imagine that the sheep/wheat orderbook has a very large spread
+or is nonexistent. In this case, you might get a better rate if you first trade your sheep for brick and then sell that brick for wheat.
+So a potential path would be 2 hops: sheep->brick->wheat. This path would take you through the sheep/brick orderbook and then the brick/wheat orderbook.
+
+These paths of asset conversion can contain up to 6 hops, but the whole payment is atomic--it will either succeed or fail. The payment sender will never be left holding an unwanted asset.
+
+This process of finding the best path of a payment is called **pathfinding**. Pathfinding involves looking at the current
+orderbooks and finding which series of conversions gives you the best rate. It is handled outside of Stellar Core by something like Horizon.
+
+
+## Preferred currency
+Because cross-asset payments are so simple with Stellar, users can keep their money in whatever asset they prefer to hold. **Preferred currency** creates a very flexible, open system. 
+
+Imagine a world where, anytime you travel, you never have to exchange currency except at the point of sale. A world where
+you can choose to keep all your assets in, for example, Google stock, cashing out small amounts as you need to pay for things. Cross-asset payments make this world possible.
+
+
+

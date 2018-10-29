@@ -1,66 +1,66 @@
 ---
-title: Configurar um Servidor Bifrost
+title: Bifrost Server Setup
 ---
 
-Bifrost é um serviço que permite que usuários movam BTC/ETH à rede Stellar. Pode ser usado tanto para representar BTC ou ETH na rede como para trocá-los por outro token personalizado. Isso é particularmente útil para ICOs (Initial Coin Offerings).
-Este guia se foca em como configurar o servidor Bifrost para mover ETH à rede Stellar.
+Bifrost is a service that enables users to move BTC/ETH to the Stellar network. It can either be used to give a representation of BTC or ETH on the network or trade it to another custom token. This is particularly useful for ICOs (Initial Coin Oferrings). 
+This guide will focus on how to setup the Bifrost server to move ETH to the Stellar network.
 
-## O que você vai precisar
+## What you will need
 
-- Base de Dados Postgresql
-- Nó de Bitcoin/Ethereum
-- Servidor Bifrost
+- Postgresql DB 
+- Bitcoin/Ethereum node
+- Bifrost Server
 
-## Configurar Postgresql
+## Setting up Postgresql
 
-Isso não será abordado aqui, sendo que já há boas documentações sobre como preparar isso online, dependendo do seu OS.
+This won't be covered here as there are handy documentation on how to set this up online, depending on your OS.
 
-## Configurar um nó de Ethereum
+## Setting up Ethereum node
 
-- Baixe o [geth versão 1.7.1 ou acima](https://geth.ethereum.org/downloads/).
-- Extraia os conteúdos do arquivo baixado
-- Inicie o listener na rede de testes
+- Download the [geth version 1.7.1 or above](https://geth.ethereum.org/downloads/).
+- Extract the contents of the downloaded file
+- Start the listener on the test network
 
 ```bash  
 ./geth --testnet --rpc
 ```
 
-- Leia mais sobre [como administrar o geth](https://github.com/ethereum/go-ethereum)
+- Read more about [managing geth](https://github.com/ethereum/go-ethereum)
 
-## Criar uma Ordem de Venda para seu Ativo
+## Create a Sell Order for your Asset
 
-O Bifrost vai trocar automaticamente os BTC ou ETH recebidos pelo seu token personalizado. Para isso acontecer, deve haver uma ordem de venda para os pares de ativos CUSTOM-TOKEN/BTC ou CUSTOM-TOKEN/ETH na exchange distribuída do Stellar.
+Bifrost will automatically exchange the received BTC or ETH for your custom token. For this to happen, there has to be a sell order for the CUSTOM-TOKEN/BTC OR CUSTOM-TOKEN/ETH asset pairs on the Stellar's distributed exchange.
 
-Por exemplo, digamos que a taxa de câmbio seja de 1 `TOKE` por 0.2 `ETH`. Você pode usar o [Laboratório Stellar](https://www.stellar.org/laboratory/) para criar e submeter uma operação manage offer:
+For example, let's say the exchange rate is 1 `TOKE` for 0.2 `ETH`. You can use [Stellar Laboratory](https://www.stellar.org/laboratory/) to create and submit a manage offer operation:
 
-- Vá até a aba "Transaction Builder"
-- Repare no botão no canto superior direito da página com "test/public". Tome cuidado para deixá-lo como "public" para transações reais e "test" para transações na testnet
-- Preencha o formulário na página:
-  - Coloque a conta fonte na Source account (emissora do ativo ou conta distribuidora)
-  - Clique no botão "Fetch next sequence number"
-  - Desça e selecione um "Operation Type" como "Manage Offer"
-  - Para "Selling": selecione Alphanumeric 4
-  - Insira o Asset Code `TOKE`
-  - Insira o Issuer Account ID: ID da conta emissora
-  - Para buying: selecione Alphanumeric 4
-  - Insira o Asset Code `ETH`
-  - Insira o Account ID: Conta Emissora
-  - Amount: Insira a quantidade de TOKE que você está vendendo
-  - Price: O preço é representado na razão para o ativo a ser comprado, ou seja, `1 selling_asset = X buying_asset`. No nosso caso, já que queremos vender 1TOKE por 0.2ETH, o valor aqui deve ser igual a 0.2
-  - Offer ID: Insira "0" para criar uma nova oferta
-  - Desça e clique em "Sign transaction in Signer"
-  - Insira a chave secreta da emissora do ativo ou conta distribuidora ou assine uma transação usando um dispositivo Ledger
-  - Clique em "Submit to Post transaction"
-  - Clique em "Submit".
+- Go to the "Transaction Builder" tab
+- Take note of the toggle button on the top right of the page with “test/public” ensure it is set to public for live transactions and test for transactions on the testnet
+- Fill the form on the page:
+  - Enter Source account (Asset Issuer or Distributing Account)
+  - Click the "Fetch next sequence number" button
+  - Scroll down, add select operation type: "Manage Offer"
+  - For selling: Select Alphanumeric 4
+  - Enter Asset Code: `TOKE`
+  - Enter Issuer Account ID: Issuer Account
+  - For buying: Select Alphanumeric 4
+  - Enter Asset Code: `ETH`
+  - Enter Issuer Account ID: Issuer Account
+  - Amount: Enter the amount of TOKE you are selling 
+  - Price: This is represented in terms of the buying asset. That is `1 selling_asset = X buying_asset`. In our case, since we want to sell 1TOKE for 0.2ETH, the value here should be 0.2
+  - Offer ID: Enter "0" to create a new offer
+  - Scroll down click "Sign transaction in Signer"
+  - Enter the secret key of the Asset Issuer or Distributing Account or sign a transaction using Ledger device
+  - Click on "Submit to Post transaction"
+  - Click on "Submit".
 
-Os passos acima irão criar uma ordem de venda para seu ativo na exchange distribuída.
+The steps above will create a sell order for your asset on the distributed exchange.
 
-## Configurar o Bifrost
+## Setting up Bifrost
 
-- Baixe [a versão mais recente](https://github.com/stellar/go/releases/tag/bifrost-v0.0.2) e extraia seu componente em uma pasta.
-- Renomeie o arquivo baixado para `bifrost-server` (opcional)
-- Gere suas chaves públicas mestras de Ethereum de acordo com a [BIP-0032](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki). Você pode baixar [esta implementação](https://iancoleman.io/bip39/) do GitHub e gerar as chaves em uma máquina offline. Você pode também extrair a chave pública mestra do dispositivo Ledger.
-- Crie um arquivo config: `bifrost.cfg`, parecido com o seguinte:
+- Download [the latest version](https://github.com/stellar/go/releases/tag/bifrost-v0.0.2) and extract its component into a folder.
+- Rename downloaded file to `bifrost-server` (optional)
+- Generate your ethereum master public keys according to [BIP-0032](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki).  You can download [this implementation](https://iancoleman.io/bip39/) from GitHub and generate the keys on an offline machine. You can also extract master public key from the Ledger device.
+- Create a config file: `bifrost.cfg`, similar to the one below:
 
 <code-example name="bifrost.cfg">
 
@@ -69,7 +69,7 @@ port = 8002
 using_proxy = false
 access_control_allow_origin_header = "*"
 
-#descomentar parâmetros do bitcoin se você for aceitar BTC
+#uncomment bitcoin parameters if you will be accepting BTC
 #[bitcoin]
 #master_public_key = "xpub6DxSCdWu6jKqr4isjo7bsPeDD6s3J4YVQV1JSHZg12Eagdqnf7XX4fxqyW2sLhUoFWutL7tAELU2LiGZrEXtjVbvYptvTX5Eoa4Mamdjm9u"
 #rpc_server = "localhost:18332"
@@ -104,14 +104,14 @@ dsn="postgres://stellar:pass1234@localhost/bifrost?sslmode=disable"
 </code-example>
 
 
-- Complete o arquivo config com os valores descritos [aqui](https://github.com/stellar/go/tree/master/services/bifrost#config)
-- Verifique que você tem as chaves públicas mestras rodando:
+- Complete the config file with the values as described [here](https://github.com/stellar/go/tree/master/services/bifrost#config)
+- Check that you have the correct master public keys by running:
 
-```bash
+```bash 
 ./bifrost-server check-keys
 ```
 
-O output deve ser parecido com:
+Output should be similar to:
 
 ```bash
 MAKE SURE YOU HAVE PRIVATE KEYS TO CORRESPONDING ADDRESSES:
@@ -130,16 +130,16 @@ Ethereum:
 9 0xC5CD4b9E6c5D9c0cd1AAe5A52f6DCA3d20CF08BC
 ```
 
-## Inicie o Servidor Bifrost
+## Start the Bifrost server
 
-Após ter terminado o setup de seu arquivo config, você pode iniciar o servidor rodando:
+Once you are done setting up the config file, you can start the server by running:
 
 ```bash
 ./bifrost-server server
 ```
-O servidor Bifrost será responsável por gerar endereços de ethereum, escutar pagamentos nesses endereços e transferir o token comprado ao usuário.
+The Bifrost server will be responsible for generating ethereum addresses, listening for payments on these addresses and transferring the token purchased to the user.
 
-## Usar o SDK do Bifrost para JS
+## Using Bifrost JS SDK.
 
-O SDK do Bifrost para JS fornece uma maneira para um cliente se comunicar com o servidor Bifrost.
-Baixe a [versão mais recente](https://github.com/stellar/bifrost-js-sdk/releases) do SDK, e o inclua em sua aplicação frontend. Veja o [exemplo de arquivo html](https://github.com/stellar/bifrost-js-sdk/blob/master/example.html) no [repositório bifrost-js-sdk](https://github.com/stellar/bifrost-js-sdk) para ter um exemplo de como isso pode ser implementado.
+The Bifrost JS SDK provides a way for a client to communicate with the Bifrost server. 
+Download the [latest version](https://github.com/stellar/bifrost-js-sdk/releases) of the SDK, and include it in your frontend application. See the [example html file](https://github.com/stellar/bifrost-js-sdk/blob/master/example.html) in the [bifrost-js-sdk repo](https://github.com/stellar/bifrost-js-sdk) for an example on how this can be implemented.

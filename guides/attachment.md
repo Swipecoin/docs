@@ -1,58 +1,58 @@
 ---
-title: Convenção de Anexos do Stellar
+title: Stellar Attachment Convention
 ---
 
-# Anexos
+# Attachments
 
-Às vezes é preciso enviar mais informações sobre uma transação do que cabe no campo memo providenciado, como informações KYC, um recibo, uma pequena anotação. Dados desse tipo não devem ser colocados no [ledger](./concepts/ledger.md) por conta de seu tamanho ou natureza privada. Em vez disso, deve-se criar o que chamamos de um `Attachment`, ou anexo. Um anexo Stellar é simplesmente um documento JSON. O hash SHA256 do anexo é incluído como um hash no memo da transação. O documento anexo em si pode ser enviado para o recipiente por meio de outro canal, muito provavelmente pelo [servidor Auth](./compliance-protocol.md) do recipiente.
+Sometimes there is a need to send more information about a transaction than fits in the provided memo field, for example: KYC info, an invoice, a short note. Such data shouldn't be placed in the [ledger](./concepts/ledger.md) because of its size or private nature. Instead, you should create what we call an `Attachment`. A Stellar attachment is simply a JSON document. The sha256 hash of this attachment is included as a memo hash in the transaction. The actual attachment document can be sent to the receiver through some other channel, most likely through the receiver's [Auth server](./compliance-protocol.md).
 
-## Estrutura dos anexos
+## Attachment structure
 
-Anexos têm uma estrutura flexível. Eles podem incluir os campos a seguir, mas eles são opcionais e pode haver informações adicionais anexadas.
+Attachments have a flexible structure. They can include the following fields but these are optional and there can be extra information attached.
 
 ```json
 {
   "nonce": "<nonce>",
   "transaction": {
     "sender_info": {
-      "first_name": "<primeiro nome>",
-      "middle_name": "<nome do meio>",
-      "last_name": "<último nome>",
-      "address": "<endereço>",
-      "city": "<cidade>",
-      "province": "<província ou estado>",
-      "country": "<país em formato ISO 3166-1 alpha-2>",
-      "date_of_birth": "<data de nascimento em formato YYYY-MM-DD>",
-      "company_name": "<nome da empresa>"
+      "first_name": "<first_name>",
+      "middle_name": "<middle_name>",
+      "last_name": "<last_name>",
+      "address": "<address>",
+      "city": "<city>",
+      "province": "<province>",
+      "country": "<country in ISO 3166-1 alpha-2 format>",
+      "date_of_birth": "<date of birth in YYYY-MM-DD format>",
+      "company_name": "<company_name>"
     },
-    "route": "<rota>",
-    "note": "<anotação>"
+    "route": "<route>",
+    "note": "<note>"
   },
   "operations": [
     {
-      "sender_info": <informações do emissor>,
-      "route": "<rota>",
-      "note": "<anotação>"
+      "sender_info": <sender_info>,
+      "route": "<route>",
+      "note": "<note>"
     },
     // ...
   ]
 }
 ```
 
-Nome | Tipo do Dado | Descrição
+Name | Data Type | Description
 -----|-----------|------------
-`nonce` | string | [Nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) é um valor único. Cada transação enviada deve possuir um valor distinto. Um nonce é necessário para distinguir anexos de duas transações que tenham sido enviadas com todos os outros detalhes idênticos. Por exemplo, caso você envie $10 para Bob em dois dias seguidos.
-`transaction.sender_info` | JSON | JSON contendo informações KYC do emissor. Este objeto JSON pode ser extendido com mais campos se necessário.
-`transaction.route` | string | Informações sobre a rota retornadas pelo servidor federation recipiente (valor `memo`). Informa ao recipiente como fazer a transação chegar ao recipiente final.
-`transaction.note` | string | Uma anotação anexa à transação.
-`operations[i]` | | Dado referente à operação `i`-ésima. Pode ser omitido se na transação só há uma operação.
-`operations[i].sender_info` | JSON | `sender_info` para a operação `i`-ésima na transação. Se vazio, herdará valor a partir da `transaction`.
-`operations[i].route` | string | `route` para a operação `i`-ésima na transação. Se vazio, herdará valor a partir da `transaction`.
-`operations[i].note` | string | `note` para a operação `i`-ésima na transação. Se vazio, herdará valor a partir da `transaction`.
+`nonce` | string | [Nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) is a unique value. Every transaction you send should have a different value. A nonce is needed to distinguish attachments of two transactions sent with otherwise identical details. For example if you send $10 to Bob two days in a row.
+`transaction.sender_info` | JSON | JSON containing KYC info of the sender. This JSON object can be extended with more fields if needed.
+`transaction.route` | string | The route information returned by the receiving federation server (`memo` value). Tells the receiver how to get the transaction to the ultimate recipient. 
+`transaction.note` | string | A note attached to transaction.
+`operations[i]` | | `i`th operation data. Can be omitted if transaction has only one operation.
+`operations[i].sender_info` | JSON | `sender_info` for `i`th operation in the transaction. If empty, will inherit value from `transaction`.
+`operations[i].route` | string | `route` for `i`th operation in the transaction. If empty, will inherit value from `transaction`.
+`operations[i].note` | string | `note` for `i`th operation in the transaction. If empty, will inherit value from `transaction`.
 
-## Cálculo do hash do Anexo
+## Calculating Attachment hash
 
-Para calcular o hash do Anexo, é preciso converter o objeto JSON em string e calcular o hash `SHA-256`. Em Node.js:
+To calculate the Attachment hash you need to stringify the JSON object and calculate `sha-256` hash. In Node.js:
 
 ```js
 const crypto = require('crypto');
@@ -62,13 +62,13 @@ hash.update(JSON.stringify(attachment));
 var memoHashHex = hash.digest('hex');
 ```
 
-Para adicionar o hash a sua transação, use o método [`TransactionBuilder.addMemo`](http://stellar.github.io/js-stellar-base/TransactionBuilder.html#addMemo).
+To add the hash to your transaction use the [`TransactionBuilder.addMemo`](http://stellar.github.io/js-stellar-base/TransactionBuilder.html#addMemo) method.
 
-## Envio dos Anexos
+## Sending Attachments
 
-Para enviar um Anexo e seu hash (em uma transação) para o servidor Auth de uma organização recipiente, leia o documento sobre o [Protocolo de Compliance](./compliance-protocol.md) para mais informações.
+To send an Attachment and its hash (in a transaction) to Auth server of a receiving organization read the [Compliance protocol](./compliance-protocol.md) doc for more information.
 
-## Exemplo
+## Example
 
 ```js
 var crypto = require('crypto');
@@ -86,15 +86,15 @@ var attachment = {
     }
   },
   "operations": [
-    // Operação #1: Pagamento para Dr. Watson
+    // Operation #1: Payment for Dr. Watson
     {
       "route": "watson",
-      "note": "Pagamento por ajudar a resolver caso de assassinato"
+      "note": "Payment for helping to solve murder case"
     },
-    // Operação #2: Pagamento para Sra. Hudson
+    // Operation #2: Payment for Mrs. Hudson
     {
       "route": "hudson",
-      "note": "Aluguel"
+      "note": "Rent"
     }
   ]
 };

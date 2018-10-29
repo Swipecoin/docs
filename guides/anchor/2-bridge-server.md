@@ -1,25 +1,25 @@
 ---
-title: Servidor Bridge
+title: Bridge Server
 sequence:
   previous: readme.md
   next: 3-federation-server.md
 ---
 
-Stellar.org mantém um [servidor bridge](https://github.com/stellar/bridge-server/blob/master/readme_bridge.md), o que torna mais fácil de usar os servidores federation e compliance para enviar e receber pagamentos. Ao usar o servidor bridge, o código que precisa ser escrito é apenas um servidor privado para receber notificações de pagamento e responder a verificações regulatórias dos servidores bridge e compliance.
+Stellar.org maintains a [bridge server](https://github.com/stellar/bridge-server/blob/master/readme_bridge.md), which makes it easier to use the federation and compliance servers to send and receive payments. When using the bridge server, the only code you need to write is a private service to receive payment notifications and respond to regulatory checks from the bridge and compliance servers.
 
 ![Payment flow diagram](assets/anchor-send-payment-basic-bridge.png)
 
-Ao usar o servidor bridge, pagamentos são enviados fazendo uma POST request HTTP a ele em vez de um servidor Horizon. Isso não muda muita coisa para transações simples, mas irá tornar os próximos passos de federation e compliance muito mais simples.
+When using the bridge server, you send payments by making an HTTP POST request to it instead of a Horizon server. It doesn’t change a whole lot for simple transactions, but it will make the next steps of federation and compliance much simpler.
 
 
-## Criar uma Base de Dados
+## Create a Database
 
-O servidor bridge requer uma base dados MySQL ou PostgreSQL para rastrear e coordenar transações e informações de compliance. Crie uma base de dados vazia chamada `stellar_bridge` e um usuário para administrá-la. Não é preciso adicionar nenhuma tabela; o servidor bridge tem [um comando especial que faz isso por você](#iniciar-o-servidor).
+The bridge server requires a MySQL or PostgreSQL database in order to track and coordinate transaction and compliance information. Create an empty database named `stellar_bridge` and a user to manage it. You don’t need to add any tables; the bridge server has [a special command to do that for you](#start-the-server).
 
 
-## Baixar e Configurar o Servidor Bridge
+## Download and Configure Bridge Server
 
-Em seguida, [faça download do servidor bridge mais recente](https://github.com/stellar/bridge-server/releases) para sua plataforma. Instale o executável onde quiser. No mesmo diretório, crie um arquivo chamado `bridge.cfg`. Ele irá armazenar as configurações para o servidor bridge. Deverá ficar mais ou menos assim:
+Next, [download the latest bridge server](https://github.com/stellar/bridge-server/releases) for your platform. Install the executable anywhere you like. In the same directory, create a file named `bridge.cfg`. This will store the configuration for the bridge server. It should look something like:
 
 <code-example name="bridge.cfg">
 
@@ -27,65 +27,66 @@ Em seguida, [faça download do servidor bridge mais recente](https://github.com/
 port = 8006
 horizon = "https://horizon-testnet.stellar.org"
 network_passphrase = "Test SDF Network ; September 2015"
-# Preencheremos isto após preparar um servidor compliance
+# We'll fill this in once we set up a compliance server
 compliance = ""
 
-# Isto descreve os ativos (assets) que podem ser enviados e recebidos.
-# Repetir esta seção para adicionar suporte a mais tipos de ativos.
+# This describes the assets that can be sent and received.
+# Repeat this section to add support for more asset types.
 [[assets]]
 code="USD"
 issuer="GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ"
 
 [database]
-type = "mysql"  # ou "postgres" se você criou uma base de dados postgres
-url = "dbusuario:dbsenha@/stellar_bridge"
+type = "mysql"  # or "postgres" if you created a postgres database
+url = "dbuser:dbpassword@/stellar_bridge"
 
 [accounts]
-# A seed secreta para sua conta base, a partir da qual são feitos os pagamentos
+# The secret seed for your base account, from which payments are made
 base_seed = "SAV75E2NK7Q5JZZLBBBNUPCIAKABN64HNHMDLD62SZWM6EBJ4R7CUNTZ"
-# O ID da conta que recebe pagamentos em nome de seus clientes. Neste
-# caso, é o ID da conta que bate com a `base_seed` acima.
+# The account ID that receives payments on behalf of your customers. In this
+# case, it is the account ID that matches `base_seed` above.
 receiving_account_id = "GAIGZHHWK3REZQPLQX5DNUN4A32CSEONTU6CMDBO7GDWLPSXZDSYA4BU"
-# Uma seed secreta que pode autorizar trustlines para ativos emitidos por você. Para mais,
-# veja https://stellar.org/developers/guides/concepts/assets.html#controlar-detentores-de-um-ativo
+# A secret seed that can authorize trustlines for assets you issue. For more,
+# see https://stellar.org/developers/guides/concepts/assets.html#controlling-asset-holders
 # authorizing_seed = "SBILUHQVXKTLPYXHHBL4IQ7ISJ3AKDTI2ZC56VQ6C2BDMNF463EON65U"
-# O ID da conta que emite os seus ativos
+# The ID of the account that issues your assets
 issuing_account_id = "GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ"
 
 [callbacks]
-# O servidor enviará POST requests a esta URL para notificar pagamentos
+# The server will send POST requests to this URL to notify you of payments
 receive = "http://localhost:8005/receive"
 ```
 
 </code-example>
 
 
-## Iniciar o Servidor
+## Start the Server
 
-Antes de iniciar o servidor pela primeira vez, as tabelas da sua base de dados devem ser criadas. Rodar o servidor bridge com o argumento `--migrate-db` garante que tudo estará pronto:
+Before starting the server the first time, the tables in your database need to be created. Running bridge server with the `--migrate-db` argument will make sure everything is set to go:
 
 ```bash
 ./bridge --migrate-db
 ```
 
-Cada vez que você atualizar o servidor bridge para uma versão nova, você deve rodar este comando novamente. Ele irá atualizar sua base de dados caso algo precise ser alterado.
+Each time you update the bridge server to a new version, you should run this command again. It will upgrade your database in case anything needs to be changed.
 
-Agora que sua base de dados está completamente configurada, você pode iniciar o servidor bridge rodando:
+Now that your database is fully set up, you can start the bridge server by running:
 
 ```bash
 ./bridge
 ```
 
 
-## Enviar um Pagamento
+## Send a Payment
 
-O servidor bridge recebe comandos na forma de requests HTTP, então podemos testar submeter um pagamento enviando um `POST` request a `/payments`. Tente enviar 1 USD à conta `GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB`. (Lembre que a conta recipiente precisa confiar no ativo primeiro. Veja [emitir ativos](../issuing-assets.md) para mais detalhes.)
+The bridge server takes commands in the form of HTTP requests, so we can test submitting a payment by sending a `POST` request to `/payments`. Try sending 1 USD to the account `GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB`. (Remember that the receiving account will need to trust the asset first. See [issuing assets](../issuing-assets.md) for more details.)
 
-<code-example name="Enviar um Pagamento">
+<code-example name="Send a Payment">
 
 ```bash
 curl -X POST -d \
-"amount=1&\
+"id=unique_payment_id&\
+amount=1&\
 asset_code=USD&\
 asset_issuer=GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ&\
 destination=GCFXHS4GXL6BVUCXBWXGTITROWLVYXQKQLF4YH5O5JT3YZXCYPAFBJZB&\
@@ -97,8 +98,9 @@ http://localhost:8006/payment
 var request = require('request');
 
 request.post({
-  url: 'http://localhost:8001/payment',
+  url: 'http://localhost:8006/payment',
   form: {
+    id: 'unique_payment_id',
     amount: '1',
     asset_code: 'USD',
     asset_issuer: 'GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ',
@@ -107,10 +109,10 @@ request.post({
   }
 }, function(error, response, body) {
   if (error || response.statusCode !== 200) {
-    console.error('ERRO!', error || body);
+    console.error('ERROR!', error || body);
   }
   else {
-    console.log('SUCCESSO!', body);
+    console.log('SUCCESS!', body);
   }
 });
 ```
@@ -133,6 +135,7 @@ public class PaymentRequest() {
     HttpPost paymentRequest = new HttpPost("http://localhost:8006/payment");
 
     List<NameValuePair> params = new ArrayList<NameValuePair>();
+    params.add(new BasicNameValuePair("id", "unique_payment_id"));
     params.add(new BasicNameValuePair("amount", "1"));
     params.add(new BasicNameValuePair("asset_code", "USD"));
     params.add(new BasicNameValuePair("asset_issuer", "GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ"));
@@ -152,17 +155,17 @@ public class PaymentRequest() {
 </code-example>
 
 
-## Criar um Servidor para Receber Pagamentos
+## Create a Server to Receive Payments
 
 ![Payment flow diagram](assets/anchor-receive-payment-basic-bridge.png)
 
-No arquivo de configuração do servidor bridge, talvez você tenha reparado em uma URL callback chamada `receive`. Sempre que um pagamento for recebido, o servidor bridge irá enviar um `POST` request HTTP à URL que você especificou. A principal responsabilidade do endpoint `receive` é atualizar o saldo de seu cliente em resposta a receber um pagamento (já que o pagamento foi à sua conta no Stellar).
+In the bridge server configuration file, you might have noticed a callback URL named `receive`. Whenever a payment is received, the bridge server will send an HTTP `POST` request to the URL you specified. The main responsibility of the `receive` endpoint is to update your customer’s balance in response to receiving a payment (since the payment went to your account on Stellar).
 
-<code-example name="Implementar o Callback Receive">
+<code-example name="Implementing the Receive Callback">
 
 ```js
 /**
- * Um pequeno servidor web Express.js para tratar pagamentos a partir do bridge server.
+ * A small Express.js web server for handling payments from the bridge server.
  */
 
 var express = require('express');
@@ -174,29 +177,29 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.post('/receive', function (request, response) {
   var payment = request.body;
 
-  // `receive` pode ser chamado múltiplas vezes para o mesmo pagamento, então verifique que
-  // você ainda não tenha visto este payment ID.
+  // `receive` may be called multiple times for the same payment, so check that
+  // you haven't already seen this payment ID.
   if (getPaymentByIdFromDb(payment.id)) {
     return response.status(200).end();
   }
 
-  // Como temos uma conta Stellar que representa vários clientes, o
-  // cliente para o qual se destina o pagamento deve estar no memo da transação.
+  // Because we have one Stellar account representing many customers, the
+  // customer the payment is intended for should be in the transaction memo.
   var customer = getAccountFromDb(payment.memo);
 
-  // É preciso verificar o asset code e issuer para ter certeza de que é um ativo
-  // para o qual você pode aceitar pagamentos nesta conta. Neste exemplo,
-  // somente convertemos a quantia para USD e adicionamos a quantia equivalente ao
-  // saldo do cliente. Você vai precisar implementar `convertToUsd()` por si mesmo.
+  // You need to check the asset code and issuer to make sure it's an asset
+  // that you can accept payment to this account for. In this example, we just
+  // convert the amount to USD and adding the equivalent amount to the customer
+  // balance. You need to implement `convertToUsd()` yourself.
   var dollarAmount = convertToUsd(
     payment.amount, payment.asset_code, payment.asset_issuer);
   addToBankAccountBalance(customer, dollarAmount);
   response.status(200).end();
-  console.log(dollarAmount + ' USD adicionados à conta: ' + customer);
+  console.log('Added ' + dollarAmount + ' USD to account: ' + customer);
 });
 
 app.listen(8005, function () {
-  console.log('Callbacks do servidor bridge rodando no port 8005!');
+  console.log('Bridge server callbacks running on port 8005!');
 });
 ```
 
@@ -209,7 +212,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Um pequeno servidor web Jersey para tratar callbacks vindos de serviços Stellar
+ * A small Jersey web server for handling callbacks from Stellar services
  */
 @Path("/")
 public class StellarCallbacks {
@@ -224,27 +227,27 @@ public class StellarCallbacks {
     @FormParam("asset_issuer") String assetIssuer,
     @FormParam("memo") String memo) {
 
-    // `receive` pode ser chamado múltiplas vezes para o mesmo pagamento, então verifique que
-    // você ainda não tenha visto este payment ID. (getPaymentByIdFromDb é
-    // um método que você terá de implementar.)
+    // `receive` may be called multiple times for the same payment, so check
+    // that you haven't already seen this payment ID. (getPaymentByIdFromDb is
+    // a method you’ll need to implement.)
     if (getPaymentByIdFromDb(id)) {
       return Response.ok().build();
     }
 
-    // Como temos uma conta Stellar que representa vários clientes, o
-    // cliente para o qual se destina o pagamento deve estar no memo da transação.
-    // (getAccountFromDb é um método que você terá de implementar.)
+    // Because we have one Stellar account representing many customers, the
+    // customer the payment is intended for should be in the transaction memo.
+    // (getAccountFromDb is a method you’ll need to implement.)
     Customer customer = getAccountFromDb(memo);
 
-    // É preciso verificar o asset code e issuer para ter certeza de que é um ativo
-    // para o qual você pode aceitar pagamentos nesta conta. Neste exemplo,
-    // somente convertemos a quantia para USD e adicionamos a quantia equivalente ao
-    // saldo do cliente. Você vai precisar implementar `convertToUsd()` por si mesmo.
+    // You need to check the asset code and issuer to make sure it's an asset
+    // that you can accept payment to this account for. In this example, we just
+    // convert the amount to USD and adding the equivalent amount to the
+    // customer balance. You need to implement `convertToUsd()` yourself.
     Double dollarAmount = convertToUsd(amount, assetCode, assetIssuer);
     addToBankAccountBalance(customer, dollarAmount);
     return Response.ok().build();
     System.out.println(String.format(
-      "Adicionar %s, USD à conta: %s",
+      "Add %s, USD to account: %s",
       dollarAmount,
       customer));
   }
@@ -254,12 +257,13 @@ public class StellarCallbacks {
 
 </code-example>
 
-Para testar e ver se o seu callback receive funciona, vamos tentar enviar 1 USD a um cliente com o nome de conta `Amy` em seu banco. (Para rever como enviar pagamentos usando a API, veja o [passo 3 de “para começar”](../get-started/transactions.md).)
+To test that your receive callback works, let’s try sending 1 USD to a customer with the account name `Amy` at your bank. (For a review of sending payments using the API, check [step 3 of “get started”](../get-started/transactions.md).)
 
-<code-example name="Testar o Callback Receive">
+<code-example name="Test Receive Callback">
 
 ```js
 var StellarSdk = require('stellar-sdk');
+StellarSdk.Network.useTestNetwork()
 var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 var sourceKeys = StellarSdk.Keypair.fromSecret(
   'SCZANGBA5YHTNYVVV4C3U252E2B6P6F5T3U6MM63WBSBZATAQI3EBTQ4');
@@ -274,17 +278,17 @@ server.loadAccount(sourceKeys.publicKey())
           'USD', 'GAIUIQNMSXTTR4TGZETSQCGBTIF32G2L5P4AML4LFTMTHKM44UHIN6XQ'),
         amount: '1'
       }))
-      // Use o memo para indicar o cliente ao qual se destina o pagamento.
+      // Use the memo to indicate the customer this payment is intended for.
       .addMemo(StellarSdk.Memo.text('Amy'))
       .build();
     transaction.sign(sourceKeys);
     return server.submitTransaction(transaction);
   })
   .then(function(result) {
-    console.log('Successo! Resultados:', result);
+    console.log('Success! Results:', result);
   })
   .catch(function(error) {
-    console.error('Algo deu errado!', error);
+    console.error('Something went wrong!', error);
   });
 ```
 
@@ -301,26 +305,26 @@ Asset dollar = Asset.createNonNativeAsset("USD", KeyPair.fromAccountId(
 AccountResponse sourceAccount = server.accounts().account(source);
 Transaction transaction = new Transaction.Builder(sourceAccount)
   .addOperation(new PaymentOperation.Builder(destination, dollar, "1").build())
-  // Use o memo para indicar o cliente ao qual se destina o pagamento.
+  // Use the memo to indicate the customer this payment is intended for.
   .addMemo(Memo.text("Amy"))
   .build();
 transaction.sign(source);
 
 try {
   SubmitTransactionResponse response = server.submitTransaction(transaction);
-  System.out.println("Successo!");
+  System.out.println("Success!");
   System.out.println(response);
 } catch (Exception e) {
-  System.out.println("Algo deu errado!");
+  System.out.println("Something went wrong!");
   System.out.println(e.getMessage());
 }
 ```
 
 </code-example>
 
-Depois de rodar o código acima, seu servidor callback deve ter logado informações sobre o pagamento.
+After running the above code, your callback server should have logged information about the payment.
 
 <nav class="sequence-navigation">
-  <a rel="prev" href="./">Anterior: Arquitetura</a>
-  <a rel="next" href="3-federation-server.md">Próximo: Servidor Federation</a>
+  <a rel="prev" href="./">Back: Architecture</a>
+  <a rel="next" href="3-federation-server.md">Next: Federation Server</a>
 </nav>

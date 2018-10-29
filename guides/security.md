@@ -1,66 +1,66 @@
 ---
-title: Segurança
+title: Security
 ---
 
-Com Stellar, você irá trocar ativos que são muito valiosos, então segurança é importante. As orientações a seguir podem ajudá-lo a manter sua integração Stellar segura.
+You’ll trade assets that are very valuable with Stellar, so security is important. The following guidelines can help keep your Stellar integration secure.
 
 
-## Segurança embutida
+## Built-in security
 
-Stellar usa ferramentas e técnicas de criptografia que são padrão de indústria, o que significa que o código é bem testado e compreendido. Todas as transações na rede são públicas, o que quer dizer que a movimentação dos fundos pode sempre ser auditada. Cada transação é assinada por quem quer que a tenha enviado usando o [algoritmo Ed25519](https://ed25519.cr.yp.to), o que prova criptograficamente que o remetente tinha autorização para fazer a transação.
+Stellar uses industry-standard public-key cryptography tools and techniques, which means the code is well tested and well understood. All transactions on the network are public, which means the movement of funds can always be audited. Each transaction is signed by whomever sent it using the [Ed25519 algorithm](https://ed25519.cr.yp.to), which cryptographically proves that the sender was authorized to make the transaction.
 
-Embora todas as transações sejam públicas, bancos que usem Stellar para trocar fundos em nome de correntistas individuais podem manter privadas as informações sobre os remetentes e destinatários armazenando identificadores encriptados ou únicos no campo memo da transação. Isso permite que bancos cumpram com exigências regulatórias de compliance e deixem o histórico de transações verificável enquanto mantêm seguras informações privilegiadas.
-
-
-## Contas offline seguras
-
-Um dos métodos mais simples de prover segurança a uma conta é manter sua seed secreta guardada em um ambiente offline — pode ser em um computador sem conexão à internet ou apenas um pedaço de papel na carteira de alguém. Transações podem ser criadas e assinadas em um computador offline, e depois salvas em um drive USB (ou outro meio de armazenamento) e transferidas para um computador com acesso à internet, que envia as transações a um servidor Horizon ou uma instância do Stellar Core. Se preferir gravar a seed no papel em vez de um computador, use um programa que não salva a seed para criar e assinar a transação.
-
-Como um computador offline não tem conexão, é extremamente difícil que alguém sem acesso físico a ele consiga acessar as chaves da conta. No entanto, isso também torna faz de todas as transações um processo extremamente manual. Uma prática comum em vez disso é manter duas contas: uma conta offline que guarda seguramente a maioria dos seus ativos e outra conta online que detém apenas alguns ativos. A maioria das transações pode ser realizada com a conta online e, quando seus fundos estiverem baixos, alguém pode reabastecê-la manualmente a partir da conta offline.
-
-Pode-se pensar neste método como ter um cofre de banco e uma caixa registradora. Na maior parte do tempo, o cofre ficará trancado, só sendo aberto ocasionalmente (e sob procedimentos específicos) para reabastecer a gaveta do caixa quando ela estiver com poucos fundos, ou para guardar fundos excessivos quando o caixa estiver lotado. Se alguém tentar roubar o banco, é extremamente difícil que se perca algo além do que estava no caixa.
+While all transactions are public, banks using Stellar to exchange funds on behalf of individual account holders can keep information about the individuals sending and receiving it private by storing encrypted or unique identifiers in the transaction’s memo field. This allows banks to meet regulatory compliance requirements and keep transaction history verifiable while still keeping privileged information secure.
 
 
-## Exigir mais de uma autorização ou signatários
+## Secure offline accounts
 
-Contas sensíveis podem ser protegidas exigindo autorização de mais de um indivíduo para fazer uma transação. Leia o [guia multisignature](concepts/multi-sig.md) para saber melhor como fazê-lo.
+One of the simplest methods for securing an account is keeping its secret seed stored offline—it could be on a computer with no connection to the internet or just a piece of paper in someone’s wallet. Transactions can be created and signed on an offline computer, then saved to a USB drive (or some other means of storage) and transferred to a computer with internet access, which sends the transactions to a Horizon server or Stellar Core instance. If storing the seed on paper instead of a computer, use a program that doesn’t save the seed to create and sign the transaction.
 
-Se forem exigidos mais de um signatário, é bom também ter certeza de não exigir que todos os signatários possíveis assinem a transação. Se um dos signatários perder as chaves de sua conta, você perderá a capacidade de realizar transações se sua assinatura for necessária.
+Since an offline computer has no connection, it is extremely hard for someone without physical access to it to access the account’s keys. However, this also makes every transaction an extremely manual process. A common practice instead is to maintain two accounts: one offline account that securely holds the majority of your assets and another online account that holds only a few assets. Most transactions can be performed with the online account and, when its funds are low, a person can manually replenish it from the offline account.
 
-
-## Garantir que os ativos sejam revogáveis
-
-Ao emitir seus próprios ativos, recomenda-se ter certeza de que eles podem ser revogados usando a [flag “authorization revocable” na conta](concepts/accounts.md#flags). Isso permite que você congele seus ativos que estejam na conta de outra pessoa em caso de roubo ou outras circunstâncias desse tipo.
+You can think of this method like having both a bank vault and a cash register drawer. Most of the time the vault is closed and locked. It is only opened occasionally (and under specific procedures) to replenish a register drawer that is running low or to store excess funds from a register drawer that is overflowing. If someone attempts to rob the bank, it is extremely hard for them to get away with anything more than what was in the register drawer.
 
 
-## Realizar verificações de compliance
+## Require multiple authorizations or signers
 
-O protocolo que está no núcleo do Stellar está limitado a um meio simples e verificável de se trocar ativos. Se você é uma instituição financeira ou estiver fazendo grandes transações, você deveria também realizar procedimentos <abbr title="Know Your Customer">KYC</abbr> e outras verificações regulatórias de compliance relacionadas. Você pode encontrar mais informações no nosso [guia do protocolo compliance](compliance-protocol.md) ou usar o [Servidor Stellar Bridge](https://github.com/stellar/bridge-server) para simplificar o processo.
+Sensitive accounts can be secured by requiring authorization from multiple individuals to make a transaction. Read the [multisignature guide](concepts/multi-sig.md) to learn more about how.
 
-
-## E se as chaves de uma conta forem comprometidas?
-
-Como a segurança do Stellar é baseada em encriptação de chaves públicas, é crucial que a seed secreta de uma conta não seja compartilhada. Qualquer pessoa que tiver acesso à seed efetivamente tem controle sobre a conta. Porém, se alguém descobrir a seed de sua conta ou você compartilhá-la por acidente com alguém que não deveria sabê-la, você pode remover a habilidade dessa seed de controlar a conta com os seguintes passos:
-
-1. Faça um novo par de chaves.
-2. Adicione a nova chave pública como um signatário da conta comprometida. (Use a [operação `set options`](concepts/list-of-operations.md#set-options)).
-3. Remova a autoridade de assinatura da chave comprometida.
-4. Agora a nova chave pública controla a conta e as chaves comprometidas não são mais capazes de assinar transações.
-5. Notifique os donos de outras contas que a nova chave tem autoridade sobre a a chave que foi comprometida. Eles precisarão seguir os passos 2 e 3 para suas contas também.
-
-É importante compreender que contas que permitem mais de uma assinatura precisam ser capazes de remover uma chave comprometida. Sempre tenha o cuidado de definir diferentes pesos nas chaves de modo que isso seja possível — nunca exija que *todos* os signatários sejam envolvidos em uma transação.
+If you require multiple signers, you should also ensure that you do not require all the possible signers to sign a transaction. If one of the signers loses the keys to their account, you will no longer be able to perform transactions if they have to sign them.
 
 
-## E se houver um bug no código do Stellar?
+## Ensure assets are revocable
 
-Todo nó mantém um arquivo histórico, então sempre há um registro forte e confiável do que aconteceu. Usuários afetados por um bug podem examinar todos os detalhes históricos e concordar em um método de atenuação até o bug ser consertado.
-
-
-## Proteger uma Instância do Stellar Core
-
-Geralmente é uma boa ideia assegurar que o acesso ao Stellar Core seja extremamente limitado. Certifique-se que os únicos ports abertos são aqueles necessários para se comunicar com o Horizon e outras instâncias do Stellar Core na rede pública. O acesso às bases de dado do Stellar Core também deve ser altamente restrito.
+If you issue your own assets, you should usually ensure that they can be revoked using the [“authorization revocable” flag on the account](concepts/accounts.md#flags). This allows you to effectively freeze your assets in someone else’s account in case of theft or in other extenuating circumstances.
 
 
-## Fique em Dia com os Patches de Segurança
+## Perform compliance checks
 
-Certifique-se de estar usando os softwares mais seguros disponíveis ficando em dia com as últimas versões. Stellar.org publica anúncios de novos releases em uma mailing list que você pode se inscrever em https://www.freelists.org/list/sdf-releases.
+Stellar’s core protocol limits itself to being a simple and verifiable means for exchanging assets. If you are a financial institution or are making large transactions, you should also perform <abbr title="Know Your Customer">KYC</abbr> and any related regulatory compliance checks. You can find more information in our [compliance protocol guide](compliance-protocol.md) or use the [Stellar Bridge Server](https://github.com/stellar/bridge-server) to simplify the process.
+
+
+## What if an account’s keys are compromised?
+
+Because Stellar’s security is based around public key encryption, it’s critical that an account’s secret seed is not shared. Anyone who has access to the seed effectively has control of the account. However, if someone learns your account’s seed or you accidentally share it with someone who shouldn’t know it, you can remove its ability to control the account with the following steps:
+
+1. Make a new key pair.
+2. Add the new public key as a signer on the compromised account. (Use the [`set options` operation](concepts/list-of-operations.md#set-options)).
+3. Remove the compromised key’s signing authority on the compromised account.
+4. Now the new public key controls the account and the compromised keys are no longer able to sign transactions.
+5. Notify the owners of other accounts that the key has signing authority on that the key was compromised. They need to follow steps 2 and 3 for their accounts as well.
+
+It’s important to understand that accounts that allow multiple signatures need to be able to remove a compromised key. You should always be careful that signature weights are set up so that this is possible—never require *all* signers to be involved in a transaction.
+
+
+## What if there’s a bug in Stellar’s code?
+
+Every node keeps a history archive, so you always have a strong and reliable record of what happened. Parties affected by a bug can examine all the historical details and agree on a method of remediation while the bug is being fixed.
+
+
+## Securing a Stellar Core Instance
+
+It’s generally a good idea to make sure access to Stellar Core is extremely limited. Make sure only the ports needed to communicate with Horizon and other Stellar Core instances on the public network are open. Access to Stellar Core’s databases should also be highly restricted.
+
+
+## Keep Up to Date with Security Patches
+
+Make sure that you’re using the most secure software available by keeping up-to-date with the latest releases. Stellar.org publishes release announcements on a mailing list you can subscribe to at https://www.freelists.org/list/sdf-releases.
